@@ -1,0 +1,52 @@
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import "@fontsource-variable/manrope";
+import "@fontsource/instrument-serif/latin-400.css";
+import "@fontsource/instrument-serif/latin-400-italic.css";
+import "./styles.css";
+import "./refinements.css";
+import "./editorial.css";
+
+class ErrorBoundary extends React.Component<
+  React.PropsWithChildren,
+  { failed: boolean }
+> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  render() {
+    return this.state.failed ? (
+      <main className="fatal">
+        <h1>A little pause.</h1>
+        <p>
+          NOCTIS couldn’t open this view. Your saved journal is still in this
+          browser.
+        </p>
+        <button onClick={() => location.reload()}>Reopen NOCTIS</button>
+      </main>
+    ) : (
+      this.props.children
+    );
+  }
+}
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
+  </React.StrictMode>,
+);
+
+if (
+  import.meta.env.PROD &&
+  "serviceWorker" in navigator &&
+  window.isSecureContext
+) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(() => {
+      /* Journal remains usable without offline caching. */
+    });
+  });
+}

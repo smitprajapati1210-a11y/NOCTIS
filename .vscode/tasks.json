@@ -1,0 +1,22 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "NOCTIS: Start app",
+      "type": "npm",
+      "script": "dev",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "NOCTIS: Check milestone",
+      "type": "shell",
+      "command": "npm test && npm run build",
+      "problemMatcher": []
+    }
+  ]
+}

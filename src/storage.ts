@@ -1,0 +1,162 @@
+import {
+  DEFAULT_PREFERENCES,
+  entryError,
+  TAGS,
+  today,
+  type Entry,
+  type Store,
+} from "./domain";
+
+export const STORAGE_KEY = "noctis.journal.v1";
+export const freshStore = (): Store => ({
+  version: 1,
+  entries: [],
+  preferences: { ...DEFAULT_PREFERENCES },
+  routine: { date: today(), completed: [] },
+  timer: { endAt: null, remaining: 180 },
+});
+const object = (v: unknown): v is Record<string, unknown> =>
+  !!v && typeof v === "object" && !Array.isArray(v);
+const bounded = (n: unknown, min: number, max: number): n is number =>
+  typeof n === "number" && Number.isFinite(n) && n >= min && n <= max;
+
+export function parseStore(value: unknown): Store {
+  if (
+    !object(value) ||
+    value.version !== 1 ||
+    !Array.isArray(value.entries) ||
+    value.entries.length > 5000 ||
+    !object(value.preferences)
+  )
+    throw new Error("This is not a supported NOCTIS backup (version 1).");
+  const ids = new Set<string>();
+  const dates = new Set<string>();
+  const entries = value.entries.map((item: unknown) => {
+    if (
+      !object(item) ||
+      typeof item.id !== "string" ||
+      !item.id ||
+      item.id.length > 100 ||
+      typeof item.date !== "string" ||
+      typeof item.bedtime !== "string" ||
+      typeof item.wakeTime !== "string" ||
+      typeof item.note !== "string" ||
+      !Array.isArray(item.tags) ||
+      !item.tags.every(
+        (t) =>
+          typeof t === "string" && TAGS.includes(t as (typeof TAGS)[number]),
+      )
+    )
+      throw new Error(
+        "A journal entry is incomplete. Nothing has been imported.",
+      );
+    const e = item as unknown as Entry;
+    const error = entryError(e);
+    if (error) throw new Error(error);
+    if (ids.has(e.id) || dates.has(e.date))
+      throw new Error(
+        "The backup has duplicate nights. Nothing has been imported.",
+      );
+    ids.add(e.id);
+    dates.add(e.date);
+    return {
+      id: e.id,
+      date: e.date,
+      bedtime: e.bedtime,
+      wakeTime: e.wakeTime,
+      latency: e.latency,
+      awake: e.awake,
+      quality: e.quality,
+      tags: [...new Set(e.tags)],
+      note: e.note,
+    };
+  });
+  const p = value.preferences;
+  if (
+    typeof p.name !== "string" ||
+    p.name.length > 40 ||
+    typeof p.demo !== "boolean" ||
+    !bounded(p.goal, 6, 10) ||
+    !Number.isInteger(p.goal * 4) ||
+    ![p.wakeTime, p.eventTime].every(
+      (t) => typeof t === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(t),
+    ) ||
+    typeof p.eventName !== "string" ||
+    p.eventName.length > 60 ||
+    !bounded(p.prep, 0, 180) ||
+    !bounded(p.travel, 0, 180) ||
+    !bounded(p.windDown, 5, 120) ||
+    ![p.prep, p.travel, p.windDown].every(Number.isInteger)
+  )
+    throw new Error(
+      "The backup preferences are invalid. Nothing has been imported.",
+    );
+  const store = freshStore();
+  store.entries = entries;
+  store.preferences = {
+    name: p.name,
+    goal: p.goal,
+    demo: p.demo,
+    wakeTime: p.wakeTime as string,
+    eventTime: p.eventTime as string,
+    eventName: p.eventName,
+    prep: p.prep,
+    travel: p.travel,
+    windDown: p.windDown,
+  };
+  if (
+    object(value.routine) &&
+    typeof value.routine.date === "string" &&
+    Array.isArray(value.routine.completed) &&
+    value.routine.completed.every(
+      (x) =>
+        typeof x === "string" &&
+        ["lights", "phone", "tomorrow", "reflect"].includes(x),
+    )
+  )
+    store.routine = {
+      date: value.routine.date,
+      completed: value.routine.completed as string[],
+    };
+  if (
+    object(value.timer) &&
+    (value.timer.endAt === null ||
+      bounded(value.timer.endAt, 0, Date.now() + 600000)) &&
+    bounded(value.timer.remaining, 0, 600)
+  )
+    store.timer = {
+      endAt: value.timer.endAt as number | null,
+      remaining: value.timer.remaining,
+    };
+  return store;
+}
+
+export function readStore(): { store: Store; error: string } {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return {
+      store: saved ? parseStore(JSON.parse(saved)) : freshStore(),
+      error: "",
+    };
+  } catch {
+    return {
+      store: freshStore(),
+      error:
+        "Your saved data could not be opened. It has not been overwritten. Download the stored copy in Settings before resetting storage.",
+    };
+  }
+}
+
+export function downloadJson(data: unknown, name: string): void {
+  const blob = new Blob([JSON.stringify(data, null, 2)], {
+    type: "application/json",
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
