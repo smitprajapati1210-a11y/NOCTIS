@@ -2,12 +2,14 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import "@fontsource-variable/manrope";
+import "@fontsource-variable/outfit";
 import "@fontsource/instrument-serif/latin-400.css";
 import "@fontsource/instrument-serif/latin-400-italic.css";
 import "./styles.css";
 import "./refinements.css";
 import "./editorial.css";
 import "./components/SleepChart.css";
+import "./components/AppHeader.css";
 
 class ErrorBoundary extends React.Component<
   React.PropsWithChildren,

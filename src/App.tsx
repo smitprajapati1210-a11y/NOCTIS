@@ -18,7 +18,6 @@ import {
   Moon,
   Plus,
   Search,
-  Settings2,
   Sparkles,
   Sunrise,
   X,
@@ -51,6 +50,7 @@ import NightMoon, { MoonVisual } from "./components/Moon";
 import { entryMoment } from "./moon";
 import LunarScene from "./components/LunarScene";
 import WeekRail from "./components/WeekRail";
+import AppHeader from "./components/AppHeader";
 
 type Tab = "today" | "journal" | "discover" | "tonight";
 const tabs = [
@@ -159,39 +159,13 @@ export default function App() {
   );
   return (
     <div className="app-shell">
-      <header className="app-header">
-        <button
-          className="wordmark"
-          onClick={() => navigate("today")}
-          aria-label="NOCTIS home"
-        >
-          <span className="brand-mark">
-            <Moon size={20} fill="currentColor" strokeWidth={0} />
-            <i>✦</i>
-          </span>
-          NOCTIS<span className="wordmark-dot">.</span>
-        </button>
-        <div className="header-right">
-          <span
-            className={`header-date ${demo && tab !== "today" ? "sample-status" : ""}`}
-          >
-            {demo && tab !== "today"
-              ? "Sample nights"
-              : dateLabel(day, { month: "short", day: "numeric" })}
-          </span>
-          <button
-            className="avatar"
-            onClick={() => setModal("settings")}
-            aria-label="Open settings"
-          >
-            {store.preferences.name ? (
-              store.preferences.name[0].toUpperCase()
-            ) : (
-              <Settings2 size={18} />
-            )}
-          </button>
-        </div>
-      </header>
+      <AppHeader
+        day={day}
+        name={store.preferences.name}
+        sample={demo && tab !== "today"}
+        onHome={() => navigate("today")}
+        onSettings={() => setModal("settings")}
+      />
       {(readError || writeError) && (
         <div className="storage-alert" role="alert">
           <p>{readError || writeError}</p>

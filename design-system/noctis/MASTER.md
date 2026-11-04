@@ -13,6 +13,10 @@ Applied the installed **UI/UX Pro Max** and **UI Animation** skills. The focused
 - Both are bundled locally through Fontsource. No Google Fonts runtime request. Font licenses remain in their packages.
 - Input text stays at least 16 CSS px, including search and chat, to avoid iOS focus zoom. Secondary captions should remain readable; physical Dynamic Type testing is still required.
 
+## Header identity
+
+Use a compact Outfit Medium wordmark around 17px with 2.5px tracking and a small crescent. Preserve the original 72px mobile header height (plus safe area), the 44px Home/settings targets and visible sample status. The user rejected a much larger high-contrast serif wordmark, an orbital emblem and a tagline. Keep the header close to the original scale, with cleaner lettering; no decorative lockup, microcopy or idle animation. Outfit is locally bundled and reserved for branding.
+
 ## Semantic color roles
 
 | Role           | Value                  |

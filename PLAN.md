@@ -9,6 +9,7 @@
 - Applied the user-installed **UI/UX Pro Max** and **UI Animation** skills under `~/.agents/skills`. Their adapted product decisions are recorded in `design-system/noctis/MASTER.md`.
 - Scrollbars: the user wants no visible scrollbars anywhere in the app. Apply the policy globally while preserving scrolling and access to all content.
 - Charts: the user prefers minimal point-and-line graphs over duration bars. Keep straight, thin lilac segments, small dots and gaps for missing nights; no decorative area fill.
+- Header: compact Outfit Medium wordmark (17px), small crescent and original header height. The user rejected an oversized serif/emblem/tagline treatment and prefers a restrained middle ground closer to the original.
 - Typography: locally bundled **Instrument Serif** display + **Manrope Variable** body/data. Preserve this direction unless the user changes it.
 
 ## Milestone 1 — implemented, 2026-11-05
@@ -42,6 +43,13 @@ The chat is **deterministic local rules, not an LLM**. No backend, account, clou
 - The plotted range uses only nights in the selected period; older outliers do not flatten the current view.
 - Added a global scrollbar policy for routes, sheets, chat and text fields, using standard and WebKit rules without changing their overflow or scrolling behavior.
 - Verification: all 24 existing tests and the production build pass. Safari screenshots inspected for weekly/monthly charts at the normal phone shell and 375×812; selecting a weekly point opened the corresponding read-only sample night. Reviewed global scrollbar coverage and preserved overflow behavior. Physical iPhone scroll indicators and touch feel remain part of the pending device check.
+
+## Follow-up — compact header identity, 2026-11-05
+
+- Reworked the header into `AppHeader.tsx` while preserving Home navigation, date/sample status and settings.
+- Applied Outfit Medium only to the compact wordmark, with a small crescent. Restored the original header height and removed the oversized display lettering, orbital emblem, tagline and extra divider after user feedback.
+- Outfit is locally bundled; the body and page display fonts remain Manrope and Instrument Serif.
+- Verification: all 24 existing tests and the production build pass. Inspected the compact header in Safari at the normal phone shell and 375×812; branding, date and settings fit without clipping. The user is previewing over LAN; no physical-device result is claimed by these Mac checks.
 
 ## Next milestone — physical iPhone and motion tuning
 

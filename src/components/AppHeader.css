@@ -1,0 +1,39 @@
+/* Compact signature: Outfit is reserved for the wordmark, at the original header scale. */
+.app-header.noctis-header {
+  gap: 12px;
+}
+.noctis-header .noctis-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: #eee7f4;
+  font-family: "Outfit Variable", var(--font-body);
+  font-size: 17px;
+  font-weight: 500;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+}
+.noctis-header .noctis-brand-name {
+  display: block;
+  font: inherit;
+  line-height: 1;
+  letter-spacing: 2.5px;
+}
+.noctis-header .noctis-brand-moon {
+  display: block;
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  color: #cdb7df;
+}
+@media (max-width: 360px) {
+  .noctis-header .noctis-brand {
+    gap: 7px;
+    font-size: 16px;
+  }
+}
