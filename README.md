@@ -22,16 +22,18 @@ If dependencies need to be restored after copying or cloning the project, run `n
 
 ## What works in milestone 1
 
-| View     | Working features                                                                                                                                                         |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Today    | Latest logged night, estimated sleep after subtracting latency and awakenings, minimal 7/30-day point-and-line charts, personal goal, links to journal and evening plan. |
-| Journal  | Create, edit and delete nights; date/time validation; rested ratings; habit tags and notes; search; tappable 35-day heatmap.                                             |
-| Discover | Computed weekly summaries, rested-rating chart, bedtime variation, habit comparisons and local chat with chart cards.                                                    |
-| Tonight  | Manual morning commitment, preparation/travel buffers, bedtime and wind-down plan, pausable timer, daily ritual checklist.                                               |
-| Moon     | Tonight’s calculated phase at 9 pm in the device’s timezone; historical phases at each entry’s actual bedtime.                                                           |
-| Settings | Name, sleep goal, separate sample mode, JSON export/import with a replacement confirmation, and personal-journal erase confirmation.                                     |
+| View      | Working features                                                                                                                                                         |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Today     | Latest logged night, estimated sleep after subtracting latency and awakenings, minimal 7/30-day point-and-line charts, personal goal, links to journal and evening plan. |
+| Journal   | Create, edit and delete nights; date/time validation; rested ratings; habit tags and notes; search; tappable 35-day heatmap.                                             |
+| Discover  | Computed weekly summaries, rested-rating chart, bedtime variation, habit comparisons and local chat with chart cards.                                                    |
+| Wind down | Prominent 15/30/45-minute session timer and daily checklist; morning schedule planner; optional short breathing pause.                                                   |
+| Moon      | Tonight’s calculated phase at 9 pm in the device’s timezone; historical phases at each entry’s actual bedtime.                                                           |
+| Settings  | Name, sleep goal, separate sample mode, JSON export/import with a replacement confirmation, and personal-journal erase confirmation.                                     |
 
 The app opens in **clearly labeled sample mode** so you can explore the interface. The **Start my journal** invitation appears only on Today and opens the first-entry sheet. Saving starts your personal journal throughout the app; canceling keeps the sample view. The 28 sample nights never get added to your personal entries. Sample mode can be revisited from Settings.
+
+**Wind down** is directly available in the bottom navigation and through a prominent Today card, before the sleep statistics. The card shows live time remaining and checklist progress. The timer and four daily rituals appear together before the schedule planner. Choose 15, 30 or 45 minutes, pause/resume, or reset; the selected length and progress survive navigation and reopening. The original 1/3/5-minute breathing pause is a separate optional section. Countdown completion is shown in the app; this does not set a system alarm or notification.
 
 The chat and insights are a **local, rule-based preview, not a connected AI model**. They calculate summaries from the journal and answer supported questions such as “How was my week?”, “Show my rested ratings”, and “Does late caffeine show a pattern?” Unknown questions explain the preview’s scope. A real model and backend are the next major milestone.
 
@@ -79,7 +81,7 @@ The illustration shows waxing light on the right and waning light on the left. I
 
 ## Design and motion
 
-Applied the user-installed UI/UX Pro Max and UI Animation skills. Today is moon-led, Journal uses a date-led diary layout, the Night Lab presents field notes and a mood line chart, and Tonight leads with the breathing experience. Instrument Serif and Manrope Variable are bundled locally. The compact header wordmark uses locally bundled Outfit Medium, with a small crescent and the original header height. Sleep-duration charts use thin lilac lines and small points, with gaps for unlogged nights, a quiet goal reference and accessible night-by-night details. Visible scrollbars are hidden across the app, including sheets and text fields, while touch and keyboard scrolling remain available. The floating dock remains live while the central viewport uses directional transitions. Rapid navigation cancels stale callbacks; reduced motion skips spatial travel. Read `design-system/noctis/MASTER.md` for the design decisions, timing and verification limits.
+Applied the user-installed UI/UX Pro Max and UI Animation skills. Today is moon-led, Journal uses a date-led diary layout, the Night Lab presents field notes and a mood line chart, and Wind down leads with its session timer and checklist, ahead of planning and the optional breathing pause. Instrument Serif and Manrope Variable are bundled locally. The compact header wordmark uses locally bundled Outfit Medium, with a small crescent and the original header height. Sleep-duration charts use thin lilac lines and small points, with gaps for unlogged nights, a quiet goal reference and accessible night-by-night details. Visible scrollbars are hidden across the app, including sheets and text fields, while touch and keyboard scrolling remain available. The floating dock remains live while the central viewport uses directional transitions. Rapid navigation cancels stale callbacks; reduced motion skips spatial travel. Read `design-system/noctis/MASTER.md` for the design decisions, timing and verification limits.
 
 ## Development and checks
 
@@ -91,16 +93,17 @@ npm run build    # icons, TypeScript, production bundle, offline asset manifest
 npm run format   # optional source formatting
 ```
 
-| File              | Purpose                                                                                         |
-| ----------------- | ----------------------------------------------------------------------------------------------- |
-| `src/App.tsx`     | Navigation, app state, local persistence and Today/Journal screens.                             |
-| `src/domain.ts`   | Time calculations, validation, patterns, planning and local assistant responses.                |
-| `src/storage.ts`  | Versioned backup validation, persistence recovery and export.                                   |
-| `src/moon.ts`     | Night-to-date conversion, moon calculations and illuminated shape.                              |
-| `src/components/` | Forms, charts, moon, Discover/chat, Tonight, settings and accessible modal.                     |
-| `src/styles.css`  | Phone layout and the dark purple design.                                                        |
-| `tests/`          | Meaningful calculation and interaction regression checks. Tests use isolated in-memory storage. |
-| `scripts/`        | Reproducible PNG icons and production service-worker generation.                                |
+| File                 | Purpose                                                                                         |
+| -------------------- | ----------------------------------------------------------------------------------------------- |
+| `src/App.tsx`        | Navigation, app state, local persistence and Today/Journal screens.                             |
+| `src/domain.ts`      | Time calculations, validation, patterns, planning and local assistant responses.                |
+| `src/useWindDown.ts` | Shared session countdown, pause/reset and completion across views.                              |
+| `src/storage.ts`     | Versioned backup validation, persistence recovery and export.                                   |
+| `src/moon.ts`        | Night-to-date conversion, moon calculations and illuminated shape.                              |
+| `src/components/`    | Forms, charts, moon, Discover/chat, Tonight, settings and accessible modal.                     |
+| `src/styles.css`     | Phone layout and the dark purple design.                                                        |
+| `tests/`             | Meaningful calculation and interaction regression checks. Tests use isolated in-memory storage. |
+| `scripts/`           | Reproducible PNG icons and production service-worker generation.                                |
 
 Browser screenshots were inspected in Safari and Chrome. The redesigned Home and Night Lab were also inspected in Safari at 375×812. The entry form was also inspected in Safari. Automated interaction checks cover saving, remount persistence, editing, duplicate-date rejection, confirmed deletion, sample separation, preferences, chat chart cards, planning, timer pause after navigation, checklist persistence, and confirmed backup restore. These checks do not replace physical iPhone testing.
 

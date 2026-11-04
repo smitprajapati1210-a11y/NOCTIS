@@ -14,6 +14,11 @@ export const freshStore = (): Store => ({
   preferences: { ...DEFAULT_PREFERENCES },
   routine: { date: today(), completed: [] },
   timer: { endAt: null, remaining: 180 },
+  windDownTimer: {
+    endAt: null,
+    remaining: DEFAULT_PREFERENCES.windDown * 60,
+    duration: DEFAULT_PREFERENCES.windDown * 60,
+  },
 });
 const object = (v: unknown): v is Record<string, unknown> =>
   !!v && typeof v === "object" && !Array.isArray(v);
@@ -127,6 +132,25 @@ export function parseStore(value: unknown): Store {
     store.timer = {
       endAt: value.timer.endAt as number | null,
       remaining: value.timer.remaining,
+    };
+  // Older backups have only the short breathing timer. Keep it untouched and
+  // initialize the new wind-down session from the user's planning preference.
+  const session = value.windDownTimer;
+  const duration = p.windDown * 60;
+  store.windDownTimer = { endAt: null, remaining: duration, duration };
+  if (
+    object(session) &&
+    bounded(session.duration, 60, 7200) &&
+    Number.isInteger(session.duration) &&
+    bounded(session.remaining, 0, session.duration) &&
+    Number.isInteger(session.remaining) &&
+    (session.endAt === null ||
+      bounded(session.endAt, 0, Date.now() + session.duration * 1000))
+  )
+    store.windDownTimer = {
+      endAt: session.endAt as number | null,
+      remaining: session.remaining,
+      duration: session.duration,
     };
   return store;
 }

@@ -1,0 +1,363 @@
+/* Wind-down is a primary task: visible on Today, timer and checklist before planning. */
+.wind-home {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #6c4d7a;
+  border-radius: 20px;
+  background: #281d34;
+  color: var(--text-primary);
+  text-align: left;
+}
+.wind-home-top,
+.wind-home-title,
+.wind-home-body {
+  display: flex;
+  align-items: center;
+}
+.wind-home-top,
+.wind-home-body {
+  justify-content: space-between;
+  gap: 16px;
+}
+.wind-home-title {
+  gap: 9px;
+  font-size: 1rem;
+  font-weight: 550;
+}
+.wind-home-top > svg,
+.wind-home-title > svg {
+  color: var(--accent);
+}
+.wind-home-body {
+  margin-top: 12px;
+  align-items: flex-end;
+}
+.wind-home-body > span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.wind-home-body strong {
+  font-size: 0.8125rem;
+  font-weight: 450;
+}
+.wind-home-body small {
+  font-size: 0.6875rem;
+  color: var(--text-secondary);
+}
+.wind-home-body .wind-home-clock {
+  text-align: right;
+}
+.wind-home-clock strong {
+  font-size: 1.6rem;
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: -0.7px;
+  font-variant-numeric: tabular-nums;
+}
+.wind-home.is-running {
+  border-color: #b99cd0;
+}
+.wind-progress {
+  display: block;
+  height: 3px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #60456e70;
+}
+.wind-progress > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--accent);
+  transform-origin: left;
+  transition: transform var(--motion-control) var(--ease-enter);
+}
+.wind-home > .wind-progress {
+  margin-top: 14px;
+}
+.wind-down-view {
+  gap: 20px;
+  background: none;
+}
+.wind-down-view .wind-down-intro h1 {
+  font-size: 2.25rem;
+  line-height: 1.1;
+  letter-spacing: -0.4px;
+  margin: 0;
+}
+.wind-down-intro > p {
+  margin-top: 6px;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+.wind-session {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.wind-timer-panel {
+  padding: 16px;
+  border: 1px solid #654974;
+  border-radius: 20px;
+  background: #251a30;
+}
+.wind-timer-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.wind-timer-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+.wind-countdown {
+  margin-top: 4px;
+  color: var(--text-primary);
+  font-size: 2.9rem;
+  font-weight: 350;
+  letter-spacing: -1.7px;
+  line-height: 1.25;
+  font-variant-numeric: tabular-nums;
+}
+.wind-start {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 13px;
+  min-height: 44px;
+  border-radius: 14px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 0.75rem;
+  font-weight: 650;
+  line-height: 1.3;
+}
+.wind-durations {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+}
+.wind-durations button {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px 4px;
+  border: 1px solid #70547e;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+.wind-durations button[aria-pressed="true"] {
+  background: #6d4d8255;
+  border-color: #c4a1df;
+  color: #f0ddff;
+}
+.wind-durations button:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+.wind-timer-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+.wind-timer-note {
+  flex: 1;
+  font-size: 0.6875rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+.wind-reset {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text-secondary);
+}
+.wind-checklist-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.wind-checklist-heading h2 {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 550;
+  line-height: 1.5;
+  letter-spacing: -0.2px;
+}
+.wind-checklist-heading > span {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+.wind-rituals {
+  margin-top: 3px;
+}
+.wind-ritual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 64px;
+  padding: 12px 0;
+  border-bottom: 1px solid #60406c66;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.wind-ritual input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.wind-ritual:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 5px;
+}
+.wind-ritual-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 26px;
+  color: #b999cc;
+}
+.wind-ritual-copy {
+  flex: 1;
+  min-width: 0;
+}
+.wind-ritual-copy strong {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+.wind-ritual-copy small {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+.wind-check {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 23px;
+  height: 23px;
+  border: 1px solid #ab8abf;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--accent-ink);
+  transition:
+    background-color 150ms,
+    border-color 150ms;
+}
+.wind-check > svg {
+  transform: scale(0.65);
+  opacity: 0;
+  transition:
+    transform 160ms var(--ease-enter),
+    opacity 120ms;
+}
+.wind-ritual.is-done .wind-check {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.wind-ritual.is-done .wind-check > svg {
+  opacity: 1;
+  transform: scale(1);
+}
+.wind-ritual.is-done .wind-ritual-icon {
+  color: var(--accent);
+}
+.wind-checklist-done {
+  margin-top: 12px;
+  color: #c4d5ad;
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+.wind-breathing {
+  border-top: 1px solid #60406c66;
+  border-bottom: 1px solid #60406c66;
+}
+.wind-breathing > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+  gap: 12px;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  list-style: none;
+  cursor: pointer;
+}
+.wind-breathing > summary::-webkit-details-marker {
+  display: none;
+}
+.wind-breathing > summary > svg {
+  transition: transform var(--motion-control) var(--ease-enter);
+}
+.wind-breathing[open] > summary > svg {
+  transform: rotate(180deg);
+}
+.wind-breathing .breathing-card {
+  margin: 0;
+  padding: 12px 0 20px;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.wind-breathing .breath-orbit {
+  width: 180px;
+  height: 180px;
+  margin-block: 22px;
+}
+.wind-breathing .breath-ring {
+  width: 140px;
+  height: 140px;
+}
+.wind-breathing .breath-ring > .timer-number {
+  font-size: 1.8rem;
+}
+@media (max-width: 350px) {
+  .wind-countdown {
+    font-size: 2.5rem;
+  }
+  .wind-start {
+    font-size: 0.6875rem;
+    padding-inline: 10px;
+  }
+  .wind-timer-panel {
+    padding: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wind-progress > span,
+  .wind-check > svg,
+  .wind-breathing > summary > svg {
+    transition: none;
+  }
+}

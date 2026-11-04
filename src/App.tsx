@@ -27,7 +27,6 @@ import {
   dateLabel,
   demoEntries,
   durationLabel,
-  makePlan,
   recent,
   sleepMinutes,
   sorted,
@@ -51,13 +50,15 @@ import { entryMoment } from "./moon";
 import LunarScene from "./components/LunarScene";
 import WeekRail from "./components/WeekRail";
 import AppHeader from "./components/AppHeader";
+import { WindDownHome } from "./components/WindDown";
+import { useWindDown } from "./useWindDown";
 
 type Tab = "today" | "journal" | "discover" | "tonight";
 const tabs = [
   { id: "today" as const, label: "Today", icon: House },
   { id: "journal" as const, label: "Journal", icon: BookOpen },
   { id: "discover" as const, label: "Discover", icon: Sparkles },
-  { id: "tonight" as const, label: "Tonight", icon: Moon },
+  { id: "tonight" as const, label: "Wind down", icon: Moon },
 ];
 
 export default function App() {
@@ -115,7 +116,7 @@ export default function App() {
   const latest = sorted(entries)[0];
   const goal = store.preferences.goal;
   const avg = average(week.map(sleepMinutes));
-  const plan = makePlan(store.preferences);
+  const windDown = useWindDown(store, setStore, notify);
   const newNight = () => {
     setEntryDate(day);
     setEditing(undefined);
@@ -213,6 +214,11 @@ export default function App() {
             <LunarScene
               name={store.preferences.name}
               onTonight={() => navigate("tonight")}
+            />
+            <WindDownHome
+              store={store}
+              timer={windDown}
+              onOpen={() => navigate("tonight")}
             />
             {latest ? (
               <section className="sleep-hero" aria-label="Latest logged night">
@@ -385,19 +391,7 @@ export default function App() {
               </span>
               <ArrowUpRight size={20} />
             </button>
-            <button
-              className="tonight-teaser"
-              onClick={() => navigate("tonight")}
-            >
-              <span className="icon-tile">
-                <Moon size={20} />
-              </span>
-              <span>
-                <small>YOUR EVENING, A LITTLE SOFTER</small>
-                <strong>Wind down at {timeLabel(plan.wind)}</strong>
-              </span>
-              <ChevronRight size={18} />
-            </button>
+
             <p className="closing-caption">
               One night at a time. You’re finding your rhythm.
             </p>
@@ -524,7 +518,12 @@ export default function App() {
           />
         )}
         {tab === "tonight" && (
-          <Tonight store={store} setStore={setStore} notify={notify} />
+          <Tonight
+            store={store}
+            setStore={setStore}
+            notify={notify}
+            windDown={windDown}
+          />
         )}
       </main>
       <nav

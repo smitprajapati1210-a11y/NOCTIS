@@ -9,6 +9,7 @@
 - Applied the user-installed **UI/UX Pro Max** and **UI Animation** skills under `~/.agents/skills`. Their adapted product decisions are recorded in `design-system/noctis/MASTER.md`.
 - Scrollbars: the user wants no visible scrollbars anywhere in the app. Apply the policy globally while preserving scrolling and access to all content.
 - Charts: the user prefers minimal point-and-line graphs over duration bars. Keep straight, thin lilac segments, small dots and gaps for missing nights; no decorative area fill.
+- Wind-down is a primary feature: Today shortcut before sleep stats, explicit bottom-nav label, timer and checklist together before planning. Keep short breathing pauses as an optional extra.
 - Header: compact Outfit Medium wordmark (17px), small crescent and original header height. The user rejected an oversized serif/emblem/tagline treatment and prefers a restrained middle ground closer to the original.
 - Typography: locally bundled **Instrument Serif** display + **Manrope Variable** body/data. Preserve this direction unless the user changes it.
 
@@ -50,6 +51,14 @@ The chat is **deterministic local rules, not an LLM**. No backend, account, clou
 - Applied Outfit Medium only to the compact wordmark, with a small crescent. Restored the original header height and removed the oversized display lettering, orbital emblem, tagline and extra divider after user feedback.
 - Outfit is locally bundled; the body and page display fonts remain Manrope and Instrument Serif.
 - Verification: all 24 existing tests and the production build pass. Inspected the compact header in Safari at the normal phone shell and 375×812; branding, date and settings fit without clipping. The user is previewing over LAN; no physical-device result is claimed by these Mac checks.
+
+## Follow-up — wind-down as a primary feature, 2026-11-05
+
+- Renamed the visible Tonight tab to **Wind down** and added a prominent Today card before sleep statistics, showing live remaining time and checklist progress.
+- Added a separate 15/30/45-minute session timer with pause/resume/reset and persistent duration. It runs from a wall-clock deadline in the app root, so returning from another view or app suspension catches up and completes correctly.
+- Moved the existing four daily rituals into the same primary session section, above the schedule planner. They now use native checkboxes, full-row targets and visible progress. Each local day starts an unticked checklist without changing saved journal entries.
+- Preserved the original 1/3/5-minute breathing timer in an optional section. Older backups keep this timer and initialize the new wind-down timer from the planning preference; new backups preserve long sessions and their duration.
+- Verification: all 26 tests and the production build pass. New checks cover home access, long-session persistence through remounts, pause/reset duration, checkbox persistence, completion while on Today, and older-backup migration. Safari screenshots inspected at the normal phone shell and 375×812: the Today shortcut is visible without scrolling, and the timer plus all four rituals appear before planning on the first Wind down screen. Physical iPhone suspension and touch checks remain unverified by these Mac inspections.
 
 ## Next milestone — physical iPhone and motion tuning
 

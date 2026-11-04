@@ -64,7 +64,7 @@ export default function LunarScene({
       <button
         className="scene-phase"
         onClick={onTonight}
-        aria-label={`Tonight’s ${moon.name}, ${moon.percent}% illuminated. Open Tonight.`}
+        aria-label={`Tonight’s ${moon.name}, ${moon.percent}% illuminated. Open wind-down.`}
       >
         <span className="phase-live-dot" />
         <span>

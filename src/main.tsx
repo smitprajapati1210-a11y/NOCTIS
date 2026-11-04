@@ -10,6 +10,7 @@ import "./refinements.css";
 import "./editorial.css";
 import "./components/SleepChart.css";
 import "./components/AppHeader.css";
+import "./components/WindDown.css";
 
 class ErrorBoundary extends React.Component<
   React.PropsWithChildren,

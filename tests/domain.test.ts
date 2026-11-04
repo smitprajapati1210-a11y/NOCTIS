@@ -188,10 +188,43 @@ test("local assistant handles empty journals, chart requests and medical boundar
   assert.match(replyTo("Write a poem", [night()], 8).text, /local preview/);
 });
 
-test('after-midnight planning targets the upcoming morning, then advances after wake-up', async()=>{
-  const {nextPlan}=await import('../src/domain');
-  const nightPlan=nextPlan(DEFAULT_PREFERENCES,new Date('2026-11-05T00:15:00'));
-  assert.equal(nightPlan.eventDate,'2026-11-05');assert.equal(nightPlan.wakeDate,'2026-11-05');assert.equal(nightPlan.bedDate,'2026-11-04');
-  const dayPlan=nextPlan(DEFAULT_PREFERENCES,new Date('2026-11-05T13:00:00'));
-  assert.equal(dayPlan.eventDate,'2026-11-06');assert.equal(dayPlan.bedDate,'2026-11-05');
+test("after-midnight planning targets the upcoming morning, then advances after wake-up", async () => {
+  const { nextPlan } = await import("../src/domain");
+  const nightPlan = nextPlan(
+    DEFAULT_PREFERENCES,
+    new Date("2026-11-05T00:15:00"),
+  );
+  assert.equal(nightPlan.eventDate, "2026-11-05");
+  assert.equal(nightPlan.wakeDate, "2026-11-05");
+  assert.equal(nightPlan.bedDate, "2026-11-04");
+  const dayPlan = nextPlan(
+    DEFAULT_PREFERENCES,
+    new Date("2026-11-05T13:00:00"),
+  );
+  assert.equal(dayPlan.eventDate, "2026-11-06");
+  assert.equal(dayPlan.bedDate, "2026-11-05");
+});
+
+test("long wind-down sessions round trip; old backups preserve breathing and gain a separate session", () => {
+  const state = freshStore();
+  state.preferences.windDown = 20;
+  state.windDownTimer = {
+    duration: 2700,
+    remaining: 2700,
+    endAt: Date.now() + 2700000,
+  };
+  assert.deepEqual(
+    parseStore(JSON.parse(JSON.stringify(state))).windDownTimer,
+    state.windDownTimer,
+  );
+  const legacy = JSON.parse(JSON.stringify(state));
+  delete legacy.windDownTimer;
+  legacy.timer = { endAt: null, remaining: 60 };
+  const restored = parseStore(legacy);
+  assert.deepEqual(restored.windDownTimer, {
+    endAt: null,
+    remaining: 1200,
+    duration: 1200,
+  });
+  assert.deepEqual(restored.timer, legacy.timer);
 });

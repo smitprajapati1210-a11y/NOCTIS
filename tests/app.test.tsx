@@ -135,10 +135,13 @@ test("local chat renders computed chart cards and detective comparisons", async 
   );
 });
 
-test("planner saves constraints; timer can pause after changing views; rituals persist", async () => {
+test("home opens wind-down; long sessions and the checklist survive navigation and reload", async () => {
   render(<App />);
   const u = user();
-  await u.click(screen.getByRole("button", { name: "Tonight" }));
+  await u.click(
+    screen.getByRole("button", { name: "Open wind-down timer and checklist" }),
+  );
+  assert.ok(screen.getByRole("heading", { name: "Your wind-down checklist" }));
   await u.click(screen.getByRole("button", { name: /Adjust my schedule/ }));
   fireEvent.change(screen.getByLabelText("Starts at"), {
     target: { value: "06:30" },
@@ -146,21 +149,58 @@ test("planner saves constraints; timer can pause after changing views; rituals p
   await u.click(screen.getByRole("button", { name: /Update tonight/ }));
   assert.equal(saved().preferences.eventTime, "06:30");
   assert.ok(screen.getByText("5:15 am"));
-  await u.click(screen.getByRole("button", { name: /Soften the room/ }));
+  await u.click(screen.getByRole("checkbox", { name: /Soften the room/ }));
   assert.deepEqual(saved().routine.completed, ["lights"]);
-  await u.click(screen.getByRole("button", { name: "Begin a pause" }));
-  assert.ok(saved().timer.endAt > Date.now());
+  await u.click(screen.getByRole("button", { name: "45 min" }));
+  await u.click(screen.getByRole("button", { name: "Start wind-down" }));
+  const deadline = saved().windDownTimer.endAt;
+  assert.ok(deadline > Date.now() + 2600000);
   await u.click(screen.getByRole("button", { name: "Today" }));
-  await u.click(screen.getByRole("button", { name: "Tonight" }));
-  await u.click(screen.getByRole("button", { name: "Pause" }));
-  assert.equal(saved().timer.endAt, null);
-  assert.ok(saved().timer.remaining > 0);
-  assert.equal(
-    screen
-      .getByRole("button", { name: /Soften the room/ })
-      .getAttribute("aria-pressed"),
-    "true",
+  assert.match(
+    screen.getByRole("button", { name: "Open wind-down timer and checklist" })
+      .textContent!,
+    /1 of 4 rituals complete/,
   );
+  cleanup();
+  render(<App />);
+  assert.equal(saved().windDownTimer.endAt, deadline);
+  await u.click(screen.getByRole("button", { name: "Wind down" }));
+  await u.click(screen.getByRole("button", { name: "Pause wind-down" }));
+  assert.equal(saved().windDownTimer.endAt, null);
+  assert.ok(saved().windDownTimer.remaining > 0);
+  assert.equal(saved().windDownTimer.duration, 2700);
+  cleanup();
+  render(<App />);
+  await u.click(screen.getByRole("button", { name: "Wind down" }));
+  await u.click(screen.getByRole("button", { name: "Reset wind-down timer" }));
+  assert.equal(saved().windDownTimer.remaining, 2700);
+  assert.equal(
+    (
+      screen.getByRole("checkbox", {
+        name: /Soften the room/,
+      }) as HTMLInputElement
+    ).checked,
+    true,
+  );
+});
+
+test("wind-down completion is handled on Today without opening its page", async () => {
+  const state = freshStore();
+  state.windDownTimer.endAt = Date.now() - 1000;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  render(<App />);
+  await waitFor(() => assert.equal(saved().windDownTimer.remaining, 0));
+  assert.equal(saved().windDownTimer.endAt, null);
+  assert.match(
+    screen.getByRole("status").textContent!,
+    /wind-down timer is complete/,
+  );
+  const u = user();
+  await u.click(
+    screen.getByRole("button", { name: "Open wind-down timer and checklist" }),
+  );
+  assert.ok(screen.getByRole("button", { name: "Start again" }));
+  assert.deepEqual(saved().routine.completed, []);
 });
 
 test("backup import previews replacement and restores only after confirmation", async () => {
@@ -236,7 +276,10 @@ test("journal calendar starts a new entry on the chosen morning without navigati
   );
   await u.click(screen.getByRole("button", { name: "Save my night" }));
   assert.equal(saved().entries[0].date, date);
-  assert.equal(document.querySelector<HTMLElement>(".dock-cursor")?.style.transform,"translateX(100%)");
+  assert.equal(
+    document.querySelector<HTMLElement>(".dock-cursor")?.style.transform,
+    "translateX(100%)",
+  );
   assert.equal(
     screen
       .getByRole("button", { name: "Journal" })

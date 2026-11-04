@@ -35,6 +35,7 @@ export type Store = {
   preferences: Preferences;
   routine: { date: string; completed: string[] };
   timer: { endAt: number | null; remaining: number };
+  windDownTimer: { endAt: number | null; remaining: number; duration: number };
 };
 export const DEFAULT_PREFERENCES: Preferences = {
   name: "",

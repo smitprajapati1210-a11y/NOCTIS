@@ -7,18 +7,16 @@ import {
 } from "react";
 import {
   ArrowRight,
-  BookOpen,
-  Check,
   ChevronDown,
   Clock3,
-  Coffee,
   Moon,
   Pause,
   Play,
   RotateCcw,
-  Sunrise,
 } from "lucide-react";
 import NightMoon from "./Moon";
+import { WindDownSession } from "./WindDown";
+import type { WindDownController } from "../useWindDown";
 import { tonightMoment } from "../moon";
 import {
   dateLabel,
@@ -29,41 +27,16 @@ import {
   type Store,
 } from "../domain";
 
-const rituals = [
-  {
-    id: "lights",
-    title: "Soften the room",
-    note: "Dim the lights. Make a little space.",
-    icon: Moon,
-  },
-  {
-    id: "phone",
-    title: "Put the scroll to bed",
-    note: "Let the next thing wait until tomorrow.",
-    icon: Coffee,
-  },
-  {
-    id: "tomorrow",
-    title: "Set tomorrow down",
-    note: "Write one thing you want to remember.",
-    icon: BookOpen,
-  },
-  {
-    id: "reflect",
-    title: "Find one good thing",
-    note: "Small moments count, too.",
-    icon: Sunrise,
-  },
-];
-
 export default function Tonight({
   store,
   setStore,
   notify,
+  windDown,
 }: {
   store: Store;
   setStore: Dispatch<SetStateAction<Store>>;
   notify: (s: string) => void;
+  windDown: WindDownController;
 }) {
   const [editPlan, setEditPlan] = useState(false);
   const [draft, setDraft] = useState(store.preferences);
@@ -89,8 +62,6 @@ export default function Tonight({
     const interval = setInterval(tick, 500);
     return () => clearInterval(interval);
   }, [running, store.timer.endAt, setStore, notify]);
-  const completed =
-    store.routine.date === today() ? store.routine.completed : [];
   const update = <K extends keyof Preferences>(key: K, value: Preferences[K]) =>
     setDraft((s) => ({ ...s, [key]: value }));
   function savePlan(e: FormEvent) {
@@ -104,103 +75,12 @@ export default function Tonight({
     setStore((s) => ({ ...s, timer: { endAt: null, remaining: seconds } }));
   };
   return (
-    <div className="view tonight-view">
-      <div className="page-intro">
-        <p className="eyebrow">THE WORLD CAN WAIT</p>
-        <h1>
-          Let the day
-          <br />
-          <em>soften.</em>
-        </h1>
-        <p className="muted">The day can wait. This moment is yours.</p>
+    <div className="view tonight-view wind-down-view">
+      <div className="wind-down-intro">
+        <h1>Wind down.</h1>
+        <p>Make a little room for rest.</p>
       </div>
-      <NightMoon date={tonightMoment(today())} tonight />
-      <section className="card breathing-card">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">A QUIET MINUTE</p>
-            <h3>Come back to your breath</h3>
-          </div>
-          <span className="icon-tile">
-            <Clock3 size={19} />
-          </span>
-        </div>
-        <p className="muted small">
-          An optional gentle rhythm. Breathe comfortably.
-        </p>
-        <div className={`breath-orbit ${running ? "running" : ""}`}>
-          <div className="breath-ring">
-            <span className="timer-number" aria-live="off">
-              {Math.floor(remaining / 60)}:
-              {String(remaining % 60).padStart(2, "0")}
-            </span>
-            <span>
-              {running
-                ? "Breathe at your pace"
-                : remaining === 0
-                  ? "A little more at ease."
-                  : "A moment, just for you"}
-            </span>
-          </div>
-        </div>
-        <div className="timer-options" aria-label="Timer duration">
-          {[60, 180, 300].map((sec) => (
-            <button
-              key={sec}
-              className={timerLength === sec ? "active" : ""}
-              onClick={() => setTimer(sec)}
-              disabled={running}
-            >
-              {sec / 60} min
-            </button>
-          ))}
-        </div>
-        <div className="timer-controls">
-          <button
-            className="icon-button"
-            aria-label="Reset timer"
-            onClick={() => setTimer(timerLength)}
-          >
-            <RotateCcw size={18} />
-          </button>
-          <button
-            className="primary"
-            onClick={() => {
-              const current = store.timer.endAt
-                ? Math.max(
-                    0,
-                    Math.ceil((store.timer.endAt - Date.now()) / 1000),
-                  )
-                : remaining;
-              setNow(Date.now());
-              setStore((s) => ({
-                ...s,
-                timer: running
-                  ? { endAt: null, remaining: current }
-                  : {
-                      endAt: Date.now() + (remaining || timerLength) * 1000,
-                      remaining: remaining || timerLength,
-                    },
-              }));
-            }}
-          >
-            {running ? (
-              <Pause size={16} />
-            ) : (
-              <Play size={16} fill="currentColor" />
-            )}
-            {running
-              ? "Pause"
-              : remaining === 0
-                ? "Begin again"
-                : "Begin a pause"}
-          </button>
-        </div>
-        <p className="caption">
-          The timer keeps time if you switch views. Keep the app open to see it
-          finish.
-        </p>
-      </section>
+      <WindDownSession store={store} setStore={setStore} timer={windDown} />
       <section className="plan-card">
         <div className="section-heading">
           <div className="mini-label">
@@ -344,46 +224,98 @@ export default function Tonight({
             : "Wind-down starts tomorrow."}{" "}
         No alarm or notification is set.
       </p>
-      <section>
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">YOUR SMALL RITUALS</p>
-            <h3>Put the day away</h3>
+      <details className="wind-breathing">
+        <summary>
+          A short breathing pause <ChevronDown size={16} aria-hidden="true" />
+        </summary>
+        <section className="card breathing-card">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">A QUIET MINUTE</p>
+              <h3>Come back to your breath</h3>
+            </div>
+            <span className="icon-tile">
+              <Clock3 size={19} />
+            </span>
           </div>
-          <span className="pill subtle">{completed.length}/4</span>
-        </div>
-        <div className="ritual-list">
-          {rituals.map(({ id, title, note, icon: Icon }) => (
-            <button
-              className={`ritual ${completed.includes(id) ? "done" : ""}`}
-              key={id}
-              aria-pressed={completed.includes(id)}
-              onClick={() =>
-                setStore((s) => ({
-                  ...s,
-                  routine: {
-                    date: today(),
-                    completed: completed.includes(id)
-                      ? completed.filter((x) => x !== id)
-                      : [...completed, id],
-                  },
-                }))
-              }
-            >
-              <span className="ritual-icon">
-                <Icon size={19} />
+          <p className="muted small">
+            An optional gentle rhythm. Breathe comfortably.
+          </p>
+          <div className={`breath-orbit ${running ? "running" : ""}`}>
+            <div className="breath-ring">
+              <span className="timer-number" aria-live="off">
+                {Math.floor(remaining / 60)}:
+                {String(remaining % 60).padStart(2, "0")}
               </span>
               <span>
-                <strong>{title}</strong>
-                <small>{note}</small>
+                {running
+                  ? "Breathe at your pace"
+                  : remaining === 0
+                    ? "A little more at ease."
+                    : "A moment, just for you"}
               </span>
-              <span className="ritual-check">
-                {completed.includes(id) && <Check size={14} />}
-              </span>
+            </div>
+          </div>
+          <div className="timer-options" aria-label="Timer duration">
+            {[60, 180, 300].map((sec) => (
+              <button
+                key={sec}
+                className={timerLength === sec ? "active" : ""}
+                onClick={() => setTimer(sec)}
+                disabled={running}
+              >
+                {sec / 60} min
+              </button>
+            ))}
+          </div>
+          <div className="timer-controls">
+            <button
+              className="icon-button"
+              aria-label="Reset timer"
+              onClick={() => setTimer(timerLength)}
+            >
+              <RotateCcw size={18} />
             </button>
-          ))}
-        </div>
-      </section>
+            <button
+              className="primary"
+              onClick={() => {
+                const current = store.timer.endAt
+                  ? Math.max(
+                      0,
+                      Math.ceil((store.timer.endAt - Date.now()) / 1000),
+                    )
+                  : remaining;
+                setNow(Date.now());
+                setStore((s) => ({
+                  ...s,
+                  timer: running
+                    ? { endAt: null, remaining: current }
+                    : {
+                        endAt: Date.now() + (remaining || timerLength) * 1000,
+                        remaining: remaining || timerLength,
+                      },
+                }));
+              }}
+            >
+              {running ? (
+                <Pause size={16} />
+              ) : (
+                <Play size={16} fill="currentColor" />
+              )}
+              {running
+                ? "Pause"
+                : remaining === 0
+                  ? "Begin again"
+                  : "Begin a pause"}
+            </button>
+          </div>
+          <p className="caption">
+            The timer keeps time if you switch views. Keep the app open to see
+            it finish.
+          </p>
+        </section>
+      </details>
+      <NightMoon date={tonightMoment(today())} tonight />
       <div className="closing-note">
         <span>✦</span>
         <p>You don’t have to earn your rest.</p>

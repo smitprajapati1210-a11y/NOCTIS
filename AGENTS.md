@@ -3,6 +3,7 @@
 - The authoritative checkout is `/Users/smitprajapati/Projects/NOCTIS`, opened by the user in VS Code. Use this checkout. Do not make a second application in a generated Codex chat folder.
 - Read `PLAN.md` and `README.md`, then inspect Git status before editing. Preserve user changes.
 - Product: a mobile-only, iPhone-first sleep journal. Keep the desktop view phone-sized. The user explicitly requested a DARK PURPLE theme; do not switch back to light mode.
+- Wind-down is a core feature: keep the Home timer/checklist shortcut prominent, label the fourth tab "Wind down", and show the session timer plus checklist before schedule planning. Preserve the separate short breathing timer.
 - Header branding stays compact: Outfit Medium lettering around 17px and a small crescent. The user rejected the oversized serif wordmark, orbit emblem and tagline; do not reintroduce that direction.
 - Hide visible scrollbars throughout the app, including sheets and text fields. Preserve touch and keyboard scrolling.
 - The user requested each night’s actual moon phase. Preserve local astronomy, date correctness across midnight, the phase name, and illumination percentage.

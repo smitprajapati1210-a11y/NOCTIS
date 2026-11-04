@@ -40,7 +40,7 @@ Calculated solid-color contrast pairs: primary/card **14.47:1**, secondary/card 
 1. **Today:** a lunar scene, personal greeting, current phase/illumination, latest-night summary and a useful goal dial. The moon is the emotional focal point. No repeated large text-only intro.
 2. **Journal:** an intimate, date-led ledger. Seven-morning rail, parchment/rose accents, serif note excerpts, quiet separators, expandable month heatmap. Avoid wrapping each night in the same card.
 3. **Night Lab:** editorial field notes, a large actual average, quiet stat columns, rested-rating line chart, expandable pattern comparisons and local chat with data cards. Do not imply a connected LLM.
-4. **Tonight:** centered display type and an immersive breathing orb before practical planning. A smaller moon label, transparent schedule timeline, then small rituals. Motion is user-triggered; no endless idle background activity.
+4. **Wind down:** a compact introduction, a practical 15/30/45-minute timer and the daily checklist together as the first task. Planning follows the checklist. The short breathing pause is an optional section. A prominent Today card and the explicit bottom-nav label make this core feature easy to find. Preserve the actual moon label and the schedule timeline below the primary session.
 
 ## Layout and controls
 
@@ -51,6 +51,10 @@ Calculated solid-color contrast pairs: primary/card **14.47:1**, secondary/card 
 - Main actions and icon controls generally use 44–48px targets. Dense charts have a large-target data-list alternative; 30-day points are not tiny interactive controls.
 - Keep focus rings, visible labels, native dates/times, modal Escape/close, and a focus trap. No swipe-only essential actions.
 - Samples remain separate. “Start my journal” exists on Today, opens the first-entry sheet, and changes mode only after saving. Other pages carry a small sample-data status.
+
+## Wind-down priority
+
+The timer and checklist belong together before planning, with no large orb or long introduction pushing rituals down the page. The Today shortcut appears immediately after the lunar scene, before sleep statistics, with live countdown and daily progress. Use tabular countdown numbers and clear start/pause/reset controls. Checkbox feedback and progress use the existing short motion tokens; no pulsing Home badge or attention-grabbing idle effects. Keep system-notification claims out until implemented.
 
 ## Sleep charts
 
