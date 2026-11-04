@@ -22,14 +22,14 @@ If dependencies need to be restored after copying or cloning the project, run `n
 
 ## What works in milestone 1
 
-| View     | Working features                                                                                                                                  |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Today    | Latest logged night, estimated sleep after subtracting latency and awakenings, 7/30-day charts, personal goal, links to journal and evening plan. |
-| Journal  | Create, edit and delete nights; date/time validation; rested ratings; habit tags and notes; search; tappable 35-day heatmap.                      |
-| Discover | Computed weekly summaries, rested-rating chart, bedtime variation, habit comparisons and local chat with chart cards.                             |
-| Tonight  | Manual morning commitment, preparation/travel buffers, bedtime and wind-down plan, pausable timer, daily ritual checklist.                        |
-| Moon     | Tonight’s calculated phase at 9 pm in the device’s timezone; historical phases at each entry’s actual bedtime.                                    |
-| Settings | Name, sleep goal, separate sample mode, JSON export/import with a replacement confirmation, and personal-journal erase confirmation.              |
+| View     | Working features                                                                                                                                                         |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Today    | Latest logged night, estimated sleep after subtracting latency and awakenings, minimal 7/30-day point-and-line charts, personal goal, links to journal and evening plan. |
+| Journal  | Create, edit and delete nights; date/time validation; rested ratings; habit tags and notes; search; tappable 35-day heatmap.                                             |
+| Discover | Computed weekly summaries, rested-rating chart, bedtime variation, habit comparisons and local chat with chart cards.                                                    |
+| Tonight  | Manual morning commitment, preparation/travel buffers, bedtime and wind-down plan, pausable timer, daily ritual checklist.                                               |
+| Moon     | Tonight’s calculated phase at 9 pm in the device’s timezone; historical phases at each entry’s actual bedtime.                                                           |
+| Settings | Name, sleep goal, separate sample mode, JSON export/import with a replacement confirmation, and personal-journal erase confirmation.                                     |
 
 The app opens in **clearly labeled sample mode** so you can explore the interface. The **Start my journal** invitation appears only on Today and opens the first-entry sheet. Saving starts your personal journal throughout the app; canceling keeps the sample view. The 28 sample nights never get added to your personal entries. Sample mode can be revisited from Settings.
 
@@ -79,7 +79,7 @@ The illustration shows waxing light on the right and waning light on the left. I
 
 ## Design and motion
 
-Applied the user-installed UI/UX Pro Max and UI Animation skills. Today is moon-led, Journal uses a date-led diary layout, the Night Lab presents field notes and a mood line chart, and Tonight leads with the breathing experience. Instrument Serif and Manrope Variable are bundled locally. The floating dock remains live while the central viewport uses directional transitions. Rapid navigation cancels stale callbacks; reduced motion skips spatial travel. Read `design-system/noctis/MASTER.md` for the design decisions, timing and verification limits.
+Applied the user-installed UI/UX Pro Max and UI Animation skills. Today is moon-led, Journal uses a date-led diary layout, the Night Lab presents field notes and a mood line chart, and Tonight leads with the breathing experience. Instrument Serif and Manrope Variable are bundled locally. Sleep-duration charts use thin lilac lines and small points, with gaps for unlogged nights, a quiet goal reference and accessible night-by-night details. Visible scrollbars are hidden across the app, including sheets and text fields, while touch and keyboard scrolling remain available. The floating dock remains live while the central viewport uses directional transitions. Rapid navigation cancels stale callbacks; reduced motion skips spatial travel. Read `design-system/noctis/MASTER.md` for the design decisions, timing and verification limits.
 
 ## Development and checks
 

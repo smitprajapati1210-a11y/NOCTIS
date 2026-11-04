@@ -7,6 +7,7 @@ import "@fontsource/instrument-serif/latin-400-italic.css";
 import "./styles.css";
 import "./refinements.css";
 import "./editorial.css";
+import "./components/SleepChart.css";
 
 class ErrorBoundary extends React.Component<
   React.PropsWithChildren,

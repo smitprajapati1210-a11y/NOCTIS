@@ -27,101 +27,168 @@ export function SleepChart({
   compact?: boolean;
 }) {
   const slots = chartDays(entries, days);
+  const valueOf = (entry: Entry) =>
+    metric === "quality" ? entry.quality : sleepMinutes(entry) / 60;
   const max =
     metric === "quality"
       ? 5
       : Math.ceil(
-          Math.max(10, goal, ...entries.map((e) => sleepMinutes(e) / 60)),
+          Math.max(
+            10,
+            goal,
+            ...slots.flatMap(({ entry }) => (entry ? [valueOf(entry)] : [])),
+          ),
         );
-  const [selected, setSelected] = useState<Entry | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const selected = slots.find(({ entry }) => entry?.id === selectedId)?.entry;
+  const x = (i: number) => ((i + 0.5) / days) * 100;
+  const y = (value: number) => 6 + (1 - value / max) * 88;
+  const valueLabel = (entry: Entry) =>
+    metric === "quality"
+      ? `${entry.quality}/5 rested`
+      : durationLabel(sleepMinutes(entry));
+
+  // Start a new segment after every missing night; never interpolate absent data.
+  let path = "";
+  let connected = false;
+  slots.forEach(({ entry }, i) => {
+    if (entry) {
+      path += ` ${connected ? "L" : "M"} ${x(i).toFixed(3)} ${y(valueOf(entry)).toFixed(3)}`;
+      connected = true;
+    } else connected = false;
+  });
+
   return (
-    <div className={`chart ${compact ? "compact" : ""}`}>
+    <div className={`chart sleep-line-chart ${compact ? "compact" : ""}`}>
       <div
-        className="chart-area"
+        className="sleep-line-plot"
         role="group"
         aria-label={`${days}-day ${metric === "quality" ? "rested rating" : "sleep duration"} chart`}
       >
-        <div className="chart-grid">
-          <span>{metric === "quality" ? "5" : `${Math.ceil(max)}h`}</span>
-          <span>{metric === "quality" ? "2.5" : `${max / 2}h`}</span>
-          <span>0</span>
-        </div>
-        {metric === "duration" && (
-          <div
-            className="goal-line"
-            style={{ bottom: `${(goal / max) * 100}%` }}
+        <div className="sleep-line-canvas">
+          <svg
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            aria-hidden="true"
           >
-            <span>{goal}h goal</span>
-          </div>
-        )}
-        <div className={`bars ${days > 7 ? "dense" : ""}`}>
+            {[6, 50, 94].map((pos) => (
+              <line
+                key={pos}
+                x1="0"
+                x2="100"
+                y1={pos}
+                y2={pos}
+                className="sleep-line-guide"
+                vectorEffect="non-scaling-stroke"
+              />
+            ))}
+            {metric === "duration" && (
+              <line
+                x1="0"
+                x2="100"
+                y1={y(goal)}
+                y2={y(goal)}
+                className="sleep-line-goal"
+                vectorEffect="non-scaling-stroke"
+              />
+            )}
+            <path
+              d={path}
+              className="sleep-line-stroke"
+              vectorEffect="non-scaling-stroke"
+            />
+          </svg>
+          {[max, max / 2, 0].map((value) => (
+            <span
+              key={value}
+              className="sleep-line-value"
+              aria-hidden="true"
+              style={{ top: `${y(value)}%` }}
+            >
+              {value}
+              {metric === "duration" && value !== 0 ? "h" : ""}
+            </span>
+          ))}
           {slots.map(({ date, entry }, i) => {
-            const value = entry
-              ? metric === "quality"
-                ? entry.quality
-                : sleepMinutes(entry) / 60
-              : 0;
-            const desc = `${dateLabel(date)}: ${entry ? (metric === "quality" ? `${value} out of 5 rested` : durationLabel(sleepMinutes(entry))) : "not logged"}`;
-            return (
-              <div key={date} className="bar-slot">
-                {days === 7 ? (
-                  <button
-                    type="button"
-                    className="chart-target"
-                    aria-label={desc}
-                    title={desc}
-                    disabled={!entry}
-                    onClick={() => {
-                      if (entry) {
-                        setSelected(entry);
-                        onSelect?.(entry);
-                      }
-                    }}
-                  >
-                    <span
-                      className={`bar ${entry ? (value >= (metric === "quality" ? 4 : goal) ? "met" : "") : "missing"} ${selected?.id === entry?.id && entry ? "selected" : ""}`}
-                      style={{
-                        height: `${entry ? Math.max((value / max) * 100, 3) : 3}%`,
-                      }}
-                    />
-                  </button>
-                ) : (
+            const desc = `${dateLabel(date)}: ${entry ? (metric === "quality" ? `${entry.quality} out of 5 rested` : valueLabel(entry)) : "not logged"}`;
+            return days === 7 ? (
+              <button
+                key={date}
+                type="button"
+                className="sleep-line-target"
+                style={{
+                  left: `${(i / days) * 100}%`,
+                  width: `${100 / days}%`,
+                }}
+                aria-label={desc}
+                title={desc}
+                disabled={!entry}
+                aria-pressed={entry ? selectedId === entry.id : undefined}
+                onClick={() => {
+                  if (entry) {
+                    setSelectedId(entry.id);
+                    onSelect?.(entry);
+                  }
+                }}
+              >
+                {entry && (
                   <span
-                    aria-hidden="true"
-                    className={`bar ${entry ? (value >= goal ? "met" : "") : "missing"}`}
-                    style={{
-                      height: `${entry ? Math.max((value / max) * 100, 3) : 3}%`,
-                    }}
+                    className="sleep-line-dot"
+                    style={{ top: `${y(valueOf(entry))}%` }}
                   />
                 )}
-                <span className="bar-label">
-                  {days === 7
-                    ? dateLabel(date, { weekday: "narrow" })
-                    : i % 5 === 0 || i === days - 1
-                      ? dateLabel(date, { day: "numeric" })
-                      : ""}
-                </span>
-              </div>
-            );
+              </button>
+            ) : entry ? (
+              <span
+                key={date}
+                aria-hidden="true"
+                className="sleep-line-dot dense"
+                style={{ left: `${x(i)}%`, top: `${y(valueOf(entry))}%` }}
+              />
+            ) : null;
           })}
+          {!slots.some(({ entry }) => entry) && (
+            <p className="sleep-line-empty">
+              Your first night will start the line.
+            </p>
+          )}
+        </div>
+        <div
+          className="sleep-line-axis"
+          aria-hidden="true"
+          style={{ gridTemplateColumns: `repeat(${days}, minmax(0, 1fr))` }}
+        >
+          {slots.map(({ date }, i) => (
+            <span key={date}>
+              {days === 7
+                ? dateLabel(date, { weekday: "narrow" })
+                : i === days - 1 || (i % 7 === 0 && i < days - 3)
+                  ? dateLabel(date, { day: "numeric" })
+                  : ""}
+            </span>
+          ))}
         </div>
       </div>
       {!compact && (
         <div className="chart-foot">
           <span>
-            <i className="legend-dot" /> At or above goal
+            {metric === "duration" ? (
+              <>
+                <i className="sleep-line-goal-key" aria-hidden="true" /> {goal}h
+                goal
+              </>
+            ) : (
+              "Self-reported · 1–5"
+            )}
           </span>
           <span>
-            {days === 7 ? "Tap a night to explore" : "Select a night below"}
+            {days === 7 ? "Tap a point to explore" : "Select a night below"}
           </span>
         </div>
       )}
       {compact && selected && (
-        <p className="caption">
-          {dateLabel(selected.date)} ·{" "}
-          {metric === "quality"
-            ? `${selected.quality}/5 rested`
-            : durationLabel(sleepMinutes(selected))}
+        <p className="sleep-line-selection" role="status">
+          {dateLabel(selected.date)} · {valueLabel(selected)}
         </p>
       )}
       {!compact && (
@@ -139,7 +206,7 @@ export function SleepChart({
                       day: "numeric",
                     })}
                   </span>
-                  <strong>{entry && durationLabel(sleepMinutes(entry))}</strong>
+                  <strong>{entry && valueLabel(entry)}</strong>
                 </button>
               ))}
             {!slots.some((s) => s.entry) && (

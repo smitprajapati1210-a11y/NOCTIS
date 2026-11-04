@@ -7,6 +7,8 @@
 - The user explicitly wants **dark purple**, a premium and engaging feel, distinct page compositions, beautiful fonts, a selector that floats/glides, and meaningful page transitions. Avoid the repeated “same heading + same cards” layout.
 - The user explicitly requested the actual moon phase for the current night and recorded nights. Keep the local date-aware astronomy and clear phase/illumination labels.
 - Applied the user-installed **UI/UX Pro Max** and **UI Animation** skills under `~/.agents/skills`. Their adapted product decisions are recorded in `design-system/noctis/MASTER.md`.
+- Scrollbars: the user wants no visible scrollbars anywhere in the app. Apply the policy globally while preserving scrolling and access to all content.
+- Charts: the user prefers minimal point-and-line graphs over duration bars. Keep straight, thin lilac segments, small dots and gaps for missing nights; no decorative area fill.
 - Typography: locally bundled **Instrument Serif** display + **Manrope Variable** body/data. Preserve this direction unless the user changes it.
 
 ## Milestone 1 — implemented, 2026-11-05
@@ -32,6 +34,14 @@
 The build generates an offline shell with hashed bundled assets, icons and fonts. The LAN HTTP address is for normal browser testing. iPhone service-worker/offline behavior requires a trusted HTTPS origin. Home Screen storage, keyboard/safe-area behavior, largest Dynamic Type, landscape, real touch feel and 0.1× animation-panel inspection remain unverified. Do not present DOM tests or Mac screenshots as physical iPhone validation.
 
 The chat is **deterministic local rules, not an LLM**. No backend, account, cloud sync, analytics, automatic sleep recording, Apple Health connection, alarm, calendar permission, notifications, or medical diagnosis is implemented. One main sleep entry per wake-up date. Data and exported backups are local/plain JSON; no app-level encryption claim.
+
+## Follow-up — minimal line charts and hidden scrollbars, 2026-11-05
+
+- Replaced the shared duration/rested bar chart on Today and in chat cards with a minimal SVG line and small circular points.
+- Kept weekly tap targets, exact per-night values, goal reference, the month data list and explicit empty states. Missing nights break the line rather than drawing zero values or interpolating across gaps.
+- The plotted range uses only nights in the selected period; older outliers do not flatten the current view.
+- Added a global scrollbar policy for routes, sheets, chat and text fields, using standard and WebKit rules without changing their overflow or scrolling behavior.
+- Verification: all 24 existing tests and the production build pass. Safari screenshots inspected for weekly/monthly charts at the normal phone shell and 375×812; selecting a weekly point opened the corresponding read-only sample night. Reviewed global scrollbar coverage and preserved overflow behavior. Physical iPhone scroll indicators and touch feel remain part of the pending device check.
 
 ## Next milestone — physical iPhone and motion tuning
 

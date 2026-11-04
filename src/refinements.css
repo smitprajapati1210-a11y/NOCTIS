@@ -20,6 +20,15 @@
   font-size: 16px;
   view-transition-name: none;
 }
+/* App-wide: keep touch/keyboard scrolling, hide scrollbar chrome in every surface. */
+* {
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
 body {
   height: 100dvh;
   overflow: hidden;
@@ -162,13 +171,9 @@ h3 {
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior-y: contain;
-  scrollbar-width: none;
   view-transition-name: noctis-page;
   outline: none;
   isolation: isolate;
-}
-.route-stage::-webkit-scrollbar {
-  display: none;
 }
 .view {
   padding: 26px 24px 30px;

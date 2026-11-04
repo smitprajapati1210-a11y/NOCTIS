@@ -41,11 +41,16 @@ Calculated solid-color contrast pairs: primary/card **14.47:1**, secondary/card 
 ## Layout and controls
 
 - One phone shell, max width 460px. Desktop view remains a phone, not a dashboard.
+- Hide visible scrollbars on every scrollable app surface, including nested sheets, chat and text fields. Keep touch and keyboard scrolling intact; never hide content with `overflow: hidden` just to remove its scrollbar.
 - Header and floating dock persist. Only the middle viewport scrolls and participates in page snapshots.
 - Use 20–24px horizontal gutters; 4/8px spacing rhythm, readable line lengths and safe-area insets.
-- Main actions and icon controls generally use 44–48px targets. Dense charts have a large-target data-list alternative; 30-day bars are not tiny interactive controls.
+- Main actions and icon controls generally use 44–48px targets. Dense charts have a large-target data-list alternative; 30-day points are not tiny interactive controls.
 - Keep focus rings, visible labels, native dates/times, modal Escape/close, and a focus trap. No swipe-only essential actions.
 - Samples remain separate. “Start my journal” exists on Today, opens the first-entry sheet, and changes mode only after saving. Other pages carry a small sample-data status.
+
+## Sleep charts
+
+The user requested minimal point-and-line charts instead of duration bars. Use a thin, straight lilac line, small circular points and faint reference rules; no area fill, glow or automatic drawing animation. Preserve date spacing and break the line at missing nights. Weekly columns remain easy to tap; dense month plots use the night-by-night list for selection. The dashed goal rule is directly labeled in the legend. Apply the same chart to local chat cards.
 
 ## Motion system
 

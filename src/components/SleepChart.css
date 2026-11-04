@@ -1,0 +1,117 @@
+/* Quiet point-and-line plots; markers stay circular as the phone width changes. */
+.sleep-line-chart .sleep-line-plot {
+  margin: 0 0 20px 28px;
+}
+.sleep-line-chart .sleep-line-canvas {
+  position: relative;
+  height: 140px;
+}
+.sleep-line-chart.compact .sleep-line-canvas {
+  height: 118px;
+}
+.sleep-line-chart .sleep-line-canvas > svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.sleep-line-chart .sleep-line-guide {
+  stroke: var(--text-tertiary);
+  stroke-width: 0.5px;
+  opacity: 0.16;
+}
+.sleep-line-chart .sleep-line-goal {
+  stroke: var(--text-tertiary);
+  stroke-width: 1px;
+  stroke-dasharray: 3 5;
+  opacity: 0.55;
+}
+.sleep-line-chart .sleep-line-stroke {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.75px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sleep-line-chart .sleep-line-value {
+  position: absolute;
+  left: -28px;
+  width: 21px;
+  transform: translateY(-50%);
+  color: var(--text-tertiary);
+  font-size: 0.625rem;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.sleep-line-chart .sleep-line-target {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  padding: 0;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  -webkit-tap-highlight-color: transparent;
+}
+.sleep-line-chart .sleep-line-target:active {
+  transform: none !important;
+}
+.sleep-line-chart .sleep-line-dot {
+  position: absolute;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--accent);
+  pointer-events: none;
+}
+.sleep-line-chart .sleep-line-dot.dense {
+  width: 4px;
+  height: 4px;
+}
+.sleep-line-chart .sleep-line-target[aria-pressed="true"] .sleep-line-dot,
+.sleep-line-chart .sleep-line-target:active .sleep-line-dot,
+.sleep-line-chart .sleep-line-target:focus-visible .sleep-line-dot {
+  box-shadow:
+    0 0 0 3px var(--surface-base),
+    0 0 0 4px var(--accent);
+}
+@media (hover: hover) and (pointer: fine) {
+  .sleep-line-chart .sleep-line-target:hover .sleep-line-dot {
+    box-shadow:
+      0 0 0 3px var(--surface-base),
+      0 0 0 4px var(--accent);
+  }
+}
+.sleep-line-chart .sleep-line-axis {
+  display: grid;
+  margin-top: 11px;
+  color: var(--text-tertiary);
+  font-size: 0.625rem;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.sleep-line-chart .sleep-line-goal-key {
+  width: 16px;
+  border-top: 1px dashed var(--text-tertiary);
+}
+.sleep-line-chart .sleep-line-selection {
+  margin: 8px 0 0 28px;
+  color: var(--text-secondary);
+  font-size: 0.6875rem;
+}
+.sleep-line-chart .sleep-line-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-align: center;
+  pointer-events: none;
+}
