@@ -88,7 +88,8 @@ The chat is **deterministic local rules, not an LLM**. The account server handle
 
 - The user chose a free, shareable beta. Created **noctis-sleep-beta** under the user’s Netlify team and provisioned its PostgreSQL account database. Added a Netlify Function that reuses the app’s Better Auth configuration and a tracked Postgres account migration. Registered an independent Google client for `https://noctis-sleep-beta.netlify.app/api/auth/callback/google`.
 - The hosted beta starts with Google sign-in. It enables email/password only after a verified SMTP sender is configured. Local email preview and the inactive Apple button remain available in their existing roles. Journals remain on the device.
-- The user authorized their `smitprajapati1210-a11y` GitHub account and asked for the whole project there. Use a private repo while beta testing. Review the Git history and the public-facing README before choosing portfolio visibility.
+- Published the production beta at `https://noctis-sleep-beta.netlify.app/`. The owner made production public with Deploy Previews private. Verified the welcome and Google sign-in in Chrome, the return to Today and an active Google-backed session in Netlify Postgres. All 31 tests and the production build passed. Additional friend accounts and physical iPhone Safari still need testing.
+- Pushed the project and its Git history to `smitprajapati1210-a11y/NOCTIS` as a private repository. The repo can become public for the portfolio after the owner chooses visibility. Deploys currently use the linked Netlify CLI project.
 
 ## Next milestone — physical iPhone and motion tuning
 

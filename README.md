@@ -50,9 +50,9 @@ Automated tests cover Google redirect generation and the verification and recove
 
 Netlify serves the build in `dist` and runs the authentication endpoints in `netlify/functions`. Netlify Database keeps accounts and sessions in Postgres. SQLite powers local previews and the Render deployment. The current hosted beta uses Google. When an SMTP sender is configured, verified email signup and password recovery become available on the same site. [Netlify free plan](https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/credit-based-pricing-plans/) · [Netlify Database](https://docs.netlify.com/build/data-and-storage/netlify-database/getting-started/)
 
-1. Create a Netlify project on the free plan and provision Netlify Database. Apply `netlify/database/migrations/0001_accounts.sql` through Netlify’s migration system.
+1. Create a Netlify project on the free plan and provision Netlify Database. The Netlify build packages `netlify/database/migrations/0001_accounts.sql` and Netlify applies it when publishing.
 2. Register a Google Web application client for `https://YOUR-SITE.netlify.app/api/auth/callback/google`. Configure `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` and a unique `BETTER_AUTH_SECRET` in Netlify’s environment. If the runtime needs an override, set `AWS_LAMBDA_JS_RUNTIME=nodejs24.x` there. Netlify supplies the site URL and database connection. In a custom-domain deploy, set `NOCTIS_URL` to the canonical HTTPS address.
-3. For the existing linked Netlify project, run `npm run build` and `npx netlify-cli deploy --prod --no-build`. Verify the live home page and sign in through Google after deployment. Use `NOCTIS_SMTP_URL` and `NOCTIS_MAIL_FROM` when setting up a verified email sender.
+3. For the existing linked Netlify project, run `npx netlify-cli@27.19.0 deploy --prod --context production`. Review the published home page and sign in through Google after deployment. Use `NOCTIS_SMTP_URL` and `NOCTIS_MAIL_FROM` when setting up a verified email sender.
 
 ### Deploy on Render
 
