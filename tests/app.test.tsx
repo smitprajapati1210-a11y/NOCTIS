@@ -126,24 +126,6 @@ test("Today answers questions with chart cards and Discover retains the detectiv
   enableSampleFixture();
   render(<App />);
   const u = user();
-  const rhythm = within(
-    screen.getByRole("region", { name: "Your sleep rhythm" }),
-  );
-  assert.ok(
-    rhythm
-      .getByRole("group", { name: "7-day sleep duration chart" })
-      .closest("section"),
-  );
-  await u.click(rhythm.getByRole("button", { name: "Month" }));
-  assert.ok(rhythm.getByRole("group", { name: "30-day sleep duration chart" }));
-  await u.click(rhythm.getByRole("button", { name: "Week" }));
-  assert.match(
-    rhythm
-      .getByRole("group", { name: "7-day sleep duration chart" })
-      .querySelector("path")
-      ?.getAttribute("d") ?? "",
-    /L/,
-  );
   assert.ok(screen.getByRole("heading", { name: "Ask Noctis" }));
   assert.ok(
     screen.getByRole("textbox", { name: "Ask about your sleep journal" }),
@@ -175,6 +157,59 @@ test("Today answers questions with chart cards and Discover retains the detectiv
   assert.equal(screen.queryByText("Ask Noctis"), null);
   await u.click(screen.getByRole("button", { name: "Detective" }));
   assert.ok(screen.getAllByText("A possible pattern").length > 0);
+});
+
+test("Today plots this week before chat and opens older constellations separately", async () => {
+  const { dateOffset, demoEntries, weekEnding } = await import("../src/domain");
+  const currentWeek = weekEnding(today());
+  const monday = dateOffset(currentWeek, -6);
+  const lastSunday = dateOffset(currentWeek, -7);
+  const earlierSunday = dateOffset(currentWeek, -14);
+  const state = freshStore();
+  const [template] = demoEntries(today());
+  state.entries = [
+    ...Array.from({ length: 7 }, (_, index) => ({
+      ...template,
+      date: dateOffset(lastSunday, -index),
+      id: `last-${index}`,
+    })),
+    { ...template, id: "old", date: earlierSunday },
+    { ...template, id: "new", date: monday },
+  ];
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  render(<App />);
+  const chart = screen.getByRole("group", {
+    name: "7-day sleep duration chart",
+  });
+  const log = screen.getByRole("button", { name: "Log a night" });
+  const ask = screen.getByRole("heading", { name: "Ask Noctis" });
+  assert.ok(log.compareDocumentPosition(chart) & 4);
+  assert.ok(chart.compareDocumentPosition(ask) & 4);
+  assert.equal(chart.querySelectorAll(".sleep-line-bloom").length, 1);
+  assert.equal(chart.querySelector(".sleep-line-goal"), null);
+  assert.equal(chart.querySelectorAll(".sleep-line-stroke").length, 0);
+
+  const u = user();
+  await u.click(screen.getByRole("button", { name: "Past weeks" }));
+  const history = within(screen.getByRole("dialog", { name: "Past weeks" }));
+  assert.equal(
+    (
+      history.getByRole("combobox", {
+        name: "Choose a week",
+      }) as HTMLSelectElement
+    ).value,
+    lastSunday,
+  );
+  const oldChart = () =>
+    history.getByRole("group", { name: "7-day sleep duration chart" });
+  assert.equal(oldChart().querySelectorAll(".sleep-line-bloom").length, 7);
+  assert.equal(oldChart().querySelector(".sleep-line-goal"), null);
+  assert.equal(oldChart().querySelectorAll(".sleep-line-stroke").length, 6);
+  await u.click(history.getByRole("button", { name: "Older week" }));
+  assert.equal(oldChart().querySelectorAll(".sleep-line-star").length, 1);
+  assert.equal(oldChart().querySelectorAll(".sleep-line-stroke").length, 0);
+  await u.click(history.getByRole("button", { name: "Newer week" }));
+  assert.equal(oldChart().querySelectorAll(".sleep-line-star").length, 7);
 });
 
 test("home opens wind-down; long sessions and the checklist survive navigation and reload", async () => {
@@ -510,7 +545,7 @@ test("a new signed-in account opens its empty personal journal", async () => {
   );
   assert.ok(screen.getByRole("button", { name: "Log my first night" }));
   assert.ok(screen.getByRole("group", { name: "7-day sleep duration chart" }));
-  assert.ok(screen.getByText("Your first night will start the line."));
+  assert.ok(screen.getByText("Log a night to add your first star this week."));
   assert.equal(screen.queryByText("Exploring sample nights"), null);
   assert.equal(
     screen.queryByRole("button", { name: "View latest night" }),

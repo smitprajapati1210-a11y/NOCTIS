@@ -65,6 +65,14 @@ export function dateOffset(date: string, offset: number): string {
   return localDate(d);
 }
 export const today = () => localDate();
+export function greetingForHour(hour: number): string {
+  if (hour >= 5 && hour < 12) return "Good Morning";
+  if (hour >= 12 && hour < 18) return "Good Afternoon";
+  return "Good Evening";
+}
+export function weekEnding(date: string): string {
+  return dateOffset(date, (7 - new Date(`${date}T12:00:00`).getDay()) % 7);
+}
 export const routineCompletedToday = (
   routine: Store["routine"],
   day = today(),

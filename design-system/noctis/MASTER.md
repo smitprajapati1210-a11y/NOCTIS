@@ -56,7 +56,7 @@ Calculated solid-color contrast pairs: primary/card **14.47:1**, secondary/card 
 
 The timer and checklist sit together before planning. The Today shortcut shows daily progress and a live countdown while running. Use tabular countdown numbers, clear start/pause/reset controls, and the existing short motion tokens for checkbox feedback and progress.
 
-The current Today layout puts a compact lunar greeting and star details first, then **Ask Noctis**, the inline sleep line chart, and the **Log a night** and **Wind down** actions. Keep detailed data behind labeled rows. Use lilac for the main action and active selectors, muted sage for wind-down, and quiet plum surfaces for secondary controls. Reuse the existing sheet motion for checklist editing and keep disclosure feedback short.
+Today opens with a local-time lunar greeting in DM Serif Text, **Log a night**, and the weekly sleep chart. **Ask Noctis** follows the chart and secondary actions. The chart uses dim pinpoints in a restrained dark sky, soft circular blooms for logged nights, and a thin lilac stroke. Logged points enter in date order, then a left-to-right reveal draws the connections. Missing nights break the path. Today and Past weeks share the chart. Use lilac for the main action and active selectors, muted sage for wind-down, and quiet plum surfaces for secondary controls.
 
 ## Sleep charts
 

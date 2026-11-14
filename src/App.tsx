@@ -26,11 +26,13 @@ import {
   dateLabel,
   demoEntries,
   durationLabel,
+  localDate,
   recent,
   sleepMinutes,
   sorted,
   timeLabel,
   today,
+  weekEnding,
   type Entry,
   type Store,
 } from "./domain";
@@ -39,10 +41,10 @@ import { Heatmap, SleepChart, WeeklyAverage } from "./components/Charts";
 import AskNoctis from "./components/AskNoctis";
 import ChecklistEditor from "./components/ChecklistEditor";
 import Discover from "./components/Discover";
+import SleepHistory from "./components/SleepHistory";
 import EntryForm from "./components/EntryForm";
 import Modal from "./components/Modal";
 import OverlayPresence from "./components/OverlayPresence";
-import Segmented from "./components/Segmented";
 import { changePage } from "./motion";
 import Settings from "./components/Settings";
 import Tonight from "./components/Tonight";
@@ -77,14 +79,14 @@ export default function App({
   const [writeError, setWriteError] = useState("");
   const [tab, setTab] = useState<Tab>("today");
   const [modal, setModal] = useState<
-    "entry" | "settings" | "sample" | "checklist" | null
+    "entry" | "settings" | "sample" | "checklist" | "history" | null
   >(null);
   const [editing, setEditing] = useState<Entry | undefined>();
   const [entryDate, setEntryDate] = useState(today());
   const [toast, setToast] = useState("");
-  const [chartDays, setChartDays] = useState(7);
   const [query, setQuery] = useState("");
-  const [day, setDay] = useState(today());
+  const [now, setNow] = useState(() => new Date());
+  const day = localDate(now);
   const content = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (readError) return;
@@ -106,8 +108,13 @@ export default function App({
     return () => document.removeEventListener("visibilitychange", visibility);
   }, []);
   useEffect(() => {
-    const id = setInterval(() => setDay(today()), 30000);
-    return () => clearInterval(id);
+    const refresh = () => setNow(new Date());
+    const id = setInterval(refresh, 30000);
+    document.addEventListener("visibilitychange", refresh);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", refresh);
+    };
   }, []);
   useEffect(() => {
     if (!toast) return;
@@ -118,8 +125,9 @@ export default function App({
   const samples = useMemo(() => demoEntries(day), [day]);
   const demo = store.preferences.demo;
   const entries = demo ? samples : sorted(store.entries);
-  const week = recent(entries, chartDays);
-  const latest = sorted(entries)[0];
+  const weekEnd = weekEnding(day);
+  const week = recent(entries, 7, weekEnd);
+  const latest = entries[0];
   const goal = store.preferences.goal;
   const avg = average(week.map(sleepMinutes));
   const windDown = useWindDown(store, setStore, notify);
@@ -189,6 +197,43 @@ export default function App({
       >
         {tab === "today" && (
           <div className="view today-view">
+            <LunarScene now={now} name={store.preferences.name} />
+            <button className="today-log primary full" onClick={newNight}>
+              <Plus size={19} aria-hidden="true" />
+              {latest ? "Log a night" : "Log my first night"}
+            </button>
+            <section
+              className="today-trends"
+              aria-labelledby="today-trends-heading"
+            >
+              <div className="section-heading">
+                <div className="today-average">
+                  <h2 id="today-trends-heading">
+                    <ChartNoAxesCombined size={16} aria-hidden="true" /> Your
+                    sleep rhythm
+                  </h2>
+                  <small>
+                    {demo && "Sample · "}
+                    {week.length
+                      ? `${durationLabel(avg)} average · ${week.length}/7 nights`
+                      : "This week · No nights logged"}
+                  </small>
+                </div>
+                <button
+                  className="past-weeks-button"
+                  onClick={() => setModal("history")}
+                >
+                  Past weeks <ChevronRight size={15} aria-hidden="true" />
+                </button>
+              </div>
+              <SleepChart
+                key={weekEnd}
+                entries={entries}
+                goal={goal}
+                weekEnd={weekEnd}
+                onSelect={openEntry}
+              />
+            </section>
             {demo && (
               <div className="demo-banner">
                 <span>
@@ -216,52 +261,7 @@ export default function App({
               </div>
             )}
 
-            <LunarScene day={day} name={store.preferences.name} />
-            <AskNoctis
-              key={String(demo)}
-              entries={entries}
-              goal={goal}
-              demo={demo}
-            />
-            <section
-              className="today-trends"
-              aria-labelledby="today-trends-heading"
-            >
-              <div className="section-heading">
-                <div className="today-average">
-                  <h2 id="today-trends-heading">
-                    <ChartNoAxesCombined size={16} aria-hidden="true" /> Your
-                    sleep rhythm
-                  </h2>
-                  <small>
-                    {week.length
-                      ? `${durationLabel(avg)} average · ${week.length}/${chartDays} nights`
-                      : `${chartDays === 7 ? "This week" : "Past 30 days"} · No nights logged`}
-                  </small>
-                </div>
-                <Segmented
-                  options={[
-                    { value: 7, label: "Week" },
-                    { value: 30, label: "Month" },
-                  ]}
-                  value={chartDays}
-                  onChange={setChartDays}
-                  label="Chart time period"
-                  mini
-                />
-              </div>
-              <SleepChart
-                entries={entries}
-                goal={goal}
-                days={chartDays}
-                onSelect={openEntry}
-              />
-            </section>
-            <div className="today-actions" aria-label="Quick actions">
-              <button className="today-log" onClick={newNight}>
-                <Plus size={19} aria-hidden="true" />
-                <strong>{latest ? "Log a night" : "Log my first night"}</strong>
-              </button>
+            <div className="today-actions">
               <WindDownHome
                 store={store}
                 timer={windDown}
@@ -293,6 +293,12 @@ export default function App({
                 </span>
               </button>
             )}
+            <AskNoctis
+              key={String(demo)}
+              entries={entries}
+              goal={goal}
+              demo={demo}
+            />
           </div>
         )}
         {tab === "journal" && (
@@ -310,6 +316,13 @@ export default function App({
               onSelect={openEntry}
               onWrite={newNightOn}
             />
+            <button
+              className="past-weeks-button journal-history"
+              onClick={() => setModal("history")}
+            >
+              <ChartNoAxesCombined size={17} aria-hidden="true" /> Past weeks{" "}
+              <ChevronRight size={15} aria-hidden="true" />
+            </button>
             <details
               className="more-panel journal-tools"
               onToggle={(event) => {
@@ -459,6 +472,14 @@ export default function App({
         </div>
       )}
       <OverlayPresence show={modal !== null}>
+        {modal === "history" && (
+          <Modal
+            title={demo ? "Past weeks · Sample journal" : "Past weeks"}
+            onClose={() => setModal(null)}
+          >
+            <SleepHistory entries={entries} goal={goal} currentWeek={weekEnd} />
+          </Modal>
+        )}
         {modal === "checklist" && (
           <Modal
             title="Edit wind-down checklist"

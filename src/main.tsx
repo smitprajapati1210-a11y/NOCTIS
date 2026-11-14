@@ -5,6 +5,7 @@ import "@fontsource-variable/manrope";
 import "@fontsource-variable/outfit";
 import "@fontsource/instrument-serif/latin-400.css";
 import "@fontsource/instrument-serif/latin-400-italic.css";
+import "@fontsource/dm-serif-text/latin-400.css";
 import "./styles.css";
 import "./refinements.css";
 import "./editorial.css";

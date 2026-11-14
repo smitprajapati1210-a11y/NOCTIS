@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
   average,
   chartDays,
@@ -18,6 +18,7 @@ export function SleepChart({
   metric = "duration",
   onSelect,
   compact = false,
+  weekEnd,
 }: {
   entries: Entry[];
   goal: number;
@@ -25,8 +26,9 @@ export function SleepChart({
   metric?: "duration" | "quality";
   onSelect?: (e: Entry) => void;
   compact?: boolean;
+  weekEnd?: string;
 }) {
-  const slots = chartDays(entries, days);
+  const slots = chartDays(entries, days, weekEnd);
   const valueOf = (entry: Entry) =>
     metric === "quality" ? entry.quality : sleepMinutes(entry) / 60;
   const max =
@@ -40,6 +42,21 @@ export function SleepChart({
           ),
         );
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const canvas = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    if (
+      !weekEnd ||
+      !canvas.current ||
+      typeof IntersectionObserver === "undefined"
+    )
+      return;
+    const observer = new IntersectionObserver(([entry]) =>
+      setInView(entry.isIntersecting),
+    );
+    observer.observe(canvas.current);
+    return () => observer.disconnect();
+  }, [weekEnd]);
   const selected = slots.find(({ entry }) => entry?.id === selectedId)?.entry;
   const x = (i: number) => ((i + 0.5) / days) * 100;
   const y = (value: number) => 6 + (1 - value / max) * 88;
@@ -48,24 +65,47 @@ export function SleepChart({
       ? `${entry.quality}/5 rested`
       : durationLabel(sleepMinutes(entry));
 
-  // Start a new segment after every missing night; never interpolate absent data.
-  let path = "";
-  let connected = false;
-  slots.forEach(({ entry }, i) => {
-    if (entry) {
-      path += ` ${connected ? "L" : "M"} ${x(i).toFixed(3)} ${y(valueOf(entry)).toFixed(3)}`;
-      connected = true;
-    } else connected = false;
+  const points = slots.flatMap(({ entry }, slot) =>
+    entry ? [{ slot, x: x(slot), y: y(valueOf(entry)) }] : [],
+  );
+  const pointOrder = new Map(points.map(({ slot }, index) => [slot, index]));
+  // Missing nights break the line, including in the weekly constellation.
+  const edges = points.flatMap((point, index) => {
+    const previous = points[index - 1];
+    return previous?.slot === point.slot - 1
+      ? [
+          {
+            slot: point.slot,
+            path: `M ${previous.x} ${previous.y} L ${point.x} ${point.y}`,
+          },
+        ]
+      : [];
   });
+  const strokes = edges.map(({ slot, path }) => (
+    <path
+      key={slot}
+      d={path}
+      className="sleep-line-stroke"
+      vectorEffect="non-scaling-stroke"
+    />
+  ));
+  const first = points[0];
+  const last = points.at(-1);
 
   return (
-    <div className={`chart sleep-line-chart ${compact ? "compact" : ""}`}>
+    <div
+      className={`chart sleep-line-chart${weekEnd ? " sleep-constellation" : ""}${compact ? " compact" : ""}`}
+    >
       <div
         className="sleep-line-plot"
         role="group"
         aria-label={`${days}-day ${metric === "quality" ? "rested rating" : "sleep duration"} chart`}
       >
-        <div className="sleep-line-canvas">
+        <div
+          className="sleep-line-canvas"
+          ref={canvas}
+          data-in-view={inView ? "true" : undefined}
+        >
           <svg
             viewBox="0 0 100 100"
             preserveAspectRatio="none"
@@ -82,7 +122,7 @@ export function SleepChart({
                 vectorEffect="non-scaling-stroke"
               />
             ))}
-            {metric === "duration" && (
+            {metric === "duration" && !weekEnd && (
               <line
                 x1="0"
                 x2="100"
@@ -92,12 +132,27 @@ export function SleepChart({
                 vectorEffect="non-scaling-stroke"
               />
             )}
-            <path
-              d={path}
-              className="sleep-line-stroke"
-              vectorEffect="non-scaling-stroke"
-            />
+            {!weekEnd && strokes}
           </svg>
+          {weekEnd && edges.length > 0 && first && last && (
+            <svg
+              key={points.map(({ slot }) => slot).join(",")}
+              className="sleep-constellation-lines"
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+              style={
+                {
+                  "--star-count": points.length,
+                  "--line-start": `${100 - first.x}%`,
+                  "--line-end": `${99 - last.x}%`,
+                  "--line-duration": `${(last.slot - first.slot) * 105}ms`,
+                } as CSSProperties
+              }
+            >
+              {strokes}
+            </svg>
+          )}
           {[max, max / 2, 0].map((value) => (
             <span
               key={value}
@@ -133,9 +188,29 @@ export function SleepChart({
               >
                 {entry && (
                   <span
-                    className="sleep-line-dot"
+                    className={
+                      weekEnd
+                        ? "sleep-line-dot sleep-line-star"
+                        : "sleep-line-dot"
+                    }
                     style={{ top: `${y(valueOf(entry))}%` }}
-                  />
+                  >
+                    {weekEnd && (
+                      <span
+                        aria-hidden="true"
+                        className="sleep-line-bloom"
+                        style={
+                          {
+                            "--star-order": pointOrder.get(i),
+                            "--twinkle-cycle": `${4800 + i * 370}ms`,
+                            "--twinkle-delay": `${1550 + i * 330}ms`,
+                          } as CSSProperties
+                        }
+                      >
+                        <span className="sleep-line-light" />
+                      </span>
+                    )}
+                  </span>
                 )}
               </button>
             ) : entry ? (
@@ -147,9 +222,11 @@ export function SleepChart({
               />
             ) : null;
           })}
-          {!slots.some(({ entry }) => entry) && (
+          {!points.length && (
             <p className="sleep-line-empty">
-              Your first night will start the line.
+              {weekEnd
+                ? "Log a night to add your first star this week."
+                : "Your first night will start the line."}
             </p>
           )}
         </div>
@@ -161,7 +238,7 @@ export function SleepChart({
           {slots.map(({ date }, i) => (
             <span key={date}>
               {days === 7
-                ? dateLabel(date, { weekday: "narrow" })
+                ? dateLabel(date, { weekday: weekEnd ? "short" : "narrow" })
                 : i === days - 1 || (i % 7 === 0 && i < days - 3)
                   ? dateLabel(date, { day: "numeric" })
                   : ""}
@@ -169,24 +246,32 @@ export function SleepChart({
           ))}
         </div>
       </div>
-      {!compact && (
+      {!compact && (points.length > 0 || !weekEnd) && (
         <div className="chart-foot">
-          <span>
-            {metric === "duration" ? (
-              <>
-                <i className="sleep-line-goal-key" aria-hidden="true" /> {goal}h
-                goal
-              </>
-            ) : (
-              "Self-reported · 1–5"
-            )}
-          </span>
-          <span>
-            {days === 7 ? "Tap a point to explore" : "Select a night below"}
-          </span>
+          {!weekEnd && (
+            <span>
+              {metric === "duration" ? (
+                <>
+                  <i className="sleep-line-goal-key" aria-hidden="true" />{" "}
+                  {goal}h goal
+                </>
+              ) : (
+                "Self-reported · 1–5"
+              )}
+            </span>
+          )}
+          {!!points.length && (
+            <span>
+              {days === 7
+                ? weekEnd
+                  ? "Tap a star for details"
+                  : "Tap a point to explore"
+                : "Select a night below"}
+            </span>
+          )}
         </div>
       )}
-      {compact && selected && (
+      {(compact || !onSelect) && selected && (
         <p className="sleep-line-selection" role="status">
           {dateLabel(selected.date)} · {valueLabel(selected)}
         </p>
@@ -197,18 +282,29 @@ export function SleepChart({
           <div className="chart-data-list">
             {slots
               .filter((s) => s.entry)
-              .map(({ date, entry }) => (
-                <button key={date} onClick={() => entry && onSelect?.(entry)}>
-                  <span>
-                    {dateLabel(date, {
-                      weekday: "short",
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </span>
-                  <strong>{entry && valueLabel(entry)}</strong>
-                </button>
-              ))}
+              .map(({ date, entry }) => {
+                const label = (
+                  <>
+                    <span>
+                      {dateLabel(date, {
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </span>
+                    <strong>{entry && valueLabel(entry)}</strong>
+                  </>
+                );
+                return onSelect ? (
+                  <button key={date} onClick={() => entry && onSelect(entry)}>
+                    {label}
+                  </button>
+                ) : (
+                  <p className="chart-data-row" key={date}>
+                    {label}
+                  </p>
+                );
+              })}
             {!slots.some((s) => s.entry) && (
               <p>No nights logged in this period yet.</p>
             )}

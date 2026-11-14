@@ -105,6 +105,12 @@ The chat is **deterministic local rules, not an LLM**. The account server handle
 - Today shows the sleep-duration chart directly under Ask Noctis, with Week and Month controls, the goal reference, and per-night details. New journals show an empty plot with a first-night message. Quick actions sit side by side below the chart.
 - All 32 tests and the production build passed. Verified the visible chart and profile icon in Chrome’s phone-sized app shell and switched between Week and Month. Physical iPhone testing remains pending.
 
+## Follow-up — weekly sleep constellations
+
+- Today opens with a local-time greeting in DM Serif Text, the log button and the weekly chart. Ask Noctis comes last. The current week runs Monday through Sunday by wake-up date and rolls over while the app is open or on return.
+- Past weeks is available on Today and Journal. Both chart views use a dim starfield, circular glowing points, and straight lilac connections with breaks for missing nights. The weekly chart omits the dashed goal line. Points appear one by one before the line reveal, then the halos twinkle at staggered intervals while visible. Reduced Motion shows a static chart.
+- Verified the populated chart and past-week switching in Chrome using an isolated sample journal. All 34 tests and the production build passed. Physical iPhone verification remains pending.
+
 ## Next milestone — physical iPhone and motion tuning
 
 1. Read README’s beginner-friendly run instructions. Start `npm run dev` in this folder.

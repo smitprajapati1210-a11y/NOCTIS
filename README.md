@@ -67,14 +67,16 @@ Netlify serves the build in `dist` and runs the authentication endpoints in `net
 
 | View      | Working features                                                                                                                                                         |
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Today     | Ask Noctis with journal answers and chart cards, quick logging, wind-down shortcut, an inline 7/30-day sleep chart, and the latest night. |
-| Journal   | Create, edit and delete nights; date/time validation; rested ratings; habit tags and notes; search; tappable 35-day heatmap.                                             |
+| Today     | Local-time greeting, quick logging, the current week's animated sleep chart, wind-down shortcut, and Ask Noctis below the chart. |
+| Journal   | Create, edit and delete nights, search, a tappable 35-day heatmap, and past weekly sleep charts. |
 | Discover  | Weekly summary, expandable rested-rating chart and bedtime variation, and the pattern detective. |
 | Wind down | 15/30/45-minute session timer, editable daily checklist with task suggestions, and an expandable evening plan and breathing timer. |
 | Moon      | Tonight’s calculated phase at 9 pm in the device’s timezone; historical phases at each entry’s actual bedtime.                                                           |
 | Settings  | Name, sleep goal, separate sample mode, JSON export/import with a replacement confirmation, and personal-journal erase confirmation.                                     |
 
 New accounts open an empty personal journal. Use **Today → Log my first night** to add a night. The walkthrough uses examples, and **Settings → Explore sample nights** opens an optional sample view. **Open my journal** returns to your entries. If you used the previous preview and signed in while sample mode was active, switch it off in Settings.
+
+**Your sleep rhythm** starts a fresh chart each Monday. Each logged wake-up date adds a glowing point at that night's sleep duration. The points appear in date order, then a thin line joins consecutive logged nights. Tap **Past weeks** on Today or Journal to see earlier weeks with entries. Reduced Motion shows the completed chart immediately.
 
 **Wind down** is directly available in the bottom navigation and through a Today shortcut with checklist progress and a live countdown when running. Choose 15, 30 or 45 minutes, pause, resume, or reset. Tap **Edit** beside the checklist to rename tasks, remove them, or add your own or a suggestion. Tap **Save checklist** to apply the changes. Tasks stay saved for that browser and account, and checkmarks start fresh each day. The evening plan and 1/3/5-minute breathing timer open separately. Countdown completion appears in the app.
 

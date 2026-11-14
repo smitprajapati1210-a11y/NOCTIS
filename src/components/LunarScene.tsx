@@ -1,29 +1,18 @@
 import { Sparkle } from "lucide-react";
+import { greetingForHour, localDate } from "../domain";
 import { moonSnapshot, tonightMoment } from "../moon";
 import { MoonVisual } from "./Moon";
 
-export default function LunarScene({
-  name,
-  day,
-}: {
-  name: string;
-  day: string;
-}) {
-  const date = tonightMoment(day);
+export default function LunarScene({ name, now }: { name: string; now: Date }) {
+  const date = tonightMoment(localDate(now));
   const moon = moonSnapshot(date);
-  const hour = new Date().getHours();
-  const greeting =
-    hour >= 5 && hour < 12
-      ? "Good morning"
-      : hour >= 12 && hour < 18
-        ? "Hello"
-        : "Good evening";
+  const greeting = greetingForHour(now.getHours());
   return (
     <section className="today-moon" aria-label="Tonight’s moon">
       <div>
         <h1>
           {greeting}
-          {name ? `, ${name}` : ""}.{" "}
+          {name ? `, ${name}` : ""}{" "}
           <Sparkle
             className="today-greeting-star"
             size={16}

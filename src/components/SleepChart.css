@@ -115,3 +115,139 @@
   text-align: center;
   pointer-events: none;
 }
+
+.sleep-constellation .sleep-line-canvas {
+  border-radius: 13px;
+  background:
+    radial-gradient(circle at 8% 32%, #dacbec6b 0.45px, transparent 1px),
+    radial-gradient(circle at 19% 66%, #d9c3ed5e 0.45px, transparent 1px),
+    radial-gradient(circle at 23% 12%, #afd0f677 0.35px, transparent 1px),
+    radial-gradient(circle at 33% 43%, #cbb5ec52 0.45px, transparent 1px),
+    radial-gradient(circle at 41% 83%, #e2ccf057 0.5px, transparent 1px),
+    radial-gradient(circle at 49% 22%, #b3c2ee6b 0.45px, transparent 1px),
+    radial-gradient(circle at 59% 57%, #e7dcf666 0.4px, transparent 1px),
+    radial-gradient(circle at 64% 8%, #bfc6f261 0.45px, transparent 1px),
+    radial-gradient(circle at 73% 76%, #d9bbef5c 0.45px, transparent 1px),
+    radial-gradient(circle at 84% 28%, #e6d6fa72 0.5px, transparent 1px),
+    radial-gradient(circle at 93% 57%, #b5c5f162 0.35px, transparent 1px),
+    linear-gradient(145deg, #211733, #130f21 58%, #1b152d);
+}
+
+.sleep-constellation .sleep-line-stroke {
+  stroke: #ba9be2;
+  stroke-width: 1.25px;
+  opacity: 0.72;
+  stroke-linecap: round;
+}
+
+.sleep-line-chart .sleep-line-star {
+  display: grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  background: transparent;
+}
+
+.sleep-line-bloom {
+  display: grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+}
+
+.sleep-line-light {
+  position: relative;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 40% 38%,
+    #f7ecff 15%,
+    #dfc6fc 64%,
+    #c5a2ed
+  );
+  box-shadow: 0 0 4px 1px #caa2f79c;
+}
+
+.sleep-line-light::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    #d8afff32,
+    #b58be823 34%,
+    transparent 70%
+  );
+  opacity: 0.72;
+}
+
+.sleep-constellation-lines {
+  filter: drop-shadow(0 0 1.6px #bfa1e77a);
+}
+
+.sleep-line-chart .chart-data-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sleep-constellation .sleep-line-bloom {
+    animation: sleep-star-appear 230ms var(--ease-enter)
+      calc(var(--star-order) * 72ms) both;
+  }
+  .sleep-line-light::after {
+    animation: sleep-star-twinkle var(--twinkle-cycle) ease-in-out
+      var(--twinkle-delay) infinite;
+    animation-play-state: paused;
+  }
+  html:not([data-page-hidden="true"])
+    [data-in-view="true"]
+    .sleep-line-light::after {
+    animation-play-state: running;
+  }
+  .sleep-constellation-lines {
+    animation: sleep-line-draw var(--line-duration) linear
+      calc((var(--star-count) - 1) * 72ms + 250ms) both;
+  }
+
+  @keyframes sleep-star-appear {
+    from {
+      opacity: 0;
+      transform: scale(0.35);
+    }
+    65% {
+      opacity: 1;
+      transform: scale(1.18);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes sleep-line-draw {
+    from {
+      clip-path: inset(0 var(--line-start) 0 0);
+    }
+    to {
+      clip-path: inset(0 var(--line-end) 0 0);
+    }
+  }
+
+  @keyframes sleep-star-twinkle {
+    0%,
+    32%,
+    64%,
+    100% {
+      opacity: 0.72;
+      transform: scale(1);
+    }
+    47% {
+      opacity: 1;
+      transform: scale(1.28);
+    }
+  }
+}

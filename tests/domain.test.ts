@@ -10,11 +10,13 @@ import {
   demoEntries,
   elapsed,
   entryError,
+  greetingForHour,
   makePlan,
   patterns,
   recent,
   replyTo,
   sleepMinutes,
+  weekEnding,
   type Entry,
 } from "../src/domain";
 import { freshStore, parseStore } from "../src/storage";
@@ -30,6 +32,26 @@ const night = (patch: Partial<Entry> = {}): Entry => ({
   tags: [],
   note: "",
   ...patch,
+});
+test("weekly sleep charts start fresh on Mondays and greetings switch at local hour boundaries", () => {
+  assert.equal(weekEnding("2026-11-01"), "2026-11-01");
+  assert.equal(weekEnding("2026-11-02"), "2026-11-08");
+  assert.equal(weekEnding("2026-12-31"), "2027-01-03");
+  const nights = [
+    night({ date: "2026-11-01" }),
+    night({ id: "n2", date: "2026-11-02" }),
+  ];
+  const slots = chartDays(nights, 7, weekEnding("2026-11-02"));
+  assert.equal(slots[0].entry?.id, "n2");
+  assert.equal(slots.filter((slot) => slot.entry).length, 1);
+  assert.deepEqual([4, 5, 11, 12, 17, 18].map(greetingForHour), [
+    "Good Evening",
+    "Good Morning",
+    "Good Morning",
+    "Good Afternoon",
+    "Good Afternoon",
+    "Good Evening",
+  ]);
 });
 
 test("overnight sleep subtracts latency and awakenings; daytime sleep works", () => {
