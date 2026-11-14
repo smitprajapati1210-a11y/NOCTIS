@@ -78,6 +78,12 @@ The chat is **deterministic local rules, not an LLM**. The account server handle
 - Production build and 31 tests passed. Added coverage for a fresh account’s empty journal, the Google authorization URL and inactive Apple provider, and public-mode email verification and password reset with a local SMTP receiver.
 - Completed a live Google sign-in in Chrome on the Mac. The account chooser returned to NOCTIS and opened Today with an empty personal journal. For iPhone sign-in, choose an HTTPS host and persistent account storage, register its callback, configure a live SMTP sender, and test in Safari. See the README for exact settings.
 
+## Follow-up — hosting preparation, 2026-11-14
+
+- Prepared a Render Blueprint for a Node Web Service with a 1 GB persistent SQLite disk. The production entry point supports binding to the hosted port and using Render's HTTPS origin, while local production runs still bind to loopback by default. Render deployments use the visitor IP supplied by public ingress for authentication rate limits.
+- Validated the Blueprint against Render’s JSON schema. All 31 tests and the production build passed. A local production run on the pinned Node 24.22.3 verified the app page, account database creation, external Google callback generation, and independent visitor rate limits.
+- The deploy requires a GitHub repository, a hosting plan and an SMTP sender. Once deployed, register the actual HTTPS Google callback and verify both sign-in methods on iPhone. No cloud service has been provisioned. See the Render steps in README.
+
 ## Next milestone — physical iPhone and motion tuning
 
 1. Read README’s beginner-friendly run instructions. Start `npm run dev` in this folder.

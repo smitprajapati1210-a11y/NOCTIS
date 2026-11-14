@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=https://render.com/schema/render.yaml.json
+services:
+  - type: web
+    name: noctis
+    runtime: node
+    plan: 0.5c-512mb
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    disk:
+      name: noctis-accounts
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "24.22.3"
+      - key: NOCTIS_BIND_ADDRESS
+        value: 0.0.0.0
+      - key: NOCTIS_AUTH_DATA_DIR
+        value: /var/data/noctis
+      - key: BETTER_AUTH_SECRET
+        generateValue: true
+      - key: NOCTIS_SMTP_URL
+        sync: false
+      - key: NOCTIS_MAIL_FROM
+        sync: false

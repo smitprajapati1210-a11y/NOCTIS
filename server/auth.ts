@@ -1,6 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { isIP } from "node:net";
 import { networkInterfaces } from "node:os";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
@@ -189,8 +190,15 @@ export async function createAuthServer({
         res.end();
         return;
       }
+      // Render's public ingress replaces this header with the visitor's address.
+      const renderIp =
+        !preview && env.RENDER === "true"
+          ? req.headers["cf-connecting-ip"]
+          : undefined;
       req.headers["x-noctis-client-ip"] =
-        req.socket.remoteAddress ?? "127.0.0.1";
+        typeof renderIp === "string" && isIP(renderIp)
+          ? renderIp
+          : (req.socket.remoteAddress ?? "127.0.0.1");
       void handleAuth(req, res).catch(() => {
         if (!res.headersSent) res.statusCode = 500;
         res.end();

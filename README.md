@@ -49,6 +49,15 @@ Use a hosted HTTPS address for Google sign-in on iPhone. The local Wi-Fi IP addr
 
 Automated tests cover Google redirect generation and the verification and recovery flows with a local SMTP inbox. Live sign-in and mail delivery need to be tested with the registered Google client and the deployed sender.
 
+### Deploy on Render
+
+[render.yaml](render.yaml) defines a paid Web Service with a 1 GB persistent disk for accounts. Render supplies the HTTPS address and generates a server session secret. The program serves the app and its authentication routes together. [Render Web Services](https://render.com/docs/web-services) · [Persistent disks](https://render.com/docs/disks)
+
+1. Push the Git repository to a private GitHub repository. The `.env.*` files containing credentials and `.noctis/` account databases are ignored. The hosted service starts with its own account database.
+2. In Render, create a **Blueprint** from that repository. Review the Starter compute and disk charges. Enter the SMTP connection and approved sender as `NOCTIS_SMTP_URL` and `NOCTIS_MAIL_FROM` in Render. If using Resend, verify a domain you control and use `smtps://resend:API_KEY@smtp.resend.com:465` with a sending key. [Render Blueprints](https://render.com/docs/infrastructure-as-code) · [Resend sender domains](https://resend.com/docs/dashboard/domains/introduction) · [Resend SMTP](https://resend.com/changelog/smtp-service)
+3. Open the deployed app and copy its exact HTTPS address from Render. Create a separate Google Web application OAuth client with `<that HTTPS address>/api/auth/callback/google`, then add `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` to Render's environment and redeploy. If switching to a custom domain, set `NOCTIS_URL` to that HTTPS origin and register the matching Google callback. Use a separate Google project for a public release. [Google OAuth client setup](https://support.google.com/cloud/answer/15549257)
+4. On iPhone Safari, test Google sign-in, email signup and verification, password recovery, and sign-out. Confirm an account still works after a redeploy. Use a JSON export and import to bring any existing journal entries to the new address.
+
 ## What works in milestone 1
 
 | View      | Working features                                                                                                                                                         |
