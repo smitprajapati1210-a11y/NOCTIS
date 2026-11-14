@@ -33,7 +33,7 @@ Object.defineProperty(globalThis, "IS_REACT_ACT_ENVIRONMENT", {
 });
 dom.window.scrollTo = () => {};
 dom.window.HTMLElement.prototype.scrollIntoView = () => {};
-const { render, screen, cleanup, fireEvent, waitFor } =
+const { render, screen, cleanup, fireEvent, waitFor, within } =
   await import("@testing-library/react");
 const { default: userEvent } = await import("@testing-library/user-event");
 const { default: App } = await import("../src/App");
@@ -55,7 +55,7 @@ async function logNight(
   note = "A test night, only in the isolated test environment.",
 ) {
   const u = user();
-  await u.click(screen.getByRole("button", { name: /How did you sleep/ }));
+  await u.click(screen.getByRole("button", { name: /Log (a|my first) night/ }));
   fireEvent.change(screen.getByLabelText(/A thought from the night/), {
     target: { value: note },
   });
@@ -122,24 +122,41 @@ test("sample toggle preserves personal data; preferences persist independently",
   assert.equal(saved().entries.length, 1);
 });
 
-test("local chat renders computed chart cards and detective comparisons", async () => {
+test("Today answers questions with chart cards and Discover retains the detective", async () => {
   enableSampleFixture();
   render(<App />);
   const u = user();
-  await u.click(screen.getByRole("button", { name: "Discover" }));
-  await u.click(screen.getByRole("button", { name: "Detective" }));
-  assert.ok(screen.getAllByText("A possible pattern").length > 0);
-  await u.click(screen.getByRole("button", { name: "Ask Noctis" }));
+  assert.ok(screen.getByRole("heading", { name: "Ask Noctis" }));
+  assert.ok(
+    screen.getByRole("textbox", { name: "Ask about your sleep journal" }),
+  );
+  await u.click(screen.getByText("Suggested questions"));
   await u.click(screen.getByRole("button", { name: "How was my week?" }));
   assert.match(screen.getByRole("log").textContent!, /7 logged nights/);
-  assert.ok(screen.getByRole("group", { name: "7-day sleep duration chart" }));
-  await u.click(
-    screen.getByRole("button", { name: "Does late caffeine show a pattern?" }),
+  assert.ok(
+    within(screen.getByRole("log")).getByRole("group", {
+      name: "7-day sleep duration chart",
+    }),
+  );
+  await u.type(
+    screen.getByRole("textbox", { name: "Ask about your sleep journal" }),
+    "Does late caffeine show a pattern?{Enter}",
   );
   assert.match(screen.getByRole("log").textContent!, /not evidence of cause/);
   assert.ok(
     screen.getByLabelText("Sleep duration comparison for Late caffeine"),
   );
+  await u.click(screen.getByText("Earlier questions"));
+  assert.ok(
+    within(screen.getByText("Earlier questions").closest("details")!).getByRole(
+      "group",
+      { name: "7-day sleep duration chart" },
+    ),
+  );
+  await u.click(screen.getByRole("button", { name: "Discover" }));
+  assert.equal(screen.queryByText("Ask Noctis"), null);
+  await u.click(screen.getByRole("button", { name: "Detective" }));
+  assert.ok(screen.getAllByText("A possible pattern").length > 0);
 });
 
 test("home opens wind-down; long sessions and the checklist survive navigation and reload", async () => {
@@ -149,6 +166,7 @@ test("home opens wind-down; long sessions and the checklist survive navigation a
     screen.getByRole("button", { name: "Open wind-down timer and checklist" }),
   );
   assert.ok(screen.getByRole("heading", { name: "Your wind-down checklist" }));
+  await u.click(screen.getByText("Evening plan"));
   await u.click(screen.getByRole("button", { name: /Adjust my schedule/ }));
   fireEvent.change(screen.getByLabelText("Starts at"), {
     target: { value: "06:30" },
@@ -189,6 +207,54 @@ test("home opens wind-down; long sessions and the checklist survive navigation a
     ).checked,
     true,
   );
+});
+
+test("wind-down edits save custom tasks, suggestions and progress without repopulating an empty list", async () => {
+  const olderStore = freshStore();
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify({
+      ...olderStore,
+      routine: { date: today(), completed: ["lights", "phone"] },
+    }),
+  );
+  render(<App />);
+  const u = user();
+  await u.click(screen.getByRole("button", { name: "Wind down" }));
+  assert.equal(screen.getAllByRole("checkbox").length, 4);
+  await u.click(screen.getByRole("button", { name: "Edit" }));
+  await u.click(screen.getByRole("button", { name: "Remove Soften the room" }));
+  await u.click(screen.getByRole("button", { name: "Read a few pages" }));
+  await u.type(screen.getByLabelText("New task"), "  Pack my bag  ");
+  await u.click(screen.getByRole("button", { name: "Save checklist" }));
+  assert.deepEqual(saved().routine.completed, ["phone"]);
+  assert.equal(
+    screen.queryByRole("checkbox", { name: "Soften the room" }),
+    null,
+  );
+  await u.click(screen.getByRole("checkbox", { name: "Pack my bag" }));
+  cleanup();
+  render(<App />);
+  await u.click(screen.getByRole("button", { name: "Wind down" }));
+  assert.ok(
+    (screen.getByRole("checkbox", { name: "Pack my bag" }) as HTMLInputElement)
+      .checked,
+  );
+  await u.click(screen.getByRole("button", { name: "Edit" }));
+  await u.type(screen.getByLabelText("New task"), "read a few pages");
+  await u.click(screen.getByRole("button", { name: "Add task" }));
+  assert.match(screen.getByRole("alert").textContent!, /already in/);
+  await u.clear(screen.getByLabelText("New task"));
+  for (const button of screen.getAllByRole("button", { name: /^Remove / }))
+    await u.click(button);
+  await u.click(screen.getByRole("button", { name: "Save checklist" }));
+  assert.deepEqual(saved().routine.tasks, []);
+  assert.deepEqual(saved().routine.completed, []);
+  cleanup();
+  render(<App />);
+  await u.click(screen.getByRole("button", { name: "Wind down" }));
+  assert.ok(screen.getByRole("button", { name: "Add tasks" }));
+  assert.equal(screen.queryByRole("progressbar"), null);
 });
 
 test("wind-down completion is handled on Today without opening its page", async () => {
@@ -260,7 +326,7 @@ test("start-journal invitation stays on Today and opens a real entry before chan
   await u.click(screen.getByRole("button", { name: "Save my night" }));
   assert.equal(saved().preferences.demo, false);
   await u.click(screen.getByRole("button", { name: "Journal" }));
-  assert.ok(screen.getByText("1 personal"));
+  assert.ok(screen.getByText("1 night"));
   assert.equal(screen.queryByText("Sample nights"), null);
 });
 
@@ -299,12 +365,12 @@ test("journal calendar starts a new entry on the chosen morning without navigati
 test("rapidly reopening a closing sheet resets an unsaved draft", async () => {
   render(<App />);
   const u = user();
-  await u.click(screen.getByRole("button", { name: /How did you sleep/ }));
+  await u.click(screen.getByRole("button", { name: "Log my first night" }));
   fireEvent.change(screen.getByLabelText(/A thought from the night/), {
     target: { value: "Do not save this draft" },
   });
   await u.keyboard("{Escape}");
-  await u.click(screen.getByRole("button", { name: /How did you sleep/ }));
+  await u.click(screen.getByRole("button", { name: "Log my first night" }));
   assert.equal(
     (screen.getByLabelText(/A thought from the night/) as HTMLTextAreaElement)
       .value,

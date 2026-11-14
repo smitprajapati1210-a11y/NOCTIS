@@ -91,6 +91,14 @@ The chat is **deterministic local rules, not an LLM**. The account server handle
 - Published the production beta at `https://noctis-sleep-beta.netlify.app/`. The owner made production public with Deploy Previews private. Verified the welcome and Google sign-in in Chrome, the return to Today and an active Google-backed session in Netlify Postgres. All 31 tests and the production build passed. Additional friend accounts and physical iPhone Safari still need testing.
 - Pushed the project and its Git history to `smitprajapati1210-a11y/NOCTIS` as a private repository. The repo can become public for the portfolio after the owner chooses visibility. Deploys currently use the linked Netlify CLI project.
 
+## Follow-up — simpler screens and personal wind-down, 2026-11-14
+
+- Moved **Ask Noctis** from Discover to a direct question field on Today, with on-demand suggested prompts and chart answers. The newest reply stays in view and prior replies are available under **Earlier questions**. The assistant still uses local journal calculations.
+- Reduced the moon scene to a compact greeting and tonight’s real phase. Placed logging and wind-down immediately below the assistant. Used collapsible controls for sleep trends, journal search and heatmap, Discover details, evening planning and the breathing timer. Increased contrast between key controls, with lilac for primary actions and muted sage for wind-down. Kept the gliding selector and reduced-motion handling.
+- Added checklist editing with renamed tasks, removal, custom tasks and suggestions. Version 1 journals and backups keep their default task IDs and existing checkmarks. An intentionally empty custom list stays empty. Tasks and daily checkmarks remain browser-local per account.
+- Moved the separately downloaded local and hosted OAuth JSON backups out of Downloads to the private `~/.config/noctis/oauth` folder. Running sign-in uses the existing configured environments.
+- Chrome verified Today’s inline answer and the checklist editor’s one-tap suggestion and cancel flow. Automated tests cover stored edits, older data, empty lists and chat chart cards. Physical iPhone testing remains pending.
+
 ## Next milestone — physical iPhone and motion tuning
 
 1. Read README’s beginner-friendly run instructions. Start `npm run dev` in this folder.

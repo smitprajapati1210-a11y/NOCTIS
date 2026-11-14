@@ -29,11 +29,20 @@ export type Preferences = {
   travel: number;
   windDown: number;
 };
+export type WindDownTask = { id: string; title: string };
+export const WIND_DOWN_TASK_LIMIT = 50;
+export const WIND_DOWN_TITLE_LIMIT = 64;
+export const DEFAULT_WIND_DOWN_TASKS: readonly WindDownTask[] = [
+  { id: "lights", title: "Soften the room" },
+  { id: "phone", title: "Put the scroll to bed" },
+  { id: "tomorrow", title: "Set tomorrow down" },
+  { id: "reflect", title: "Find one good thing" },
+];
 export type Store = {
   version: 1;
   entries: Entry[];
   preferences: Preferences;
-  routine: { date: string; completed: string[] };
+  routine: { date: string; completed: string[]; tasks: WindDownTask[] };
   timer: { endAt: number | null; remaining: number };
   windDownTimer: { endAt: number | null; remaining: number; duration: number };
 };
@@ -56,6 +65,10 @@ export function dateOffset(date: string, offset: number): string {
   return localDate(d);
 }
 export const today = () => localDate();
+export const routineCompletedToday = (
+  routine: Store["routine"],
+  day = today(),
+) => (routine.date === day ? routine.completed : []);
 export function dateLabel(
   date: string,
   options: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" },
@@ -253,6 +266,7 @@ export function replyTo(
       return {
         text: `There isn't enough comparison data yet. Log at least 3 nights with ${p?.tag.toLowerCase() ?? "a habit"} and 3 without it. Missing tags count as “not tagged,” not proof that a habit was absent.`,
         chart: "pattern",
+        tag: p?.tag,
       };
     return {
       text: `In the last 30 days, nights tagged “${p.tag}” averaged ${durationLabel(p.withMean)} (${p.withCount} nights), compared with ${durationLabel(p.withoutMean)} on ${p.withoutCount} untagged nights. That's ${Math.round(Math.abs(p.difference))} minutes ${p.difference >= 0 ? "more" : "less"}. This is an association in your notes, not evidence of cause.`,

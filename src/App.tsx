@@ -8,13 +8,11 @@ import {
 } from "react";
 import {
   ArrowRight,
-  ArrowUpRight,
   BookOpen,
   ChevronLeft,
   ChevronRight,
   Clock3,
   House,
-  Leaf,
   Moon,
   Plus,
   Search,
@@ -37,6 +35,8 @@ import {
 } from "./domain";
 import { readStore, STORAGE_KEY } from "./storage";
 import { Heatmap, SleepChart, WeeklyAverage } from "./components/Charts";
+import AskNoctis from "./components/AskNoctis";
+import ChecklistEditor from "./components/ChecklistEditor";
 import Discover from "./components/Discover";
 import EntryForm from "./components/EntryForm";
 import Modal from "./components/Modal";
@@ -75,12 +75,9 @@ export default function App({
   const [readError, setReadError] = useState(initial.error);
   const [writeError, setWriteError] = useState("");
   const [tab, setTab] = useState<Tab>("today");
-  const [discoveryTab, setDiscoveryTab] = useState<
-    "overview" | "patterns" | "chat"
-  >("overview");
-  const [modal, setModal] = useState<"entry" | "settings" | "sample" | null>(
-    null,
-  );
+  const [modal, setModal] = useState<
+    "entry" | "settings" | "sample" | "checklist" | null
+  >(null);
   const [editing, setEditing] = useState<Entry | undefined>();
   const [entryDate, setEntryDate] = useState(today());
   const [toast, setToast] = useState("");
@@ -138,8 +135,8 @@ export default function App({
     setEditing(e);
     setModal(demo ? "sample" : "entry");
   };
-  function navigate(next: Tab, mode: typeof discoveryTab = "overview") {
-    if (next === tab && mode === discoveryTab) return;
+  function navigate(next: Tab) {
+    if (next === tab) return;
     const direction =
       tabs.findIndex((t) => t.id === next) >=
       tabs.findIndex((t) => t.id === tab)
@@ -147,7 +144,7 @@ export default function App({
         : "backward";
     changePage(() => {
       setTab(next);
-      setDiscoveryTab(mode);
+      setQuery("");
       if (content.current) content.current.scrollTop = 0;
       content.current?.focus({ preventScroll: true });
     }, direction);
@@ -219,244 +216,133 @@ export default function App({
               </div>
             )}
 
-            <LunarScene
-              name={store.preferences.name}
-              onTonight={() => navigate("tonight")}
+            <LunarScene day={day} name={store.preferences.name} />
+            <AskNoctis
+              key={String(demo)}
+              entries={entries}
+              goal={goal}
+              demo={demo}
             />
-            <WindDownHome
-              store={store}
-              timer={windDown}
-              onOpen={() => navigate("tonight")}
-            />
-            {latest ? (
-              <section className="sleep-hero" aria-label="Latest logged night">
-                <div className="hero-stars" aria-hidden="true">
-                  <span>✧</span>
-                  <span>·</span>
-                  <span>✦</span>
-                  <span>·</span>
-                  <span>+</span>
-                </div>
-                <div className="hero-top">
-                  <span className="mini-label">
-                    <Moon size={13} />
-                    {latest.date === day ? "LAST NIGHT" : "LATEST NIGHT"}
-                  </span>
-                  <span className="hero-date">{dateLabel(latest.date)}</span>
-                </div>
-                <div className="hero-main">
-                  <div>
-                    <div className="sleep-number">
-                      {Math.floor(sleepMinutes(latest) / 60)}
-                      <span>h</span> {sleepMinutes(latest) % 60}
-                      <span>m</span>
-                    </div>
-                    <p>Estimated time asleep</p>
-                    <span className="rested-chip">
-                      <Leaf size={12} />
-                      {
-                        [
-                          "",
-                          "Feeling drained",
-                          "A little low",
-                          "Feeling okay",
-                          "Feeling rested",
-                          "Feeling bright",
-                        ][latest.quality]
-                      }
-                    </span>
-                  </div>
-                  <div
-                    className="goal-dial"
-                    aria-label={`${Math.round((sleepMinutes(latest) / (goal * 60)) * 100)}% of your ${goal}-hour goal`}
-                  >
-                    <svg viewBox="0 0 92 92" aria-hidden="true">
-                      <circle cx="46" cy="46" r="38" />
-                      <circle
-                        className="goal-dial-fill"
-                        cx="46"
-                        cy="46"
-                        r="38"
-                        style={{
-                          strokeDasharray: 239,
-                          strokeDashoffset:
-                            239 *
-                            (1 -
-                              Math.min(sleepMinutes(latest) / (goal * 60), 1)),
-                        }}
-                      />
-                    </svg>
-                    <span>
-                      <strong>
-                        {Math.round((sleepMinutes(latest) / (goal * 60)) * 100)}
-                        <small>%</small>
-                      </strong>
-                      <em>of {goal}h goal</em>
-                    </span>
-                  </div>
-                </div>
-                <div className="hero-divider" />
-                <div className="hero-bottom">
-                  <div>
-                    <Moon size={15} />
-                    <span>
-                      Bedtime<strong>{timeLabel(latest.bedtime)}</strong>
-                    </span>
-                  </div>
-                  <div>
-                    <Sunrise size={17} />
-                    <span>
-                      Wake-up<strong>{timeLabel(latest.wakeTime)}</strong>
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => openEntry(latest)}
-                    aria-label="View latest night"
-                  >
-                    <ArrowUpRight size={22} />
-                  </button>
-                </div>
-              </section>
-            ) : (
-              <section className="sleep-hero empty-hero">
-                <div className="empty-moon">
-                  <Moon size={42} strokeWidth={1.1} />
-                  <span>✧</span>
-                </div>
-                <h2>
-                  A new page.
-                  <br />A fresh perspective.
-                </h2>
-                <p>Your first night is the start of your story.</p>
-                <button className="light-button" onClick={newNight}>
-                  Log my first night
-                  <ArrowRight size={17} />
-                </button>
-              </section>
-            )}
-            <button className="log-night-button" onClick={newNight}>
-              <span className="plus-circle">
-                <Plus size={20} />
-              </span>
-              <span>
-                <strong>How did you sleep?</strong>
-                <small>A minute to reflect on your night.</small>
-              </span>
-              <ChevronRight size={20} />
-            </button>
-            <section className="card weekly-card">
-              <div className="section-heading">
-                <div>
-                  <p className="eyebrow">FINDING YOUR RHYTHM</p>
-                  <h3>Your sleep rhythm</h3>
-                </div>
-                <Segmented
-                  options={[
-                    { value: 7, label: "Week" },
-                    { value: 30, label: "Month" },
-                  ]}
-                  value={chartDays}
-                  onChange={setChartDays}
-                  label="Chart time period"
-                  mini
-                />
-              </div>
-              <div className="weekly-summary">
-                <div>
-                  <strong>{week.length ? durationLabel(avg) : "—"}</strong>
-                  <span>nightly average</span>
-                </div>
-                <span className="nights-count">
-                  {week.length}/{chartDays} nights logged
-                </span>
-              </div>
-              <SleepChart
-                entries={entries}
-                goal={goal}
-                days={chartDays}
-                onSelect={openEntry}
+            <div className="today-actions" aria-label="Quick actions">
+              <button className="today-log" onClick={newNight}>
+                <Plus size={19} aria-hidden="true" />
+                <strong>{latest ? "Log a night" : "Log my first night"}</strong>
+                <ChevronRight size={17} aria-hidden="true" />
+              </button>
+              <WindDownHome
+                store={store}
+                timer={windDown}
+                day={day}
+                onOpen={() => navigate("tonight")}
               />
-            </section>
-            <button
-              className="insight-teaser"
-              onClick={() => navigate("discover")}
-            >
-              <span className="insight-spark">
-                <Sparkles size={21} />
-              </span>
-              <span>
-                <small>A LITTLE NIGHTLIGHT</small>
-                <strong>
-                  {entries.length
-                    ? "What are your nights telling you?"
-                    : "Your story starts with one night."}
-                </strong>
-                <p>
-                  {entries.length
-                    ? "Explore the patterns behind your rest."
-                    : "Log your night to start connecting the dots."}
-                </p>
-              </span>
-              <ArrowUpRight size={20} />
-            </button>
-
-            <p className="closing-caption">
-              One night at a time. You’re finding your rhythm.
-            </p>
+            </div>
+            {latest && (
+              <div className="today-sleep">
+                <button
+                  className="latest-night"
+                  aria-label="View latest night"
+                  onClick={() => openEntry(latest)}
+                >
+                  <span>
+                    <strong>{durationLabel(sleepMinutes(latest))}</strong>
+                    <small>
+                      Estimated sleep ·{" "}
+                      {Math.round((sleepMinutes(latest) / (goal * 60)) * 100)}%
+                      of goal
+                    </small>
+                  </span>
+                  <span>
+                    <small>
+                      {latest.date === day
+                        ? "Last night"
+                        : dateLabel(latest.date)}
+                    </small>
+                    <ChevronRight size={17} aria-hidden="true" />
+                  </span>
+                </button>
+                <details className="more-panel today-trends">
+                  <summary>
+                    Your sleep rhythm{" "}
+                    <ChevronRight size={16} aria-hidden="true" />
+                  </summary>
+                  <div className="section-heading">
+                    <div className="today-average">
+                      <strong>{week.length ? durationLabel(avg) : "—"}</strong>
+                      <small>
+                        {week.length}/{chartDays} nights logged
+                      </small>
+                    </div>
+                    <Segmented
+                      options={[
+                        { value: 7, label: "Week" },
+                        { value: 30, label: "Month" },
+                      ]}
+                      value={chartDays}
+                      onChange={setChartDays}
+                      label="Chart time period"
+                      mini
+                    />
+                  </div>
+                  <SleepChart
+                    entries={entries}
+                    goal={goal}
+                    days={chartDays}
+                    onSelect={openEntry}
+                  />
+                </details>
+              </div>
+            )}
           </div>
         )}
         {tab === "journal" && (
           <div className="view journal-view">
             <div className="page-intro journal-intro">
-              <div className="journal-edition">
-                <BookOpen size={16} />
-                <span>THE PERSONAL EDITION</span>
-              </div>
-              <h1>
-                Night <em>notes.</em>
-              </h1>
-              <p className="muted">Some nights are worth remembering.</p>
+              <h1>Journal</h1>
+              <button className="primary" onClick={newNight}>
+                <Plus size={17} aria-hidden="true" /> Log a night
+              </button>
             </div>
             <WeekRail
               entries={entries}
               onSelect={openEntry}
               onWrite={newNightOn}
             />
-            <div className="journal-summary">
-              <div>
-                <WeeklyAverage entries={entries} />
-              </div>
-              <button className="primary" onClick={newNight}>
-                <Plus size={17} />
-                Log a night
-              </button>
-            </div>
-            <details className="heat-disclosure">
+            <details
+              className="more-panel journal-tools"
+              onToggle={(event) => {
+                if (!event.currentTarget.open) setQuery("");
+              }}
+            >
               <summary>
-                Your month at a glance <ChevronRight size={17} />
+                Search and monthly heatmap{" "}
+                <ChevronRight size={16} aria-hidden="true" />
               </summary>
+              <label className="search-field">
+                <Search size={18} aria-hidden="true" />
+                <input
+                  aria-label="Search journal"
+                  placeholder="Search dates, notes, or habits…"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+                {query && (
+                  <button
+                    aria-label="Clear search"
+                    onClick={() => setQuery("")}
+                  >
+                    <X size={15} aria-hidden="true" />
+                  </button>
+                )}
+              </label>
+              <WeeklyAverage entries={entries} />
               <Heatmap entries={entries} goal={goal} onSelect={openEntry} />
             </details>
             <div className="section-heading journal-heading">
-              <h3>Your nights</h3>
-              <span className="pill subtle">
-                {entries.length} {demo ? "sample" : "personal"}
+              <h2>Your nights</h2>
+              <span className="caption">
+                {filtered.length} {filtered.length === 1 ? "night" : "nights"}
               </span>
             </div>
-            <label className="search-field">
-              <Search size={18} />
-              <input
-                aria-label="Search journal"
-                placeholder="Search thoughts, dates, habits…"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-              />
-              {query && (
-                <button aria-label="Clear search" onClick={() => setQuery("")}>
-                  <X size={15} />
-                </button>
-              )}
-            </label>
             <div className="entry-list">
               {filtered.map((e) => (
                 <button
@@ -480,10 +366,10 @@ export default function App({
                     </span>
                     {e.note && <span className="entry-note">{e.note}</span>}
                     <span className="entry-tags">
-                      {e.tags.slice(0, 2).map((t) => (
+                      {e.tags.slice(0, 1).map((t) => (
                         <span key={t}>{t}</span>
                       ))}
-                      {e.tags.length > 2 && <span>+{e.tags.length - 2}</span>}
+                      {e.tags.length > 1 && <span>+{e.tags.length - 1}</span>}
                     </span>
                   </span>
                   <span className="entry-moon" aria-hidden="true">
@@ -516,21 +402,15 @@ export default function App({
             </div>
           </div>
         )}
-        {tab === "discover" && (
-          <Discover
-            key={`${demo}-${discoveryTab}`}
-            entries={entries}
-            goal={goal}
-            demo={demo}
-            initial={discoveryTab}
-          />
-        )}
+        {tab === "discover" && <Discover entries={entries} goal={goal} />}
         {tab === "tonight" && (
           <Tonight
             store={store}
             setStore={setStore}
             notify={notify}
             windDown={windDown}
+            day={day}
+            onEditChecklist={() => setModal("checklist")}
           />
         )}
       </main>
@@ -576,6 +456,30 @@ export default function App({
         </div>
       )}
       <OverlayPresence show={modal !== null}>
+        {modal === "checklist" && (
+          <Modal
+            title="Edit wind-down checklist"
+            onClose={() => setModal(null)}
+          >
+            <ChecklistEditor
+              tasks={store.routine.tasks}
+              onSave={(tasks) => {
+                const ids = new Set(tasks.map(({ id }) => id));
+                setStore((previous) => ({
+                  ...previous,
+                  routine: {
+                    ...previous.routine,
+                    tasks,
+                    completed: previous.routine.completed.filter((id) =>
+                      ids.has(id),
+                    ),
+                  },
+                }));
+                setModal(null);
+              }}
+            />
+          </Modal>
+        )}
         {modal === "entry" && (
           <Modal
             title={

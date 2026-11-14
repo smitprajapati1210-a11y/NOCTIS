@@ -1,43 +1,28 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  ChartNoAxesCombined,
-  ChevronRight,
-  FlaskConical,
-  MessageCircle,
-  Send,
-  Sparkles,
-} from "lucide-react";
+import { useState } from "react";
+import { ChevronRight, FlaskConical } from "lucide-react";
 import {
   average,
   consistency,
   durationLabel,
   patterns,
   recent,
-  replyTo,
   sleepMinutes,
-  type ChatReply,
   type Entry,
 } from "../domain";
-import { PatternBars, SleepChart } from "./Charts";
+import { PatternBars } from "./Charts";
 import Segmented from "./Segmented";
 import RestedChart from "./RestedChart";
 
 export default function Discover({
   entries,
   goal,
-  demo,
-  initial = "overview",
 }: {
   entries: Entry[];
   goal: number;
-  demo: boolean;
-  initial?: "overview" | "patterns" | "chat";
 }) {
-  const [tab, setTab] = useState(initial);
+  const [tab, setTab] = useState<"overview" | "patterns">("overview");
   const [hasInteracted, setHasInteracted] = useState(false);
-  const selectTab = (next: typeof initial) => {
+  const selectTab = (next: typeof tab) => {
     if (next !== tab) {
       setHasInteracted(true);
       setTab(next);
@@ -51,20 +36,12 @@ export default function Discover({
   return (
     <div className="view discover-view">
       <div className="page-intro lab-intro">
-        <div className="lab-edition">
-          <FlaskConical size={16} />
-          <span>OBSERVE. REFLECT. REST.</span>
-        </div>
-        <h1>
-          The Night <em>Lab.</em>
-        </h1>
-        <p className="muted">A little curiosity. A clearer picture.</p>
+        <h1>Discover</h1>
       </div>
       <Segmented
         options={[
           { value: "overview", label: "Insights" },
           { value: "patterns", label: "Detective" },
-          { value: "chat", label: "Ask Noctis" },
         ]}
         value={tab}
         onChange={selectTab}
@@ -74,74 +51,50 @@ export default function Discover({
         {tab === "overview" && (
           <>
             <section className="insight-feature lab-lead">
-              <div className="lab-note-header">
-                <span>FIELD NOTE / THIS WEEK</span>
-                <span className="pill light">
-                  {demo ? "Sample nights" : "Your journal"}
-                </span>
-              </div>
+              <h2>Past 7 days</h2>
               <div className="lab-average">
                 {week.length
                   ? durationLabel(average(week.map(sleepMinutes)))
                   : "—"}
                 <span>your nightly average</span>
               </div>
-              <h2>
-                {week.length >= 3
-                  ? "Your rhythm is taking shape."
-                  : "A new story starts here."}
-              </h2>
               <p>
                 {week.length
-                  ? `${week.length} logged nights. ${week.filter((e) => sleepMinutes(e) >= goal * 60).length} at your ${goal}-hour goal. A small record of how you rest.`
-                  : "Log a night to start finding your rhythm. Missing mornings are never counted as zero sleep."}
+                  ? `${week.length} nights logged · ${week.filter((e) => sleepMinutes(e) >= goal * 60).length} met your ${goal}-hour goal`
+                  : "Log a night to see your weekly average."}
               </p>
-              <span className="lab-note-number" aria-hidden="true">
-                01
-              </span>
             </section>
-            <div className="stats-pair">
-              <div className="card mini-stat">
-                <span>Rested, on average</span>
-                <strong>
-                  {week.length
-                    ? average(week.map((e) => e.quality)).toFixed(1)
-                    : "—"}
-                  <small> / 5</small>
-                </strong>
-                <p>Your own morning rating</p>
-              </div>
-              <div className="card mini-stat">
-                <span>Bedtime variation</span>
-                <strong>
-                  {regularity === null ? "—" : regularity}
-                  <small>{regularity === null ? "" : " min"}</small>
-                </strong>
-                <p>
-                  {regularity === null
-                    ? "Needs 3 logged nights"
-                    : "Standard deviation · 7 days"}
-                </p>
-              </div>
-            </div>
-            <section className="card">
-              <div className="section-heading">
-                <div>
-                  <p className="eyebrow">NOTICING HOW YOU FEEL</p>
-                  <h3>Your morning mood</h3>
+            <details className="more-panel discover-details">
+              <summary>
+                Rested ratings and bedtime variation{" "}
+                <ChevronRight size={16} aria-hidden="true" />
+              </summary>
+              <div className="stats-pair">
+                <div className="card mini-stat">
+                  <span>Rested, on average</span>
+                  <strong>
+                    {week.length
+                      ? average(week.map((e) => e.quality)).toFixed(1)
+                      : "—"}
+                    <small> / 5</small>
+                  </strong>
+                  <p>Your own morning rating</p>
                 </div>
-                <span className="icon-tile">
-                  <ChartNoAxesCombined size={18} />
-                </span>
+                <div className="card mini-stat">
+                  <span>Bedtime variation</span>
+                  <strong>
+                    {regularity === null ? "—" : regularity}
+                    <small>{regularity === null ? "" : " min"}</small>
+                  </strong>
+                  <p>
+                    {regularity === null
+                      ? "Needs 3 logged nights"
+                      : "Standard deviation · 7 days"}
+                  </p>
+                </div>
               </div>
-              <p className="muted small">
-                Rested ratings over your last 7 mornings.
-              </p>
-              <RestedChart entries={entries} />
-              <p className="caption">
-                Self-reported, from 1 (drained) to 5 (bright).
-              </p>
-            </section>
+              {week.length > 0 && <RestedChart entries={entries} />}
+            </details>
             <button
               className="discovery-link"
               onClick={() => selectTab("patterns")}
@@ -154,22 +107,11 @@ export default function Discover({
                 <small>
                   {ready.length
                     ? `${ready.length} habits ready to compare`
-                    : "A few more nights, a little more clarity"}
+                    : "See which habits you can compare"}
                 </small>
               </span>
               <ChevronRight size={19} />
             </button>
-            <button className="ask-banner" onClick={() => selectTab("chat")}>
-              <Sparkles size={24} />
-              <span>
-                <strong>Let’s reflect together.</strong>
-                <small>Ask about your week or a habit.</small>
-              </span>
-              <ArrowUpRight size={22} />
-            </button>
-            <p className="caption centered">
-              Local insight preview · No AI model connected
-            </p>
           </>
         )}
         {tab === "patterns" && (
@@ -179,19 +121,12 @@ export default function Discover({
                 <FlaskConical size={22} />
               </span>
               <div>
-                <h3>A clue, not a conclusion.</h3>
-                <p>
-                  Compare tagged and untagged nights from the past 30 days.
-                  Other things may be at play.
-                </p>
+                <h2>Pattern detective</h2>
+                <p>Compare tagged and untagged nights from the past 30 days.</p>
               </div>
             </div>
-            {comparisons.map((p, index) => (
-              <details
-                className="card pattern-card"
-                key={p.tag}
-                open={index === 0 && p.ready}
-              >
+            {comparisons.map((p) => (
+              <details className="card pattern-card" key={p.tag}>
                 <summary className="section-heading">
                   <h3>{p.tag}</h3>
                   <span className={`pill ${p.ready ? "sage" : "subtle"}`}>
@@ -227,159 +162,7 @@ export default function Discover({
             ))}
           </>
         )}
-        {tab === "chat" && <Chat entries={entries} goal={goal} demo={demo} />}
       </div>
-    </div>
-  );
-}
-
-type Message = { role: "user" | "assistant"; text: string; reply?: ChatReply };
-function Chat({
-  entries,
-  goal,
-  demo,
-}: {
-  entries: Entry[];
-  goal: number;
-  demo: boolean;
-}) {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
-  const end = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (messages.length)
-      end.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }, [messages.length]);
-  function send(text: string) {
-    const question = text.trim();
-    if (!question) return;
-    const reply = replyTo(question, entries, goal);
-    setMessages((s) => [
-      ...s,
-      { role: "user", text: question },
-      { role: "assistant", text: reply.text, reply },
-    ]);
-    setInput("");
-  }
-  function submit(e: FormEvent) {
-    e.preventDefault();
-    send(input);
-  }
-  return (
-    <div className="chat-view">
-      <div className="assistant-notice">
-        <Sparkles size={16} />
-        <span>
-          Local preview · {demo ? "Sample journal" : "Your journal"} · No AI
-          connected
-        </span>
-      </div>
-      <div className="chat-welcome">
-        <div className="assistant-orb">
-          <Sparkles size={28} strokeWidth={1.3} />
-        </div>
-        <h2>
-          Let’s make sense
-          <br />
-          <em>of your nights.</em>
-        </h2>
-        <p>
-          I can summarize your nights, draw a chart, and help you notice
-          patterns.
-        </p>
-      </div>
-      <div className="prompt-list">
-        {[
-          "How was my week?",
-          "Show my rested ratings",
-          "Does late caffeine show a pattern?",
-        ].map((q) => (
-          <button key={q} onClick={() => send(q)}>
-            {q}
-            <ArrowRight size={15} />
-          </button>
-        ))}
-      </div>
-      <div
-        className="messages"
-        role="log"
-        aria-live="polite"
-        aria-label="Conversation"
-      >
-        {messages.map((m, i) => (
-          <div className={`message ${m.role}`} key={i}>
-            {m.role === "assistant" && (
-              <span className="message-name">
-                <Sparkles size={13} />
-                NOCTIS PREVIEW
-              </span>
-            )}
-            <p>{m.text}</p>
-            {m.reply?.chart && (
-              <div className="chat-chart-card">
-                <div className="section-heading">
-                  <strong>
-                    {m.reply.chart === "pattern"
-                      ? "A closer look"
-                      : m.reply.chart === "quality"
-                        ? "How your mornings felt"
-                        : "Your last 7 nights"}
-                  </strong>
-                  <ChartNoAxesCombined size={17} />
-                </div>
-                {m.reply.chart === "pattern" ? (
-                  (() => {
-                    const p =
-                      patterns(recent(entries, 30)).find(
-                        (p) => p.tag === m.reply?.tag,
-                      ) ?? patterns(recent(entries, 30)).find((p) => p.ready);
-                    return p?.ready ? (
-                      <>
-                        <p className="caption">{p.tag} · Last 30 days</p>
-                        <PatternBars pattern={p} />
-                      </>
-                    ) : (
-                      <p className="caption">
-                        Keep tagging your evenings. A comparison needs 3 nights
-                        with a tag and 3 without it.
-                      </p>
-                    );
-                  })()
-                ) : (
-                  <SleepChart
-                    entries={entries}
-                    goal={goal}
-                    metric={m.reply.chart}
-                    compact
-                  />
-                )}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-      <div ref={end} />
-      <form className="chat-composer" onSubmit={submit}>
-        <MessageCircle size={19} />
-        <input
-          aria-label="Ask about your sleep journal"
-          placeholder="Ask about your nights…"
-          maxLength={500}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-        />
-        <button
-          type="submit"
-          aria-label="Send message"
-          disabled={!input.trim()}
-        >
-          <Send size={18} />
-        </button>
-      </form>
-      <p className="caption centered">
-        Responses use local rules and your journal calculations. Chat is cleared
-        when you leave this view. For reflection, not diagnosis.
-      </p>
     </div>
   );
 }

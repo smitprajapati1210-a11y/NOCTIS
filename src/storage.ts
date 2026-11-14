@@ -1,5 +1,8 @@
 import {
   DEFAULT_PREFERENCES,
+  DEFAULT_WIND_DOWN_TASKS,
+  WIND_DOWN_TASK_LIMIT,
+  WIND_DOWN_TITLE_LIMIT,
   entryError,
   TAGS,
   today,
@@ -14,7 +17,11 @@ export const freshStore = (): Store => ({
   version: 1,
   entries: [],
   preferences: { ...DEFAULT_PREFERENCES },
-  routine: { date: today(), completed: [] },
+  routine: {
+    date: today(),
+    completed: [],
+    tasks: DEFAULT_WIND_DOWN_TASKS.map((task) => ({ ...task })),
+  },
   timer: { endAt: null, remaining: 180 },
   windDownTimer: {
     endAt: null,
@@ -111,20 +118,45 @@ export function parseStore(value: unknown): Store {
     travel: p.travel,
     windDown: p.windDown,
   };
-  if (
-    object(value.routine) &&
-    typeof value.routine.date === "string" &&
-    Array.isArray(value.routine.completed) &&
-    value.routine.completed.every(
-      (x) =>
-        typeof x === "string" &&
-        ["lights", "phone", "tomorrow", "reflect"].includes(x),
-    )
-  )
-    store.routine = {
-      date: value.routine.date,
-      completed: value.routine.completed as string[],
-    };
+  if (object(value.routine)) {
+    const routine = value.routine;
+    if (routine.tasks !== undefined) {
+      if (
+        !Array.isArray(routine.tasks) ||
+        routine.tasks.length > WIND_DOWN_TASK_LIMIT
+      )
+        throw new Error("The backup has an invalid wind-down checklist.");
+      const taskIds = new Set<string>();
+      const titles = new Set<string>();
+      store.routine.tasks = routine.tasks.map((task: unknown) => {
+        if (
+          !object(task) ||
+          typeof task.id !== "string" ||
+          !/^[a-zA-Z0-9_-]{1,64}$/.test(task.id) ||
+          taskIds.has(task.id) ||
+          typeof task.title !== "string" ||
+          !task.title.trim() ||
+          task.title.length > WIND_DOWN_TITLE_LIMIT ||
+          titles.has(task.title.trim().toLowerCase())
+        )
+          throw new Error("The backup has an invalid wind-down task.");
+        taskIds.add(task.id);
+        titles.add(task.title.trim().toLowerCase());
+        return { id: task.id, title: task.title.trim() };
+      });
+    }
+    if (typeof routine.date === "string" && Array.isArray(routine.completed)) {
+      const taskIds = new Set(store.routine.tasks.map((task) => task.id));
+      store.routine.date = routine.date;
+      store.routine.completed = [
+        ...new Set(
+          routine.completed.filter(
+            (id): id is string => typeof id === "string" && taskIds.has(id),
+          ),
+        ),
+      ];
+    }
+  }
   if (
     object(value.timer) &&
     (value.timer.endAt === null ||

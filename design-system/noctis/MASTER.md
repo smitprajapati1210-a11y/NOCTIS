@@ -54,7 +54,9 @@ Calculated solid-color contrast pairs: primary/card **14.47:1**, secondary/card 
 
 ## Wind-down priority
 
-The timer and checklist belong together before planning, with no large orb or long introduction pushing rituals down the page. The Today shortcut appears immediately after the lunar scene, before sleep statistics, with live countdown and daily progress. Use tabular countdown numbers and clear start/pause/reset controls. Checkbox feedback and progress use the existing short motion tokens; no pulsing Home badge or attention-grabbing idle effects. Keep system-notification claims out until implemented.
+The timer and checklist sit together before planning. The Today shortcut shows daily progress and a live countdown while running. Use tabular countdown numbers, clear start/pause/reset controls, and the existing short motion tokens for checkbox feedback and progress.
+
+The current Today layout puts a compact lunar greeting first, then **Ask Noctis**, **Log a night** and **Wind down**. Put sleep trends and secondary controls behind labeled rows. Use lilac for the main action and active selectors, muted sage for wind-down, and quiet plum surfaces for secondary controls. Reuse the existing sheet motion for checklist editing and keep disclosure feedback short.
 
 ## Sleep charts
 

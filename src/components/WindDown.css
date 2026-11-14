@@ -1,64 +1,4 @@
-/* Wind-down is a primary task: visible on Today, timer and checklist before planning. */
-.wind-home {
-  display: block;
-  width: 100%;
-  padding: 16px;
-  border: 1px solid #6c4d7a;
-  border-radius: 20px;
-  background: #281d34;
-  color: var(--text-primary);
-  text-align: left;
-}
-.wind-home-top,
-.wind-home-title,
-.wind-home-body {
-  display: flex;
-  align-items: center;
-}
-.wind-home-top,
-.wind-home-body {
-  justify-content: space-between;
-  gap: 16px;
-}
-.wind-home-title {
-  gap: 9px;
-  font-size: 1rem;
-  font-weight: 550;
-}
-.wind-home-top > svg,
-.wind-home-title > svg {
-  color: var(--accent);
-}
-.wind-home-body {
-  margin-top: 12px;
-  align-items: flex-end;
-}
-.wind-home-body > span {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.wind-home-body strong {
-  font-size: 0.8125rem;
-  font-weight: 450;
-}
-.wind-home-body small {
-  font-size: 0.6875rem;
-  color: var(--text-secondary);
-}
-.wind-home-body .wind-home-clock {
-  text-align: right;
-}
-.wind-home-clock strong {
-  font-size: 1.6rem;
-  line-height: 1;
-  font-weight: 400;
-  letter-spacing: -0.7px;
-  font-variant-numeric: tabular-nums;
-}
-.wind-home.is-running {
-  border-color: #b99cd0;
-}
+/* Timer, checklist and checklist editor. */
 .wind-progress {
   display: block;
   height: 3px;
@@ -74,9 +14,6 @@
   transform-origin: left;
   transition: transform var(--motion-control) var(--ease-enter);
 }
-.wind-home > .wind-progress {
-  margin-top: 14px;
-}
 .wind-down-view {
   gap: 20px;
   background: none;
@@ -86,12 +23,6 @@
   line-height: 1.1;
   letter-spacing: -0.4px;
   margin: 0;
-}
-.wind-down-intro > p {
-  margin-top: 6px;
-  font-size: 0.8125rem;
-  line-height: 1.6;
-  color: var(--text-secondary);
 }
 .wind-session {
   display: flex;
@@ -205,10 +136,31 @@
   line-height: 1.5;
   letter-spacing: -0.2px;
 }
-.wind-checklist-heading > span {
+.wind-checklist-status > span {
   color: var(--text-secondary);
   font-size: 0.75rem;
   font-variant-numeric: tabular-nums;
+}
+.wind-checklist-status {
+  display: grid;
+  gap: 8px;
+}
+.wind-edit {
+  min-height: 44px;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 7px;
+  padding: 0 12px;
+  border-radius: 11px;
+  background: #a978bd24;
+  color: var(--accent);
+  font-size: 0.8125rem;
+}
+.wind-empty {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
 }
 .wind-rituals {
   margin-top: 3px;
@@ -218,7 +170,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  min-height: 64px;
+  min-height: 52px;
   padding: 12px 0;
   border-bottom: 1px solid #60406c66;
   cursor: pointer;
@@ -235,30 +187,12 @@
   outline-offset: 4px;
   border-radius: 5px;
 }
-.wind-ritual-icon {
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  width: 26px;
-  color: #b999cc;
-}
 .wind-ritual-copy {
   flex: 1;
   min-width: 0;
-}
-.wind-ritual-copy strong {
-  display: block;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--text-primary);
-}
-.wind-ritual-copy small {
-  display: block;
-  margin-top: 2px;
-  font-size: 0.6875rem;
-  line-height: 1.5;
-  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 .wind-check {
   display: grid;
@@ -288,15 +222,6 @@
 .wind-ritual.is-done .wind-check > svg {
   opacity: 1;
   transform: scale(1);
-}
-.wind-ritual.is-done .wind-ritual-icon {
-  color: var(--accent);
-}
-.wind-checklist-done {
-  margin-top: 12px;
-  color: #c4d5ad;
-  font-size: 0.75rem;
-  line-height: 1.6;
 }
 .wind-breathing {
   border-top: 1px solid #60406c66;
@@ -360,4 +285,76 @@
   .wind-breathing > summary > svg {
     transition: none;
   }
+}
+
+.routine-editor {
+  display: grid;
+  gap: 22px;
+}
+.routine-editor h3 {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+.routine-add {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: end;
+}
+.routine-add input,
+.routine-task-edits input {
+  min-width: 0;
+  width: 100%;
+  min-height: 48px;
+  font-size: 1rem;
+}
+.routine-add .primary {
+  min-height: 48px;
+}
+.routine-add .primary:disabled {
+  opacity: 0.55;
+}
+.routine-suggestions {
+  display: grid;
+  gap: 4px;
+}
+.routine-suggestions button,
+.routine-task-edits button {
+  min-height: 44px;
+  color: var(--accent);
+  border-radius: 10px;
+  background: #a978bd21;
+}
+.routine-suggestions button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 0.875rem;
+}
+.routine-task-edits {
+  display: grid;
+  gap: 8px;
+}
+.routine-task-edits > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  align-items: center;
+  gap: 8px;
+}
+.routine-task-edits input {
+  padding: 8px 10px;
+  background: #271b31;
+  color: var(--text-primary);
+  border-radius: 10px;
+  border: 1px solid #76598780;
+}
+.routine-task-edits button {
+  display: grid;
+  place-items: center;
+}
+.routine-save {
+  min-height: 48px;
 }

@@ -32,11 +32,15 @@ export default function Tonight({
   setStore,
   notify,
   windDown,
+  day,
+  onEditChecklist,
 }: {
   store: Store;
   setStore: Dispatch<SetStateAction<Store>>;
   notify: (s: string) => void;
   windDown: WindDownController;
+  day: string;
+  onEditChecklist: () => void;
 }) {
   const [editPlan, setEditPlan] = useState(false);
   const [draft, setDraft] = useState(store.preferences);
@@ -77,156 +81,168 @@ export default function Tonight({
   return (
     <div className="view tonight-view wind-down-view">
       <div className="wind-down-intro">
-        <h1>Wind down.</h1>
-        <p>Make a little room for rest.</p>
+        <h1>Wind down</h1>
       </div>
-      <WindDownSession store={store} setStore={setStore} timer={windDown} />
-      <section className="plan-card">
-        <div className="section-heading">
-          <div className="mini-label">
-            <span className="status-dot" />
-            YOUR EVENING PLAN
-          </div>
-          <span className="small">
-            For {dateLabel(plan.eventDate, { weekday: "short" })}
-          </span>
-        </div>
-        <div className="plan-time">
-          <div>
-            <span>Start winding down</span>
-            <strong>{timeLabel(plan.wind)}</strong>
-          </div>
-          <Moon size={36} strokeWidth={1.1} />
-        </div>
-        <div className="plan-stops">
-          <div>
-            <span className="timeline-dot" />
-            <span>
-              In bed ·{" "}
-              {plan.bedDate === today()
-                ? "today"
-                : plan.bedDate < today()
-                  ? "last night"
-                  : "tomorrow"}
+      <WindDownSession
+        store={store}
+        setStore={setStore}
+        timer={windDown}
+        day={day}
+        onEdit={onEditChecklist}
+      />
+      <details className="more-panel wind-plan">
+        <summary>
+          <span>Evening plan</span>
+          <small>{timeLabel(plan.wind)} start</small>
+          <ChevronDown size={16} aria-hidden="true" />
+        </summary>
+        <section className="plan-card">
+          <div className="section-heading">
+            <div className="mini-label">
+              <span className="status-dot" />
+              YOUR EVENING PLAN
+            </div>
+            <span className="small">
+              For {dateLabel(plan.eventDate, { weekday: "short" })}
             </span>
-            <strong>{timeLabel(plan.bed)}</strong>
           </div>
-          <div>
-            <span className="timeline-dot" />
-            <span>Wake up</span>
-            <strong>{timeLabel(plan.wake)}</strong>
+          <div className="plan-time">
+            <div>
+              <span>Start winding down</span>
+              <strong>{timeLabel(plan.wind)}</strong>
+            </div>
+            <Moon size={36} strokeWidth={1.1} />
           </div>
-          <div>
-            <span className="timeline-dot" />
-            <span>{p.eventName || "First commitment"}</span>
-            <strong>{timeLabel(p.eventTime)}</strong>
+          <div className="plan-stops">
+            <div>
+              <span className="timeline-dot" />
+              <span>
+                In bed ·{" "}
+                {plan.bedDate === today()
+                  ? "today"
+                  : plan.bedDate < today()
+                    ? "last night"
+                    : "tomorrow"}
+              </span>
+              <strong>{timeLabel(plan.bed)}</strong>
+            </div>
+            <div>
+              <span className="timeline-dot" />
+              <span>Wake up</span>
+              <strong>{timeLabel(plan.wake)}</strong>
+            </div>
+            <div>
+              <span className="timeline-dot" />
+              <span>{p.eventName || "First commitment"}</span>
+              <strong>{timeLabel(p.eventTime)}</strong>
+            </div>
           </div>
-        </div>
-        <p className="plan-explain">
-          {p.goal}h in bed · {p.prep}m to get ready · {p.travel}m travel
-          {plan.constrained
-            ? ". Wake-up moved earlier to fit your morning."
-            : ""}
-        </p>
-        <button
-          className="plan-edit"
-          onClick={() => {
-            setDraft(p);
-            setEditPlan(!editPlan);
-          }}
-        >
-          Adjust my schedule
-          <ChevronDown size={16} className={editPlan ? "rotate" : ""} />
-        </button>
-      </section>
-      {editPlan && (
-        <form className="card schedule-form" onSubmit={savePlan}>
-          <h3>Make room for tomorrow</h3>
-          <p className="muted small">
-            Set your next morning commitment. NOCTIS works backward from it.
+          <p className="plan-explain">
+            {p.goal}h in bed · {p.prep}m to get ready · {p.travel}m travel
+            {plan.constrained
+              ? ". Wake-up moved earlier to fit your morning."
+              : ""}
           </p>
-          <label className="field">
-            Commitment name
-            <input
-              maxLength={60}
-              value={draft.eventName}
-              onChange={(e) => update("eventName", e.target.value)}
-              placeholder="Class, work, an early start…"
-            />
-          </label>
-          <div className="field-grid">
-            <label className="field">
-              Starts at
-              <input
-                type="time"
-                required
-                value={draft.eventTime}
-                onChange={(e) => update("eventTime", e.target.value)}
-              />
-            </label>
-            <label className="field">
-              Preferred wake-up
-              <input
-                type="time"
-                required
-                value={draft.wakeTime}
-                onChange={(e) => update("wakeTime", e.target.value)}
-              />
-            </label>
-          </div>
-          <div className="field-grid">
-            <label className="field">
-              Getting ready (min)
-              <input
-                type="number"
-                min="0"
-                max="180"
-                required
-                value={draft.prep}
-                onChange={(e) => update("prep", Number(e.target.value))}
-              />
-            </label>
-            <label className="field">
-              Travel (min)
-              <input
-                type="number"
-                min="0"
-                max="180"
-                required
-                value={draft.travel}
-                onChange={(e) => update("travel", Number(e.target.value))}
-              />
-            </label>
-          </div>
-          <label className="field">
-            Wind-down time (min)
-            <input
-              type="number"
-              min="5"
-              max="120"
-              required
-              value={draft.windDown}
-              onChange={(e) => update("windDown", Number(e.target.value))}
-            />
-          </label>
-          <button className="primary full" type="submit">
-            Update tonight’s plan
-            <ArrowRight size={17} />
+          <button
+            className="plan-edit"
+            onClick={() => {
+              setDraft(p);
+              setEditPlan(!editPlan);
+            }}
+          >
+            Adjust my schedule
+            <ChevronDown size={16} className={editPlan ? "rotate" : ""} />
           </button>
-        </form>
-      )}
-      <p className="caption plan-caption">
-        This is a time-in-bed plan, not a prediction of sleep.{" "}
-        {plan.windMoment.getTime() < Date.now()
-          ? "Your planned wind-down time has passed. You can still take a short pause."
-          : plan.windDate === today()
-            ? "Wind-down starts today."
-            : "Wind-down starts tomorrow."}{" "}
-        No alarm or notification is set.
-      </p>
+        </section>
+        {editPlan && (
+          <form className="card schedule-form" onSubmit={savePlan}>
+            <h3>Make room for tomorrow</h3>
+            <p className="muted small">
+              Set your next morning commitment. NOCTIS works backward from it.
+            </p>
+            <label className="field">
+              Commitment name
+              <input
+                maxLength={60}
+                value={draft.eventName}
+                onChange={(e) => update("eventName", e.target.value)}
+                placeholder="Class, work, an early start…"
+              />
+            </label>
+            <div className="field-grid">
+              <label className="field">
+                Starts at
+                <input
+                  type="time"
+                  required
+                  value={draft.eventTime}
+                  onChange={(e) => update("eventTime", e.target.value)}
+                />
+              </label>
+              <label className="field">
+                Preferred wake-up
+                <input
+                  type="time"
+                  required
+                  value={draft.wakeTime}
+                  onChange={(e) => update("wakeTime", e.target.value)}
+                />
+              </label>
+            </div>
+            <div className="field-grid">
+              <label className="field">
+                Getting ready (min)
+                <input
+                  type="number"
+                  min="0"
+                  max="180"
+                  required
+                  value={draft.prep}
+                  onChange={(e) => update("prep", Number(e.target.value))}
+                />
+              </label>
+              <label className="field">
+                Travel (min)
+                <input
+                  type="number"
+                  min="0"
+                  max="180"
+                  required
+                  value={draft.travel}
+                  onChange={(e) => update("travel", Number(e.target.value))}
+                />
+              </label>
+            </div>
+            <label className="field">
+              Wind-down time (min)
+              <input
+                type="number"
+                min="5"
+                max="120"
+                required
+                value={draft.windDown}
+                onChange={(e) => update("windDown", Number(e.target.value))}
+              />
+            </label>
+            <button className="primary full" type="submit">
+              Update tonight’s plan
+              <ArrowRight size={17} />
+            </button>
+          </form>
+        )}
+        <p className="caption plan-caption">
+          This is a time-in-bed plan, not a prediction of sleep.{" "}
+          {plan.windMoment.getTime() < Date.now()
+            ? "Your planned wind-down time has passed. You can still take a short pause."
+            : plan.windDate === today()
+              ? "Wind-down starts today."
+              : "Wind-down starts tomorrow."}{" "}
+          No alarm or notification is set.
+        </p>
+      </details>
       <details className="wind-breathing">
         <summary>
-          A short breathing pause <ChevronDown size={16} aria-hidden="true" />
+          Breathing timer <ChevronDown size={16} aria-hidden="true" />
         </summary>
         <section className="card breathing-card">
           <div className="section-heading">
@@ -315,11 +331,12 @@ export default function Tonight({
           </p>
         </section>
       </details>
-      <NightMoon date={tonightMoment(today())} tonight />
-      <div className="closing-note">
-        <span>✦</span>
-        <p>You don’t have to earn your rest.</p>
-      </div>
+      <details className="more-panel wind-plan">
+        <summary>
+          Tonight’s moon <ChevronDown size={16} aria-hidden="true" />
+        </summary>
+        <NightMoon date={tonightMoment(day)} tonight />
+      </details>
     </div>
   );
 }

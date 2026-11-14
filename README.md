@@ -67,16 +67,16 @@ Netlify serves the build in `dist` and runs the authentication endpoints in `net
 
 | View      | Working features                                                                                                                                                         |
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Today     | Latest logged night, estimated sleep after subtracting latency and awakenings, minimal 7/30-day point-and-line charts, personal goal, links to journal and evening plan. |
+| Today     | Ask Noctis with journal answers and chart cards, quick logging, wind-down shortcut, latest night and expandable 7/30-day charts. |
 | Journal   | Create, edit and delete nights; date/time validation; rested ratings; habit tags and notes; search; tappable 35-day heatmap.                                             |
-| Discover  | Computed weekly summaries, rested-rating chart, bedtime variation, habit comparisons and local chat with chart cards.                                                    |
-| Wind down | Prominent 15/30/45-minute session timer and daily checklist; morning schedule planner; optional short breathing pause.                                                   |
+| Discover  | Weekly summary, expandable rested-rating chart and bedtime variation, and the pattern detective. |
+| Wind down | 15/30/45-minute session timer, editable daily checklist with task suggestions, and an expandable evening plan and breathing timer. |
 | Moon      | Tonight’s calculated phase at 9 pm in the device’s timezone; historical phases at each entry’s actual bedtime.                                                           |
 | Settings  | Name, sleep goal, separate sample mode, JSON export/import with a replacement confirmation, and personal-journal erase confirmation.                                     |
 
 New accounts open an empty personal journal. Use **Today → Log my first night** to add a night. The walkthrough uses examples, and **Settings → Explore sample nights** opens an optional sample view. **Open my journal** returns to your entries. If you used the previous preview and signed in while sample mode was active, switch it off in Settings.
 
-**Wind down** is directly available in the bottom navigation and through a prominent Today card, before the sleep statistics. The card shows live time remaining and checklist progress. The timer and four daily rituals appear together before the schedule planner. Choose 15, 30 or 45 minutes, pause/resume, or reset; the selected length and progress survive navigation and reopening. The original 1/3/5-minute breathing pause is a separate optional section. Countdown completion is shown in the app; this does not set a system alarm or notification.
+**Wind down** is directly available in the bottom navigation and through a Today shortcut with checklist progress and a live countdown when running. Choose 15, 30 or 45 minutes, pause, resume, or reset. Tap **Edit** beside the checklist to rename tasks, remove them, or add your own or a suggestion. Tap **Save checklist** to apply the changes. Tasks stay saved for that browser and account, and checkmarks start fresh each day. The evening plan and 1/3/5-minute breathing timer open separately. Countdown completion appears in the app.
 
 The chat and insights are a **local, rule-based preview, not a connected AI model**. They calculate summaries from the journal and answer supported questions such as “How was my week?”, “Show my rested ratings”, and “Does late caffeine show a pattern?” Unknown questions explain the preview’s scope. A real model and backend are the next major milestone.
 

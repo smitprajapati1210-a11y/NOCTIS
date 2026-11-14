@@ -1,99 +1,58 @@
 import type { Dispatch, SetStateAction } from "react";
 import {
-  ArrowUpRight,
-  BookOpen,
   Check,
+  ChevronRight,
+  Pencil,
   Clock3,
   Moon,
   Pause,
   Play,
   RotateCcw,
-  Smartphone,
-  Sunrise,
 } from "lucide-react";
-import { today, type Store } from "../domain";
+import { routineCompletedToday, today, type Store } from "../domain";
 import type { WindDownController } from "../useWindDown";
 
-const rituals = [
-  {
-    id: "lights",
-    title: "Soften the room",
-    note: "Dim the lights. Make a little space.",
-    icon: Moon,
-  },
-  {
-    id: "phone",
-    title: "Put the scroll to bed",
-    note: "Let the next thing wait until tomorrow.",
-    icon: Smartphone,
-  },
-  {
-    id: "tomorrow",
-    title: "Set tomorrow down",
-    note: "Write one thing you want to remember.",
-    icon: BookOpen,
-  },
-  {
-    id: "reflect",
-    title: "Find one good thing",
-    note: "Small moments count, too.",
-    icon: Sunrise,
-  },
-];
-const doneToday = (store: Store) =>
-  store.routine.date === today()
-    ? rituals
-        .filter(({ id }) => store.routine.completed.includes(id))
-        .map(({ id }) => id)
-    : [];
 const clock = (seconds: number) =>
   `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 
 export function WindDownHome({
   store,
   timer,
+  day,
   onOpen,
 }: {
   store: Store;
   timer: WindDownController;
+  day: string;
   onOpen: () => void;
 }) {
-  const done = doneToday(store).length;
+  const done = routineCompletedToday(store.routine, day).length;
+  const total = store.routine.tasks.length;
   return (
     <button
-      className={`wind-home ${timer.running ? "is-running" : ""}`}
+      className="today-wind"
       onClick={onOpen}
       aria-label="Open wind-down timer and checklist"
     >
-      <span className="wind-home-top">
-        <span className="wind-home-title">
-          <Moon size={17} aria-hidden="true" /> Wind down
-        </span>
-        <ArrowUpRight size={18} aria-hidden="true" />
+      <Moon size={19} aria-hidden="true" />
+      <span>
+        <strong>Wind down</strong>
+        <small>
+          {total
+            ? `${done} of ${total} rituals complete`
+            : "Set up your checklist"}
+        </small>
       </span>
-      <span className="wind-home-body">
-        <span>
-          <strong>Timer + checklist</strong>
-          <small>
-            {done} of {rituals.length} rituals complete
-          </small>
+      {timer.running ? (
+        <span
+          className="today-timer"
+          aria-label={`${clock(timer.remaining)} left`}
+        >
+          {clock(timer.remaining)}
         </span>
-        <span className="wind-home-clock">
-          <strong>{clock(timer.remaining)}</strong>
-          <small>
-            {timer.running
-              ? "in progress"
-              : timer.remaining === 0
-                ? "timer complete"
-                : timer.remaining < timer.duration
-                  ? "paused"
-                  : "take your time"}
-          </small>
-        </span>
-      </span>
-      <span className="wind-progress" aria-hidden="true">
-        <span style={{ transform: `scaleX(${done / rituals.length})` }} />
-      </span>
+      ) : (
+        <ChevronRight size={17} aria-hidden="true" />
+      )}
     </button>
   );
 }
@@ -102,12 +61,17 @@ export function WindDownSession({
   store,
   setStore,
   timer,
+  day,
+  onEdit,
 }: {
   store: Store;
   setStore: Dispatch<SetStateAction<Store>>;
   timer: WindDownController;
+  day: string;
+  onEdit: () => void;
 }) {
-  const done = doneToday(store);
+  const { tasks } = store.routine;
+  const done = routineCompletedToday(store.routine, day);
   const options = [...new Set([900, 1800, 2700, timer.duration])].sort(
     (a, b) => a - b,
   );
@@ -170,12 +134,12 @@ export function WindDownSession({
         <div className="wind-timer-footer">
           <p className="wind-timer-note" role="status">
             {timer.running
-              ? "Your timer keeps going as you move around NOCTIS."
+              ? "Running"
               : timer.remaining === 0
-                ? "Your time is yours again. Finish your rituals at your pace."
+                ? "Complete"
                 : paused
-                  ? "Paused. Pick up whenever you’re ready."
-                  : "A little room between your day and your night."}
+                  ? "Paused"
+                  : ""}
           </p>
           <button
             className="wind-reset"
@@ -189,63 +153,67 @@ export function WindDownSession({
       <div className="wind-checklist">
         <div className="wind-checklist-heading">
           <h2>Your wind-down checklist</h2>
-          <span>
-            {done.length}/{rituals.length}
-          </span>
+          <button className="wind-edit" onClick={onEdit}>
+            <Pencil size={14} aria-hidden="true" />{" "}
+            {tasks.length ? "Edit" : "Add tasks"}
+          </button>
         </div>
-        <div
-          className="wind-progress"
-          role="progressbar"
-          aria-label="Wind-down checklist progress"
-          aria-valuemin={0}
-          aria-valuemax={rituals.length}
-          aria-valuenow={done.length}
-        >
-          <span
-            style={{ transform: `scaleX(${done.length / rituals.length})` }}
-          />
-        </div>
-        <div className="wind-rituals">
-          {rituals.map(({ id, title, note, icon: Icon }) => (
-            <label
-              key={id}
-              className={`wind-ritual ${done.includes(id) ? "is-done" : ""}`}
-            >
-              <input
-                type="checkbox"
-                checked={done.includes(id)}
-                onChange={() =>
-                  setStore((s) => {
-                    const current =
-                      s.routine.date === today() ? s.routine.completed : [];
-                    return {
-                      ...s,
-                      routine: {
-                        date: today(),
-                        completed: current.includes(id)
+        {tasks.length > 0 ? (
+          <>
+            <div className="wind-checklist-status">
+              <span>
+                {done.length} of {tasks.length} done
+              </span>
+              <div
+                className="wind-progress"
+                role="progressbar"
+                aria-label="Wind-down checklist progress"
+                aria-valuemin={0}
+                aria-valuemax={tasks.length}
+                aria-valuenow={done.length}
+              >
+                <span
+                  style={{ transform: `scaleX(${done.length / tasks.length})` }}
+                />
+              </div>
+            </div>
+            <div className="wind-rituals">
+              {tasks.map(({ id, title }) => (
+                <label
+                  key={id}
+                  className={`wind-ritual ${done.includes(id) ? "is-done" : ""}`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={done.includes(id)}
+                    onChange={() =>
+                      setStore((previous) => {
+                        const date = today();
+                        const current = routineCompletedToday(
+                          previous.routine,
+                          date,
+                        );
+                        const completed = current.includes(id)
                           ? current.filter((item) => item !== id)
-                          : [...current, id],
-                      },
-                    };
-                  })
-                }
-              />
-              <span className="wind-ritual-icon">
-                <Icon size={18} aria-hidden="true" />
-              </span>
-              <span className="wind-ritual-copy">
-                <strong>{title}</strong>
-                <small>{note}</small>
-              </span>
-              <span className="wind-check" aria-hidden="true">
-                <Check size={13} />
-              </span>
-            </label>
-          ))}
-        </div>
-        {done.length === rituals.length && (
-          <p className="wind-checklist-done" role="status">
-            A little less to carry into the night.
+                          : [...current, id];
+                        return {
+                          ...previous,
+                          routine: { ...previous.routine, date, completed },
+                        };
+                      })
+                    }
+                  />
+                  <span className="wind-check" aria-hidden="true">
+                    <Check size={13} />
+                  </span>
+                  <span className="wind-ritual-copy">{title}</span>
+                </label>
+              ))}
+            </div>
+          </>
+        ) : (
+          <p className="wind-empty">
+            Add a task to build your evening routine.
           </p>
         )}
       </div>
