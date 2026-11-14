@@ -117,6 +117,7 @@ test("configured Google sign-in uses the registered callback and leaves Apple in
   assert.deepEqual(await available.json(), {
     google: true,
     mailEnabled: false,
+    passwordEnabled: true,
   });
   const callbackURL = `${origin}/?account=callback`;
   const start = await request("auth/sign-in/social", {

@@ -393,6 +393,9 @@
   gap: 12px;
   margin-top: 16px;
 }
+.entry-form[hidden] {
+  display: none;
+}
 .entry-form .field {
   margin: 0;
   color: var(--text-primary);

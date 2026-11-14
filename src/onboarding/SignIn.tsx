@@ -5,7 +5,11 @@ import { authClient } from "./authClient";
 
 type Mode = "signin" | "signup" | "forgot" | "reset";
 type Provider = "google" | "apple";
-type Providers = { google: boolean; mailEnabled: boolean };
+type Providers = {
+  google: boolean;
+  mailEnabled: boolean;
+  passwordEnabled: boolean;
+};
 const headings = {
   signin: ["Come on in.", "Sign in to open your sleep journal."],
   signup: ["Make it yours.", "Create your NOCTIS account."],
@@ -87,6 +91,7 @@ export default function SignIn({
   const [status, setStatus] = useState("");
   const heading = useRef<HTMLHeadingElement>(null);
   const returnUrl = `${window.location.origin}/?account=callback`;
+  const canUsePassword = providers?.passwordEnabled !== false;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -107,7 +112,7 @@ export default function SignIn({
   }, [mode]);
 
   function switchMode(next: Mode) {
-    if (active.current) return;
+    if (active.current || !canUsePassword) return;
     setMode(next);
     if (mode === "reset") onResetComplete();
     setPassword("");
@@ -149,7 +154,7 @@ export default function SignIn({
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    if (active.current) return;
+    if (active.current || !canUsePassword) return;
     active.current = true;
     setBusy(true);
     setError("");
@@ -264,12 +269,22 @@ export default function SignIn({
                   Google sign-in is awaiting setup.
                 </p>
               )}
-              <div className="entry-divider">
-                <span>or use email</span>
-              </div>
+              {canUsePassword ? (
+                <div className="entry-divider">
+                  <span>or use email</span>
+                </div>
+              ) : (
+                <p className="entry-provider-status">
+                  Use Google to join the beta.
+                </p>
+              )}
             </>
           )}
-          <form className="entry-form" onSubmit={submit}>
+          <form
+            className="entry-form"
+            onSubmit={submit}
+            hidden={!canUsePassword}
+          >
             {mode === "signup" && (
               <label className="field">
                 Name
@@ -330,7 +345,7 @@ export default function SignIn({
                   : "Use at least 12 characters."}
               </p>
             )}
-            {(error || connectionError) && (
+            {canUsePassword && (error || connectionError) && (
               <p className="entry-error" role="alert">
                 {error ||
                   "The account service is unavailable. Check that NOCTIS is running."}
@@ -362,39 +377,47 @@ export default function SignIn({
               )}
             </button>
           </form>
-          <div className="entry-login-actions">
-            {mode === "signin" ? (
-              <>
-                <button
-                  className="entry-link"
-                  type="button"
-                  disabled={busy}
-                  onClick={() => switchMode("signup")}
-                >
-                  Create an account
-                </button>
-                {providers?.mailEnabled && (
+          {!canUsePassword && (error || connectionError) && (
+            <p className="entry-error" role="alert">
+              {error ||
+                "The account service is unavailable. Try again in a moment."}
+            </p>
+          )}
+          {canUsePassword && (
+            <div className="entry-login-actions">
+              {mode === "signin" ? (
+                <>
                   <button
                     className="entry-link"
                     type="button"
                     disabled={busy}
-                    onClick={() => switchMode("forgot")}
+                    onClick={() => switchMode("signup")}
                   >
-                    Forgot password?
+                    Create an account
                   </button>
-                )}
-              </>
-            ) : (
-              <button
-                className="entry-link"
-                type="button"
-                disabled={busy}
-                onClick={() => switchMode("signin")}
-              >
-                <ArrowLeft size={16} aria-hidden="true" /> Back to sign in
-              </button>
-            )}
-          </div>
+                  {providers?.mailEnabled && (
+                    <button
+                      className="entry-link"
+                      type="button"
+                      disabled={busy}
+                      onClick={() => switchMode("forgot")}
+                    >
+                      Forgot password?
+                    </button>
+                  )}
+                </>
+              ) : (
+                <button
+                  className="entry-link"
+                  type="button"
+                  disabled={busy}
+                  onClick={() => switchMode("signin")}
+                >
+                  <ArrowLeft size={16} aria-hidden="true" /> Back to sign in
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </main>
     </EntryFrame>

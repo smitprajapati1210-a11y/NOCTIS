@@ -84,6 +84,12 @@ The chat is **deterministic local rules, not an LLM**. The account server handle
 - Validated the Blueprint against Render’s JSON schema. All 31 tests and the production build passed. A local production run on the pinned Node 24.22.3 verified the app page, account database creation, external Google callback generation, and independent visitor rate limits.
 - The deploy requires a GitHub repository, a hosting plan and an SMTP sender. Once deployed, register the actual HTTPS Google callback and verify both sign-in methods on iPhone. No cloud service has been provisioned. See the Render steps in README.
 
+## Follow-up — Netlify friends beta, 2026-11-14
+
+- The user chose a free, shareable beta. Created **noctis-sleep-beta** under the user’s Netlify team and provisioned its PostgreSQL account database. Added a Netlify Function that reuses the app’s Better Auth configuration and a tracked Postgres account migration. Registered an independent Google client for `https://noctis-sleep-beta.netlify.app/api/auth/callback/google`.
+- The hosted beta starts with Google sign-in. It enables email/password only after a verified SMTP sender is configured. Local email preview and the inactive Apple button remain available in their existing roles. Journals remain on the device.
+- The user authorized their `smitprajapati1210-a11y` GitHub account and asked for the whole project there. Use a private repo while beta testing. Review the Git history and the public-facing README before choosing portfolio visibility.
+
 ## Next milestone — physical iPhone and motion tuning
 
 1. Read README’s beginner-friendly run instructions. Start `npm run dev` in this folder.

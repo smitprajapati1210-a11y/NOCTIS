@@ -36,14 +36,18 @@ function localSecret(directory: string): string {
   return readFileSync(file, "utf8").trim();
 }
 
-export async function createAuthServer({
+export function createAuthConfig({
   env,
   port,
   preview = false,
+  database,
+  secret,
 }: {
   env: NodeJS.ProcessEnv;
   port: number;
   preview?: boolean;
+  database: NonNullable<BetterAuthOptions["database"]>;
+  secret: string;
 }) {
   const publicUrl = env.NOCTIS_URL ? new URL(env.NOCTIS_URL) : undefined;
   if (
@@ -67,23 +71,12 @@ export async function createAuthServer({
   }
 
   const mailEnabled = !!(env.NOCTIS_SMTP_URL && env.NOCTIS_MAIL_FROM);
-  const secretOverride = env.BETTER_AUTH_SECRET;
-  if (
-    !preview &&
-    (!mailEnabled || !secretOverride || secretOverride.length < 32)
-  ) {
+  const passwordEnabled = preview || mailEnabled;
+  if (!preview && secret.length < 32) {
     throw new Error(
-      "Public sign-in requires SMTP, a sender address and a server secret of at least 32 characters.",
+      "Public sign-in requires a server secret of at least 32 characters.",
     );
   }
-  const directory =
-    env.NOCTIS_AUTH_DATA_DIR || (preview ? ".noctis" : ".noctis/production");
-  mkdirSync(directory, { recursive: true, mode: 0o700 });
-  const secret = secretOverride || localSecret(directory);
-  const database = new DatabaseSync(join(directory, "accounts.sqlite"));
-  database.exec(
-    "PRAGMA journal_mode = WAL; PRAGMA busy_timeout = 5000; PRAGMA foreign_keys = ON;",
-  );
   const origins = publicUrl ? [publicUrl.origin] : localOrigins(port);
   const hosts = new Set(origins.map((origin) => new URL(origin).host));
   const google = !!(
@@ -91,6 +84,11 @@ export async function createAuthServer({
     env.GOOGLE_CLIENT_ID &&
     env.GOOGLE_CLIENT_SECRET
   );
+  if (!passwordEnabled && !google) {
+    throw new Error(
+      "Configure Google or verified email sign-in for the public app.",
+    );
+  }
   const mail = mailEnabled
     ? nodemailer.createTransport(env.NOCTIS_SMTP_URL!)
     : null;
@@ -116,7 +114,7 @@ export async function createAuthServer({
     session: { expiresIn: 7 * 24 * 60 * 60 },
     account: { encryptOAuthTokens: true, accountLinking: { enabled: false } },
     emailAndPassword: {
-      enabled: true,
+      enabled: passwordEnabled,
       minPasswordLength: 12,
       maxPasswordLength: 128,
       requireEmailVerification: mailEnabled,
@@ -160,14 +158,43 @@ export async function createAuthServer({
     },
   } satisfies BetterAuthOptions;
 
+  return {
+    options,
+    hosts,
+    providers: { google, mailEnabled, passwordEnabled },
+  };
+}
+
+export async function createAuthServer({
+  env,
+  port,
+  preview = false,
+}: {
+  env: NodeJS.ProcessEnv;
+  port: number;
+  preview?: boolean;
+}) {
+  const directory =
+    env.NOCTIS_AUTH_DATA_DIR || (preview ? ".noctis" : ".noctis/production");
+  mkdirSync(directory, { recursive: true, mode: 0o700 });
+  const secret =
+    env.BETTER_AUTH_SECRET ?? (preview ? localSecret(directory) : "");
+  const database = new DatabaseSync(join(directory, "accounts.sqlite"));
+  let config: ReturnType<typeof createAuthConfig>;
+
   try {
-    const migration = await getMigrations(options);
+    database.exec(
+      "PRAGMA journal_mode = WAL; PRAGMA busy_timeout = 5000; PRAGMA foreign_keys = ON;",
+    );
+    config = createAuthConfig({ env, port, preview, database, secret });
+    const migration = await getMigrations(config.options);
     await migration.runMigrations();
   } catch (error) {
     database.close();
     throw error;
   }
 
+  const { options, hosts, providers } = config;
   const handleAuth = toNodeHandler(betterAuth(options));
   return {
     close: () => database.close(),
@@ -182,7 +209,7 @@ export async function createAuthServer({
       }
       if (path === "/api/noctis/auth-options" && req.method === "GET") {
         res.setHeader("Content-Type", "application/json");
-        res.end(JSON.stringify({ google, mailEnabled }));
+        res.end(JSON.stringify(providers));
         return;
       }
       if (!path.startsWith("/api/auth/")) {

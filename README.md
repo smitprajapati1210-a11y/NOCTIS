@@ -2,21 +2,18 @@
 
 **Your night, understood.** A mobile-only sleep journal with a dark purple interface, designed for iPhone first.
 
+[Open the NOCTIS friends beta](https://noctis-sleep-beta.netlify.app/). Google sign-in creates a hosted account. Journal entries live in the browser where you write them. Discover and its chat show calculations from your journal using local rules.
+
 ## Open and run
 
-The authoritative project is **`/Users/smitprajapati/Projects/NOCTIS`**, the folder already open in VS Code. Continue working here; do not create another copy in a generated chat folder.
-
-Dependencies are installed. The account server runs on Node.js 24.15 or newer. In VS Code, choose **Terminal → New Terminal**, then enter:
+The account server runs on Node.js 24.15 or newer. In VS Code, open the project folder and choose **Terminal → New Terminal**, then enter:
 
 ```sh
+npm ci
 npm run dev
 ```
 
-Open **http://localhost:5173** on the Mac. Keep that terminal running. Press **Control + C** in it to stop the app. If starting from a different folder, first enter:
-
-```sh
-cd /Users/smitprajapati/Projects/NOCTIS
-```
+Open **http://localhost:5173** on the Mac. Keep that terminal running. Press **Control + C** in it to stop the app.
 
 If dependencies need to be restored after copying or cloning the project, run `npm ci` first. The development server uses port 5173 and reports an error if another copy is already running. VS Code also has a **NOCTIS: Start app** task under Terminal → Run Task.
 
@@ -48,6 +45,14 @@ Use a hosted HTTPS address for Google sign-in on iPhone. The local Wi-Fi IP addr
 4. Run `npm run build` and `npm start` on the host. The server listens on loopback port 4173 by default. From iPhone Safari, test Google sign-in, verified email signup, password recovery and sign-out at the registered HTTPS address.
 
 Automated tests cover Google redirect generation and the verification and recovery flows with a local SMTP inbox. Live sign-in and mail delivery need to be tested with the registered Google client and the deployed sender.
+
+### Deploy the friends beta on Netlify
+
+Netlify serves the build in `dist` and runs the authentication endpoints in `netlify/functions`. Netlify Database keeps accounts and sessions in Postgres. SQLite powers local previews and the Render deployment. The current hosted beta uses Google. When an SMTP sender is configured, verified email signup and password recovery become available on the same site. [Netlify free plan](https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/credit-based-pricing-plans/) · [Netlify Database](https://docs.netlify.com/build/data-and-storage/netlify-database/getting-started/)
+
+1. Create a Netlify project on the free plan and provision Netlify Database. Apply `netlify/database/migrations/0001_accounts.sql` through Netlify’s migration system.
+2. Register a Google Web application client for `https://YOUR-SITE.netlify.app/api/auth/callback/google`. Configure `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` and a unique `BETTER_AUTH_SECRET` in Netlify’s environment. If the runtime needs an override, set `AWS_LAMBDA_JS_RUNTIME=nodejs24.x` there. Netlify supplies the site URL and database connection. In a custom-domain deploy, set `NOCTIS_URL` to the canonical HTTPS address.
+3. For the existing linked Netlify project, run `npm run build` and `npx netlify-cli deploy --prod --no-build`. Verify the live home page and sign in through Google after deployment. Use `NOCTIS_SMTP_URL` and `NOCTIS_MAIL_FROM` when setting up a verified email sender.
 
 ### Deploy on Render
 
