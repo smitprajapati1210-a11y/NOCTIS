@@ -61,8 +61,16 @@ const tabs = [
   { id: "tonight" as const, label: "Wind down", icon: Moon },
 ];
 
-export default function App() {
-  const initial = useMemo(readStore, []);
+export default function App({
+  storageKey = STORAGE_KEY,
+  legacyStorageKey,
+  account,
+}: {
+  storageKey?: string;
+  legacyStorageKey?: string;
+  account?: { email: string; signOut: () => Promise<void> };
+} = {}) {
+  const initial = useMemo(() => readStore(storageKey), [storageKey]);
   const [store, setStore] = useState<Store>(initial.store);
   const [readError, setReadError] = useState(initial.error);
   const [writeError, setWriteError] = useState("");
@@ -83,14 +91,14 @@ export default function App() {
   useEffect(() => {
     if (readError) return;
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+      localStorage.setItem(storageKey, JSON.stringify(store));
       setWriteError("");
     } catch {
       setWriteError(
         "This browser could not save your latest changes. Export a backup before closing the app.",
       );
     }
-  }, [store, readError]);
+  }, [store, readError, storageKey]);
   useEffect(() => {
     const visibility = () => {
       document.documentElement.dataset.pageHidden = String(document.hidden);
@@ -596,6 +604,9 @@ export default function App() {
         {modal === "settings" && (
           <Modal title="Your space" onClose={() => setModal(null)}>
             <Settings
+              storageKey={storageKey}
+              legacyStorageKey={legacyStorageKey}
+              account={account}
               store={store}
               setStore={setStore}
               storageError={readError || writeError}

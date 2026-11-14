@@ -35,7 +35,7 @@
 
 The build generates an offline shell with hashed bundled assets, icons and fonts. The LAN HTTP address is for normal browser testing. iPhone service-worker/offline behavior requires a trusted HTTPS origin. Home Screen storage, keyboard/safe-area behavior, largest Dynamic Type, landscape, real touch feel and 0.1× animation-panel inspection remain unverified. Do not present DOM tests or Mac screenshots as physical iPhone validation.
 
-The chat is **deterministic local rules, not an LLM**. No backend, account, cloud sync, analytics, automatic sleep recording, Apple Health connection, alarm, calendar permission, notifications, or medical diagnosis is implemented. One main sleep entry per wake-up date. Data and exported backups are local/plain JSON; no app-level encryption claim.
+The chat is **deterministic local rules, not an LLM**. The account server handles authentication. Journal entries stay device-local, and the assistant preview runs from local rules. One main sleep entry per wake-up date. Data and exported backups are local/plain JSON; no app-level encryption claim.
 
 ## Follow-up — minimal line charts and hidden scrollbars, 2026-11-05
 
@@ -59,6 +59,18 @@ The chat is **deterministic local rules, not an LLM**. No backend, account, clou
 - Moved the existing four daily rituals into the same primary session section, above the schedule planner. They now use native checkboxes, full-row targets and visible progress. Each local day starts an unticked checklist without changing saved journal entries.
 - Preserved the original 1/3/5-minute breathing timer in an optional section. Older backups keep this timer and initialize the new wind-down timer from the planning preference; new backups preserve long sessions and their duration.
 - Verification: all 26 tests and the production build pass. New checks cover home access, long-session persistence through remounts, pause/reset duration, checkbox persistence, completion while on Today, and older-backup migration. Safari screenshots inspected at the normal phone shell and 375×812: the Today shortcut is visible without scrolling, and the timer plus all four rituals appear before planning on the first Wind down screen. Physical iPhone suspension and touch checks remain unverified by these Mac inspections.
+
+## Follow-up — introduction and accounts, 2026-11-14
+
+- Added a separate four-scene introduction with a generated bedroom photograph, tonight’s lunar phase, sample journal and interactive sleep chart, timer preset selection, and rehearsal checklist. The steps use directional page transitions and respect reduced motion.
+- The opening photograph lives at `public/onboarding/night-room.jpg`. It was generated with the built-in ImageGen tool using the prompt below. The UI overlays the calculated moon phase.
+
+  > Create a single photographic asset for NOCTIS, an intimate iPhone sleep journal's first-run welcome. Portrait 4:5 crop. Editorial interior photograph from inside a very quiet small bedroom looking toward an unlit tall softly arched window. In the lower right, side of a bed with a subtly rumpled dark plum linen duvet, a tiny table and closed paper notebook in silhouette. Outside, faint hills under deep indigo twilight and a very fine scattered distant star field. NO visible moon, no people, no lightbulbs, no illuminated screens, no text, no symbols or UI, no decorative border or graphics. Muted deep aubergine/navy almost black palette, tactile natural linen, soft dim blue-violet window light, understated contemporary film photography. Keep the window readable in the center-right, dark clean negative space on the left, ample top and bottom crop room. No bright white areas, flashy lens effects, or fantasy elements.
+
+- Added a real Better Auth and SQLite server for persistent email/password accounts, server sessions and sign-out. Live SMTP config adds verified email signup and recovery. Google and Apple use their respective OAuth callbacks when configured.
+- Journals use a separate browser storage key per account. A confirmed Settings import brings the earlier journal into the signed-in account while preserving the original copy.
+- Verified browser walkthrough, sample interactions, email account creation, entry to the existing app and sign-out in isolated Chrome preview. The production build and 29 tests passed, including email session revocation, Google and Apple authorization URLs and legacy journal isolation.
+- The current preview needs live Google OAuth registration, Apple Developer registration, an HTTPS host and SMTP to test all public sign-in paths. See README for the exact callback routes and server settings.
 
 ## Next milestone — physical iPhone and motion tuning
 

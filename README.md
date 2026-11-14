@@ -6,7 +6,7 @@
 
 The authoritative project is **`/Users/smitprajapati/Projects/NOCTIS`**, the folder already open in VS Code. Continue working here; do not create another copy in a generated chat folder.
 
-Dependencies are installed. In VS Code, choose **Terminal → New Terminal**, then enter:
+Dependencies are installed. The account server runs on Node.js 24.15 or newer. In VS Code, choose **Terminal → New Terminal**, then enter:
 
 ```sh
 npm run dev
@@ -20,6 +20,25 @@ cd /Users/smitprajapati/Projects/NOCTIS
 
 If dependencies need to be restored after copying or cloning the project, run `npm ci` first. The development server uses port 5173 and reports an error if another copy is already running. VS Code also has a **NOCTIS: Start app** task under Terminal → Run Task.
 
+## Introduction and accounts
+
+On first open, explore the night scene, try a rested rating, tap through a sample sleep chart and check off a wind-down ritual. These examples use sample data. Continue to sign in, then choose **Create an account** to use an email address and a new password of at least 12 characters. The Mac preview stores real accounts in SQLite and uses server-managed session cookies. **Settings → Account** has sign-out.
+
+The Wi-Fi URL is for local testing with a password you use only for this preview. The preview accepts an email address as the account name and supports sign-in without inbox verification. Use a verified HTTPS deployment and SMTP for public signup, email confirmation and password reset.
+
+Each account uses its own journal storage in the current browser. To bring an existing journal into your account on that same device and address, use **Settings → Import journal from before sign-in**, review the preview and confirm the restore. The earlier copy remains in browser storage. Use a JSON backup to transfer a journal to another browser or address.
+
+## Enable Google and Apple sign-in
+
+Provider buttons become available once their server credentials and the correct app address are configured. For both providers on an iPhone, start with an HTTPS host for NOCTIS and keep a persistent disk for its SQLite database. The Node server runs behind the host's HTTPS reverse proxy, which should preserve the original Host header.
+
+1. Copy [.env.example](.env.example) to `.env.local`. Set `NOCTIS_URL` to the app's HTTPS origin. Set `BETTER_AUTH_SECRET` to a fresh random value, generated locally with `openssl rand -hex 32`. Set the SMTP connection URL and sender. Keep this file out of Git.
+2. In Google Cloud, create a **Web application** OAuth client for NOCTIS and add `https://YOUR-DOMAIN/api/auth/callback/google` as its authorized redirect URI. Enter the client ID and secret in the server environment. Google also allows an explicit localhost callback for Mac development. [Google OAuth setup](https://better-auth.com/docs/authentication/google)
+3. Apple documents an existing App Store app using Sign in with Apple as a prerequisite for web authentication. In the Apple Developer account, enable the capability on the primary App ID and create a Services ID for the website. [Apple’s web authentication requirements](https://developer.apple.com/documentation/signinwithapple/configuring-your-environment-for-sign-in-with-apple) Register your HTTPS domain and `https://YOUR-DOMAIN/api/auth/callback/apple` as the return URL. Use the Services ID for `APPLE_CLIENT_ID` and a signed client-secret JWT for `APPLE_CLIENT_SECRET`. Rotate the JWT before it expires. [Apple web sign-in setup](https://better-auth.com/docs/authentication/apple)
+4. Run `npm run build` and `npm start` on the host. The server listens on loopback port 4173 by default. Test email verification and recovery, then complete a real Google and Apple sign-in at the registered HTTPS address. Public deployments use a separate default account database in `.noctis/production`. Choose a fresh database when publishing.
+
+The current Wi-Fi preview has verified email/password account creation, sign-in and sign-out. Google and Apple authorization redirects were exercised with test configuration. Completing provider sign-in requires live credentials. SMTP delivery and provider identity verification need a configured deployment to test end to end.
+
 ## What works in milestone 1
 
 | View      | Working features                                                                                                                                                         |
@@ -31,7 +50,7 @@ If dependencies need to be restored after copying or cloning the project, run `n
 | Moon      | Tonight’s calculated phase at 9 pm in the device’s timezone; historical phases at each entry’s actual bedtime.                                                           |
 | Settings  | Name, sleep goal, separate sample mode, JSON export/import with a replacement confirmation, and personal-journal erase confirmation.                                     |
 
-The app opens in **clearly labeled sample mode** so you can explore the interface. The **Start my journal** invitation appears only on Today and opens the first-entry sheet. Saving starts your personal journal throughout the app; canceling keeps the sample view. The 28 sample nights never get added to your personal entries. Sample mode can be revisited from Settings.
+After signing in for the first time, the journal opens in **clearly labeled sample mode** so you can explore the interface. The **Start my journal** invitation appears only on Today and opens the first-entry sheet. Saving starts your personal journal throughout the app; canceling keeps the sample view. The 28 sample nights never get added to your personal entries. Sample mode can be revisited from Settings.
 
 **Wind down** is directly available in the bottom navigation and through a prominent Today card, before the sleep statistics. The card shows live time remaining and checklist progress. The timer and four daily rituals appear together before the schedule planner. Choose 15, 30 or 45 minutes, pause/resume, or reset; the selected length and progress survive navigation and reopening. The original 1/3/5-minute breathing pause is a separate optional section. Countdown completion is shown in the app; this does not set a system alarm or notification.
 
@@ -53,7 +72,7 @@ This is a **mobile web app**, not an App Store build. Safari supports adding a w
 
 ### PWA and offline status
 
-The app includes a manifest, Home Screen icons, standalone metadata, safe-area support, and a production service worker. The production build precaches the app shell and bundled assets. There are no external fonts or runtime services to fetch.
+The app includes a manifest, Home Screen icons, standalone metadata, safe-area support, and a production service worker. The production build precaches the app shell and bundled assets. Fonts and artwork ship with the app. Opening a signed-in journal requires access to the session service.
 
 ```sh
 npm run build
@@ -66,7 +85,7 @@ The planner selects the next upcoming wake-up, including when opened after midni
 
 ## Your data
 
-- Personal entries and preferences are stored under `noctis.journal.v1` in the browser’s local storage. No account, server database, analytics, cloud sync, microphone recording, Apple Health access, or AI transmission is implemented.
+- Journal entries, preferences and timers stay in browser storage under an account-specific key. The SQLite database stores account, credential and session records. Journal data travels between devices through user-exported backups.
 - Each device and web address has separate storage. `localhost:5173`, a Network IP, and production preview on port 4173 are separate journals. Safari/Home Screen storage behavior must also be tested before relying on it.
 - Use **Settings → Export backup** regularly. Clearing browser data can remove your journal. The app does not add its own encryption to browser storage, and exported backups are plain JSON.
 - Import validates the complete backup before offering replacement. Canceling leaves the current journal intact. Export before replacing or erasing it.
@@ -85,7 +104,7 @@ Applied the user-installed UI/UX Pro Max and UI Animation skills. Today is moon-
 
 ## Development and checks
 
-React + TypeScript + Vite; no backend. The lockfile records exact installed dependencies.
+React, TypeScript and Vite power the interface. Better Auth and SQLite power the account server. The lockfile records the installed versions.
 
 ```sh
 npm test          # domain, moon and isolated interaction checks

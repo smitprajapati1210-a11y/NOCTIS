@@ -6,3 +6,8 @@ dist/
 *.local
 *.tsbuildinfo
 coverage/
+.noctis/
+!.env.example
+*.p8
+*.pem
+*.sqlite*

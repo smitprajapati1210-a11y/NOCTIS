@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
+import AccountGate from "./onboarding/AccountGate";
 import "@fontsource-variable/manrope";
 import "@fontsource-variable/outfit";
 import "@fontsource/instrument-serif/latin-400.css";
@@ -11,6 +11,7 @@ import "./editorial.css";
 import "./components/SleepChart.css";
 import "./components/AppHeader.css";
 import "./components/WindDown.css";
+import "./onboarding/Entry.css";
 
 class ErrorBoundary extends React.Component<
   React.PropsWithChildren,
@@ -38,7 +39,7 @@ class ErrorBoundary extends React.Component<
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ErrorBoundary>
-      <App />
+      <AccountGate />
     </ErrorBoundary>
   </React.StrictMode>,
 );

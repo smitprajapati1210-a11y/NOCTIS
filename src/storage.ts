@@ -8,6 +8,8 @@ import {
 } from "./domain";
 
 export const STORAGE_KEY = "noctis.journal.v1";
+export const accountStorageKey = (accountId: string) =>
+  `${STORAGE_KEY}.account.${encodeURIComponent(accountId)}`;
 export const freshStore = (): Store => ({
   version: 1,
   entries: [],
@@ -155,9 +157,9 @@ export function parseStore(value: unknown): Store {
   return store;
 }
 
-export function readStore(): { store: Store; error: string } {
+export function readStore(key = STORAGE_KEY): { store: Store; error: string } {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
+    const saved = localStorage.getItem(key);
     return {
       store: saved ? parseStore(JSON.parse(saved)) : freshStore(),
       error: "",

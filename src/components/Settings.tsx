@@ -10,6 +10,7 @@ import {
   ArrowUpFromLine,
   Check,
   ShieldCheck,
+  LogOut,
   Smartphone,
 } from "lucide-react";
 import { today, type Store } from "../domain";
@@ -22,6 +23,9 @@ export default function Settings({
   onRecover,
   notify,
   onClose,
+  account,
+  legacyStorageKey,
+  storageKey = STORAGE_KEY,
 }: {
   store: Store;
   setStore: Dispatch<SetStateAction<Store>>;
@@ -29,14 +33,61 @@ export default function Settings({
   onRecover: () => void;
   notify: (s: string) => void;
   onClose: () => void;
+  account?: { email: string; signOut: () => Promise<void> };
+  storageKey?: string;
+  legacyStorageKey?: string;
 }) {
   const [name, setName] = useState(store.preferences.name);
   const [goal, setGoal] = useState(store.preferences.goal);
   const [pending, setPending] = useState<Store | null>(null);
+  const [importIsLegacy, setImportIsLegacy] = useState(false);
+  const legacyClaimKey = legacyStorageKey ? `${legacyStorageKey}.claimed` : "";
+  function canImportLegacy(): boolean {
+    if (!legacyStorageKey || !localStorage.getItem(legacyStorageKey))
+      return false;
+    const owner = localStorage.getItem(legacyClaimKey);
+    return !owner || owner === storageKey;
+  }
   const [error, setError] = useState("");
   const [clear, setClear] = useState(false);
   const [recover, setRecover] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
+  const [signingOut, setSigningOut] = useState(false);
+  const [accountError, setAccountError] = useState("");
+  const [legacyAvailable] = useState(() => {
+    try {
+      return canImportLegacy();
+    } catch {
+      return false;
+    }
+  });
+  function previewLegacy() {
+    if (!legacyStorageKey) return;
+    setPending(null);
+    setError("");
+    try {
+      if (!canImportLegacy()) throw new Error("Earlier journal unavailable.");
+      const saved = localStorage.getItem(legacyStorageKey);
+      if (!saved) throw new Error("No earlier journal was found.");
+      setPending(parseStore(JSON.parse(saved)));
+      setImportIsLegacy(true);
+    } catch {
+      setError(
+        "The earlier journal couldn’t be read. Your current journal is still available.",
+      );
+    }
+  }
+  async function signOut() {
+    if (!account || signingOut) return;
+    setSigningOut(true);
+    setAccountError("");
+    try {
+      await account.signOut();
+    } catch {
+      setAccountError("Couldn’t sign out. Try again.");
+      setSigningOut(false);
+    }
+  }
   function save(e: FormEvent) {
     e.preventDefault();
     setStore((s) => ({
@@ -48,6 +99,7 @@ export default function Settings({
   }
   async function load(file?: File) {
     if (!file) return;
+    setImportIsLegacy(false);
     setError("");
     setPending(null);
     try {
@@ -64,6 +116,25 @@ export default function Settings({
   }
   return (
     <div className="settings-content">
+      {account && (
+        <div className="settings-section">
+          <h3>Account</h3>
+          <p className="muted small">{account.email}</p>
+          <button
+            className="secondary full"
+            disabled={signingOut}
+            onClick={() => void signOut()}
+          >
+            <LogOut size={16} aria-hidden="true" />{" "}
+            {signingOut ? "Signing out…" : "Sign out"}
+          </button>
+          {accountError && (
+            <p className="form-error" role="alert">
+              {accountError}
+            </p>
+          )}
+        </div>
+      )}
       <form onSubmit={save}>
         <p className="eyebrow">MAKE YOURSELF AT HOME</p>
         <label className="field">
@@ -99,8 +170,8 @@ export default function Settings({
         <div className="privacy-note">
           <ShieldCheck size={22} />
           <p>
-            Entries stay in this browser on this device. There is no account,
-            cloud sync, tracking, or connected AI in this version.
+            Your journal stays in this browser on this device. Backups let you
+            move it between browsers and devices.
           </p>
         </div>
         <p className="muted small">
@@ -128,6 +199,11 @@ export default function Settings({
             Import backup
           </button>
         </div>
+        {legacyAvailable && (
+          <button className="secondary full" onClick={previewLegacy}>
+            Import journal from before sign-in
+          </button>
+        )}
         <input
           hidden
           type="file"
@@ -161,6 +237,18 @@ export default function Settings({
               <button
                 className="primary"
                 onClick={() => {
+                  if (importIsLegacy) {
+                    try {
+                      if (!canImportLegacy())
+                        throw new Error("Earlier journal unavailable.");
+                      localStorage.setItem(legacyClaimKey, storageKey);
+                    } catch {
+                      setError(
+                        "The earlier journal couldn’t be assigned to this account.",
+                      );
+                      return;
+                    }
+                  }
                   setStore({
                     ...pending,
                     preferences: { ...pending.preferences, demo: false },
@@ -223,7 +311,7 @@ export default function Settings({
             className="secondary full"
             onClick={() => {
               try {
-                const raw = localStorage.getItem(STORAGE_KEY);
+                const raw = localStorage.getItem(storageKey);
                 downloadJson(
                   raw ? JSON.parse(raw) : { error: "No stored copy found" },
                   `noctis-recovery-${today()}.json`,
@@ -231,7 +319,7 @@ export default function Settings({
               } catch {
                 try {
                   downloadJson(
-                    { raw: localStorage.getItem(STORAGE_KEY) },
+                    { raw: localStorage.getItem(storageKey) },
                     `noctis-recovery-${today()}.json`,
                   );
                 } catch {

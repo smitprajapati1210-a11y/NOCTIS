@@ -360,3 +360,49 @@ test("reduced motion navigates immediately and does not start spatial transition
     Reflect.deleteProperty(document, "startViewTransition");
   }
 });
+
+test("an earlier journal can be adopted explicitly without appearing in a different account", async () => {
+  const legacy = freshStore();
+  legacy.preferences.name = "Earlier journal owner";
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(legacy));
+  const { accountStorageKey } = await import("../src/storage");
+
+  const firstKey = accountStorageKey("account-one");
+  render(<App storageKey={firstKey} legacyStorageKey={STORAGE_KEY} />);
+  const u = user();
+  await u.click(screen.getByRole("button", { name: "Open settings" }));
+  assert.equal(
+    (screen.getByLabelText("What should we call you?") as HTMLInputElement)
+      .value,
+    "",
+  );
+  await u.click(
+    screen.getByRole("button", { name: "Import journal from before sign-in" }),
+  );
+  await u.click(screen.getByRole("button", { name: "Replace & restore" }));
+  assert.equal(
+    JSON.parse(localStorage.getItem(firstKey)!).preferences.name,
+    legacy.preferences.name,
+  );
+  assert.equal(saved().preferences.name, legacy.preferences.name);
+
+  cleanup();
+  render(
+    <App
+      storageKey={accountStorageKey("account-two")}
+      legacyStorageKey={STORAGE_KEY}
+    />,
+  );
+  await u.click(screen.getByRole("button", { name: "Open settings" }));
+  assert.equal(
+    (screen.getByLabelText("What should we call you?") as HTMLInputElement)
+      .value,
+    "",
+  );
+  assert.equal(
+    screen.queryByRole("button", {
+      name: "Import journal from before sign-in",
+    }),
+    null,
+  );
+});
