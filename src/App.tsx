@@ -369,7 +369,13 @@ export default function App({
                       <span>·</span>
                       {e.quality}/5 rested
                     </span>
-                    {e.note && <span className="entry-note">{e.note}</span>}
+                    {e.note && (
+                      <span
+                        className={`entry-note${demo ? " sample-entry-note" : ""}`}
+                      >
+                        {e.note}
+                      </span>
+                    )}
                     <span className="entry-tags">
                       {e.tags.slice(0, 1).map((t) => (
                         <span key={t}>{t}</span>

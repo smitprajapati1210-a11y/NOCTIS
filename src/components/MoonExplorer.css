@@ -122,32 +122,10 @@
   letter-spacing: 0.02em;
 }
 
-.moon-explorer-nights {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) minmax(60px, 1.3fr) repeat(
-      2,
-      minmax(0, 1fr)
-    );
-  align-items: stretch;
-  gap: 3px;
-  padding: 3px;
-  border: 1px solid #a67cbc45;
-  border-radius: 14px;
-  background: #21172a;
-}
-
-.moon-explorer-nights button {
-  min-height: 44px;
-  padding: 4px 2px;
-  border-radius: 10px;
-  color: #d5bddf;
+.moon-explorer .glide-selector button {
+  min-width: 0;
+  padding-inline: 2px;
   font-size: 0.75rem;
-}
-
-.moon-explorer-nights button[aria-pressed="true"] {
-  background: #654a7b;
-  box-shadow: inset 0 0 0 1px #d3b7e65c;
-  color: #fff4ff;
 }
 
 @keyframes moon-orbit-glint {

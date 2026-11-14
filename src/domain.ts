@@ -1,3 +1,5 @@
+import { sampleNights } from "./sampleNights";
+
 export const TAGS = [
   "Late caffeine",
   "Screens in bed",
@@ -213,31 +215,12 @@ export function makePlan(p: Preferences): {
   };
 }
 export function demoEntries(end = today()): Entry[] {
-  return Array.from({ length: 28 }, (_, i) => {
-    const late = i % 4 === 0 || i % 7 === 2;
-    const movement = i % 3 !== 1;
-    const bed = late ? 45 + (i % 3) * 12 : 23 * 60 + (i % 4) * 9;
-    const tags: Tag[] = [
-      ...(late
-        ? ["Late caffeine" as const, "Screens in bed" as const]
-        : ["Reading" as const]),
-      ...(movement ? ["Movement" as const] : []),
-      ...(i % 5 === 0 ? ["High stress" as const] : []),
-    ];
-    return {
-      id: `sample-${i}`,
-      date: dateOffset(end, -i),
-      bedtime: clockTime(bed),
-      wakeTime: clockTime(7 * 60 + 20 + (i % 3) * 12),
-      latency: late ? 25 : 10,
-      awake: (i % 3) * 5,
-      quality: late ? 2 + (i % 2) : 4 + (i % 2),
-      tags,
-      note: late
-        ? "A busy evening. Took a little longer to settle."
-        : "Read a few pages, then put the day away.",
-    };
-  });
+  return sampleNights.map((night, i) => ({
+    ...night,
+    id: `sample-${i}`,
+    date: dateOffset(end, -i),
+    tags: [...night.tags],
+  }));
 }
 export type ChatReply = {
   text: string;

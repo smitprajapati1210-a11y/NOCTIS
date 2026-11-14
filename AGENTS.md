@@ -7,6 +7,7 @@
 - Header branding stays compact: Outfit Medium lettering around 17px and a small crescent. The user rejected the oversized serif wordmark, orbit emblem and tagline; do not reintroduce that direction.
 - Hide visible scrollbars throughout the app, including sheets and text fields. Preserve touch and keyboard scrolling.
 - The user requested each night’s actual moon phase. Preserve local astronomy, date correctness across midnight, the phase name, and illumination percentage.
+- Use `GlassSelector` for all tab switchers and segmented pickers. Keep the same rounded rectangle for the track and lilac slider, with the inner corners following the track. Size and thickness can vary. The main navigation is 66 px tall in portrait.
 - Preserve separate sample/personal data. Never seed samples into the personal journal or overwrite stored entries on load.
 - The assistant is a clearly labeled rule-based preview. Do not claim real AI, automatic sleep tracking, Apple Health access, cloud sync, medical diagnosis, or alarms until those are actually implemented and verified.
 - Never put AI credentials in the client. A future AI integration needs server-only credentials and explicit handling of private journal data.

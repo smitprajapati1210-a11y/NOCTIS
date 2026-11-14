@@ -66,15 +66,14 @@ The user requested minimal point-and-line charts instead of duration bars. Use a
 
 | Interaction          | Properties                                          | Timing / easing                       |
 | -------------------- | --------------------------------------------------- | ------------------------------------- |
-| Dock and Discover cursor | `transform`, a directional curved outline, and a moving reflection | 310ms, fast glide and soft settle |
+| Tab and segmented picker cursor | `transform`, a deforming outline, and a moving reflection | 310ms, fast glide and soft settle |
 | Scroll starfield    | direct `transform` on two background layers | Scroll-linked with brief flick momentum on the nearer layer |
-| Secondary selector   | direct `transform` on one persistent element        | 280ms, same enter curve               |
 | Page change          | captured viewport `transform` + `opacity`           | 280ms; incoming ±28px, outgoing ∓16px |
 | Sheet entry / exit   | `transform` + scrim `opacity`                       | 280ms / 160ms, enter curve            |
 | Press / release      | immediate press scale, transform release            | 0ms / 160ms                           |
 | Secondary content    | restrained opacity/6px entry after a user selection | 160–200ms                             |
 
-The dock and Discover use the same bright lilac glass selector. The dock rests in a rounded shape. Insights and Detective rest in a rectangle. Movement changes the shape and carries a reflection in the direction of travel. Horizontal drags start from the current selection and commit the option under the pointer on release. The page changes independently of the selector’s settling time.
+Use `GlassSelector` throughout the app for tab switchers and segmented pickers. The track and bubble rest as rounded rectangles with straight sides, and the inner radius follows the track radius and gap. Keep this shape and the bright lilac glass across the bottom dock, Discover, moon dates, and timer presets. Vary only the dimensions and thickness to suit the layout. Movement deforms the corners and carries a reflection in the direction of travel. Horizontal drags start from the current selection and commit the option under the pointer on release. The page changes independently of the selector’s settling time.
 
 The background sky uses two layers behind the signed-in pages. Slow scrolling moves both layers at different rates. A quick flick briefly adds up to 24 px of drift to the nearer stars. The effect uses native scrolling and keeps the sky static with Reduced Motion. The weekly chart remains brighter than the page background.
 

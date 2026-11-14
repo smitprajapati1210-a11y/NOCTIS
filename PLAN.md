@@ -122,6 +122,12 @@ The chat is **deterministic local rules, not an LLM**. The account server handle
 - Today’s moon opens a close-up with an orbiting glint and a picker for tonight and two nights on either side. Every date uses the calculated local 9 pm phase and illumination. The sheet reopens on tonight, restores focus to the moon on dismissal, and keeps the artwork still with Reduced Motion.
 - All 35 tests and the production build passed. Touch-sized Chrome and WebKit previews verified opening, orbital movement, date selection, reopening, focus restoration, and Reduced Motion. Physical iPhone verification remains pending.
 
+## Follow-up — shared rounded pickers and expanded sample journal
+
+- Reused `GlassSelector` for the moon dates, both timer duration pickers, and the walkthrough’s sample timer. It also powers the bottom dock and Discover. Every track and selection bubble has straight edges and concentric rounded corners at rest, with the same liquid-glass motion on tap or drag. The portrait dock is 66 px tall.
+- Replaced repetitive sample notes with 28 distinct entries that vary in sleep duration, rested rating, and habits. The sample list shows a two-line preview, and the detail sheet shows the full note at a smaller size in the existing serif. The walkthrough uses one of the same notes. Personal journal data remains separate.
+- All 35 tests and the production build passed. Checked phone-sized Chrome and WebKit for slider shape, first and last alignment, date and timer switching, and access to the full sample notes. Physical iPhone testing remains pending.
+
 ## Next milestone — physical iPhone and motion tuning
 
 1. Read README’s beginner-friendly run instructions. Start `npm run dev` in this folder.

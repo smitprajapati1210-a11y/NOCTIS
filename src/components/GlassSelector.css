@@ -1,5 +1,10 @@
 .glass-selector {
+  --glass-inset: 4px;
+  --glass-track-radius: 27px;
+  --glass-radius: calc(var(--glass-track-radius) - var(--glass-inset) - 1px);
   background: #261b32cd;
+  border-radius: var(--glass-track-radius);
+  padding: var(--glass-inset);
   -webkit-backdrop-filter: blur(20px) saturate(125%);
   backdrop-filter: blur(20px) saturate(125%);
   touch-action: pan-y pinch-zoom;
@@ -9,29 +14,25 @@
 
 .glass-selector-cursor {
   position: absolute;
-  left: var(--glass-inset-x);
-  inset-block: var(--glass-inset-y);
-  width: calc((100% - 2 * var(--glass-inset-x)) / var(--glass-options));
+  left: var(--glass-inset);
+  inset-block: var(--glass-inset);
+  width: calc((100% - 2 * var(--glass-inset)) / var(--glass-options));
   transition: transform 310ms var(--ease-enter);
   pointer-events: none;
   z-index: -1;
 }
 
 .bottom-nav.glass-selector {
-  --glass-inset-x: 8px;
-  --glass-inset-y: 7px;
-  --glass-radius: 19px;
+  --glass-inset: 7px;
 }
 
 .glide-selector.glass-selector {
-  --glass-inset-x: 4px;
-  --glass-inset-y: 4px;
-  --glass-radius: 1px;
-  border-radius: 1px;
+  gap: 0;
 }
 
 .glide-selector.glass-selector button {
-  border-radius: 1px;
+  min-width: 0;
+  border-radius: var(--glass-radius);
 }
 
 .glass-selector-cursor[data-dragging] {
@@ -73,9 +74,7 @@
     background: linear-gradient(167deg, #eee0ff90, #ad82d82e 55%, #cd9dee70);
   }
   .glass-selector-surface {
-    inset: 0;
     clip-path: inherit;
-    transform: scale(0.975, 0.962);
     background: none;
   }
   .glass-selector-surface::before {
@@ -108,9 +107,14 @@
   color: #fcf4ff;
 }
 
+.glide-selector.glass-selector button:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
 @media (max-height: 480px) and (orientation: landscape) {
   .bottom-nav.glass-selector {
-    --glass-inset-y: 5px;
+    --glass-inset: 5px;
   }
 }
 

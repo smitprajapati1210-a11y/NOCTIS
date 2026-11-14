@@ -535,7 +535,7 @@ h3 {
   transform: none;
   width: auto;
   max-width: none;
-  height: 72px;
+  height: 66px;
   padding: 7px 8px;
   border: 1px solid #72548655 !important;
   border-radius: 25px;
@@ -549,7 +549,7 @@ h3 {
   z-index: 20;
 }
 .bottom-nav button {
-  min-height: 57px;
+  min-height: 50px;
   border-radius: 19px;
   gap: 2px;
   position: relative;
@@ -899,11 +899,6 @@ h3 {
 .timer-number {
   font-size: 2rem;
   font-variant-numeric: tabular-nums;
-}
-.timer-options button {
-  font-size: 0.75rem;
-  min-height: 44px;
-  padding-inline: 18px;
 }
 .timer-controls > .icon-button {
   width: 44px;

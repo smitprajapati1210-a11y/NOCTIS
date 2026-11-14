@@ -1878,25 +1878,7 @@ legend {
   color: #b497c4;
 }
 .timer-options {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
   margin-bottom: 17px;
-}
-.timer-options button {
-  font-size: 9px;
-  padding: 9px 15px;
-  border-radius: 9px;
-  background: #f4eff6;
-  color: #b094c0;
-  min-height: 34px;
-}
-.timer-options button.active {
-  background: #e7dbef;
-  color: #9674ab;
-}
-.timer-options button:disabled {
-  opacity: 0.5;
 }
 .timer-controls {
   display: flex;
@@ -3197,14 +3179,6 @@ h3 {
 }
 .breath-ring > span:last-child {
   color: #c8a1dc;
-}
-.timer-options button {
-  background: #30203c;
-  color: #b58acb;
-}
-.timer-options button.active {
-  background: #563769;
-  color: #efcfff;
 }
 .timer-controls > .icon-button {
   color: #cc9ee1;

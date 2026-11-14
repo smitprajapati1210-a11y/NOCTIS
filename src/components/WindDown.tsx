@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { routineCompletedToday, today, type Store } from "../domain";
 import type { WindDownController } from "../useWindDown";
+import GlassSelector from "./GlassSelector";
 
 const clock = (seconds: number) =>
   `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
@@ -118,22 +119,18 @@ export function WindDownSession({
             </button>
           </div>
         </div>
-        <div
+        <GlassSelector
+          key={options.join(",")}
           className="wind-durations"
-          role="group"
-          aria-label="Wind-down duration"
-        >
-          {options.map((seconds) => (
-            <button
-              key={seconds}
-              disabled={timer.running}
-              aria-pressed={timer.duration === seconds}
-              onClick={() => timer.setDuration(seconds)}
-            >
-              {seconds / 60} min
-            </button>
-          ))}
-        </div>
+          label="Wind-down duration"
+          options={options.map((seconds) => ({
+            value: seconds,
+            label: `${seconds / 60} min`,
+          }))}
+          value={timer.duration}
+          onSelect={timer.setDuration}
+          disabled={timer.running}
+        />
         <div className="wind-timer-footer">
           <p className="wind-timer-note" role="status">
             {timer.running

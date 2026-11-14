@@ -189,6 +189,8 @@ test("sample nights are valid, unique and never become personal entries", () => 
   const samples = demoEntries("2026-11-04");
   assert.equal(samples.length, 28);
   assert.equal(new Set(samples.map((e) => e.date)).size, 28);
+  assert.equal(new Set(samples.map((e) => e.note)).size, 28);
+  assert.ok(samples.every((e) => e.note.split(/\s+/).length >= 30));
   samples.forEach((e) => assert.equal(entryError(e, "2026-11-04"), null));
   assert.equal(freshStore().entries.length, 0);
 });

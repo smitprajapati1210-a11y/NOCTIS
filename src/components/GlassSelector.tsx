@@ -28,47 +28,69 @@ function soften(position: number, limit: number) {
   return edge + (excess * 7) / (20 + Math.abs(excess));
 }
 
-function lensOutline(bend: number, rectangular: boolean) {
+function lensOutline(bend: number) {
   const left = Math.max(0, -bend);
   const right = Math.max(0, bend);
-  const shoulder = rectangular ? 1 : 22;
-  const trailingInset = rectangular ? 4 : 9;
-  const reach = rectangular ? 6 : 13;
-  const leftShoulder = shoulder + right * (rectangular ? 4 : -5);
-  const rightShoulder = 100 - shoulder - left * (rectangular ? 4 : -5);
-  const leftTop = 1 + right * trailingInset - left * 4;
-  const rightTop = 1 + left * trailingInset - right * 4;
-  const leftEdge = 1 - left * reach + right * 2;
-  const rightEdge = 99 + right * reach - left * 2;
-  return `shape(from ${leftShoulder}% ${leftTop}%,
-    curve to ${rightShoulder}% ${rightTop}% with 42% ${leftTop}% / 58% ${rightTop}%,
-    curve to ${rightEdge}% 50% with ${rightEdge}% ${rightTop}% / ${rightEdge}% 25%,
-    curve to ${rightShoulder}% ${100 - rightTop}% with ${rightEdge}% 75% / ${rightEdge}% ${100 - rightTop}%,
-    curve to ${leftShoulder}% ${100 - leftTop}% with 58% ${100 - rightTop}% / 42% ${100 - leftTop}%,
-    curve to ${leftEdge}% 50% with ${leftEdge}% ${100 - leftTop}% / ${leftEdge}% 75%,
-    curve to ${leftShoulder}% ${leftTop}% with ${leftEdge}% 25% / ${leftEdge}% ${leftTop}%, close)`;
+  const xLeft = right * 2 - left * 9;
+  const xRight = 100 + right * 9 - left * 2;
+  const yLeft = right * 8 - left * 3;
+  const yRight = left * 8 - right * 3;
+  // A cubic quarter-circle has control points 0.448 radii in from each edge.
+  const leftRadius = `calc(var(--glass-radius) - ${right * 5}px)`;
+  const rightRadius = `calc(var(--glass-radius) - ${left * 5}px)`;
+  const leftHandle = `calc(${leftRadius} * 0.448)`;
+  const rightHandle = `calc(${rightRadius} * 0.448)`;
+  const lx = `calc(${xLeft}% + ${leftRadius})`;
+  const rx = `calc(${xRight}% - ${rightRadius})`;
+  const lh = `calc(${xLeft}% + ${leftHandle})`;
+  const rh = `calc(${xRight}% - ${rightHandle})`;
+  const topLeft = `${yLeft}%`;
+  const topRight = `${yRight}%`;
+  const bottomLeft = `${100 - yLeft}%`;
+  const bottomRight = `${100 - yRight}%`;
+  return `shape(from ${lx} ${topLeft},
+    line to ${rx} ${topRight},
+    curve to ${xRight}% calc(${topRight} + ${rightRadius}) with ${rh} ${topRight} / ${xRight}% calc(${topRight} + ${rightHandle}),
+    line to ${xRight}% calc(${bottomRight} - ${rightRadius}),
+    curve to ${rx} ${bottomRight} with ${xRight}% calc(${bottomRight} - ${rightHandle}) / ${rh} ${bottomRight},
+    line to ${lx} ${bottomLeft},
+    curve to ${xLeft}% calc(${bottomLeft} - ${leftRadius}) with ${lh} ${bottomLeft} / ${xLeft}% calc(${bottomLeft} - ${leftHandle}),
+    line to ${xLeft}% calc(${topLeft} + ${leftRadius}),
+    curve to ${lx} ${topLeft} with ${xLeft}% calc(${topLeft} + ${leftHandle}) / ${lh} ${topLeft}, close)`;
 }
 
-const canBend = !!globalThis.CSS?.supports("clip-path", lensOutline(0, false));
+const restingOutline = lensOutline(0);
+const canBend = !!globalThis.CSS?.supports(
+  "clip-path",
+  "shape(from 0% 0%, line to 100% 100%, close)",
+);
 
 export default function GlassSelector<T extends string | number>({
   options,
   value,
   onSelect,
   label,
+  className,
+  disabled = false,
   navigation = false,
 }: {
-  options: readonly { value: T; label: string; icon?: LucideIcon }[];
-  value: T;
+  options: readonly {
+    value: T;
+    label: string;
+    accessibleLabel?: string;
+    icon?: LucideIcon;
+  }[];
+  value: T | null;
   onSelect: (value: T) => void;
   label: string;
+  className?: string;
+  disabled?: boolean;
   navigation?: boolean;
 }) {
-  const index = Math.max(
-    0,
-    options.findIndex((option) => option.value === value),
-  );
-  const restingOutline = lensOutline(0, !navigation);
+  const selectedIndex = options.findIndex((option) => option.value === value);
+  const hasSelection = selectedIndex >= 0;
+  const index = Math.max(0, selectedIndex);
+  const optionCount = options.length;
   const initialPosition = useRef(`translateX(${index * 100}%)`);
   const cursor = useRef<HTMLSpanElement>(null);
   const lens = useRef<HTMLSpanElement>(null);
@@ -110,7 +132,7 @@ export default function GlassSelector<T extends string | number>({
     const direction = Math.sign(distance);
     const bend = direction * Math.min(0.65 + Math.abs(distance) * 0.15, 1);
     const peak = canBend
-      ? { clipPath: lensOutline(bend, !navigation) }
+      ? { clipPath: lensOutline(bend) }
       : {
           transform: `translateY(-2px) scale(${1 + Math.abs(bend) * 0.14}, .965)`,
         };
@@ -147,7 +169,8 @@ export default function GlassSelector<T extends string | number>({
   }
 
   function startDrag(event: PointerEvent<HTMLElement>) {
-    if (!event.isPrimary || event.button !== 0) return;
+    if (disabled || !hasSelection || !event.isPrimary || event.button !== 0)
+      return;
     ignoreClick.current = false;
     const buttons = event.currentTarget.querySelectorAll("button");
     const selected = buttons[target.current];
@@ -198,8 +221,7 @@ export default function GlassSelector<T extends string | number>({
     if (!reducedMotion()) {
       const bend =
         Math.sign(delta || dx) * Math.min(0.45 + Math.abs(delta) / 95, 0.85);
-      if (canBend)
-        lens.current!.style.clipPath = lensOutline(bend, !navigation);
+      if (canBend) lens.current!.style.clipPath = lensOutline(bend);
       else
         lens.current!.style.transform = `translateY(-2px) scale(${1 + Math.abs(bend) * 0.09}, .98)`;
     }
@@ -215,7 +237,7 @@ export default function GlassSelector<T extends string | number>({
       return;
     drag.current = null;
     if (!gesture.active) return;
-    const commit = event.type === "pointerup";
+    const commit = event.type === "pointerup" && !disabled;
     const index = commit
       ? clamp(
           Math.floor((event.clientX - gesture.origin) / gesture.width),
@@ -227,16 +249,13 @@ export default function GlassSelector<T extends string | number>({
   }
 
   const Container = navigation ? "nav" : "div";
+  const layout = navigation ? "bottom-nav" : "segmented glide-selector";
   return (
     <Container
-      className={
-        navigation
-          ? "bottom-nav glass-selector"
-          : "segmented glide-selector glass-selector"
-      }
+      className={`${layout} glass-selector${className ? ` ${className}` : ""}`}
       role={navigation ? undefined : "group"}
       aria-label={label}
-      style={{ "--glass-options": options.length } as CSSProperties}
+      style={{ "--glass-options": optionCount } as CSSProperties}
       onPointerDown={startDrag}
       onPointerMove={moveDrag}
       onPointerUp={finishDrag}
@@ -256,6 +275,7 @@ export default function GlassSelector<T extends string | number>({
         ref={cursor}
         className="glass-selector-cursor"
         aria-hidden="true"
+        hidden={!hasSelection}
         style={{ transform: initialPosition.current }}
       >
         <span
@@ -267,30 +287,34 @@ export default function GlassSelector<T extends string | number>({
           <span ref={gleam} className="glass-selector-gleam" />
         </span>
       </span>
-      {options.map(({ value: option, label, icon: Icon }, index) => {
-        const active = value === option;
-        return (
-          <button
-            key={option}
-            type="button"
-            className={active ? "active" : ""}
-            aria-current={navigation && active ? "page" : undefined}
-            aria-pressed={navigation ? undefined : active}
-            onClick={() => select(index)}
-          >
-            {Icon && (
-              <span>
-                <Icon
-                  aria-hidden="true"
-                  size={21}
-                  strokeWidth={active ? 1.9 : 1.5}
-                />
-              </span>
-            )}
-            {navigation ? <small>{label}</small> : label}
-          </button>
-        );
-      })}
+      {options.map(
+        ({ value: option, label, accessibleLabel, icon: Icon }, index) => {
+          const active = value === option;
+          return (
+            <button
+              key={option}
+              type="button"
+              disabled={disabled}
+              className={active ? "active" : ""}
+              aria-label={accessibleLabel}
+              aria-current={navigation && active ? "page" : undefined}
+              aria-pressed={navigation ? undefined : active}
+              onClick={() => select(index)}
+            >
+              {Icon && (
+                <span>
+                  <Icon
+                    aria-hidden="true"
+                    size={21}
+                    strokeWidth={active ? 1.9 : 1.5}
+                  />
+                </span>
+              )}
+              {navigation ? <small>{label}</small> : label}
+            </button>
+          );
+        },
+      )}
     </Container>
   );
 }

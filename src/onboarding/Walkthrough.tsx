@@ -12,6 +12,7 @@ import { demoEntries, today } from "../domain";
 import { MoonVisual } from "../components/Moon";
 import { tonightMoment } from "../moon";
 import { SleepChart } from "../components/Charts";
+import GlassSelector from "../components/GlassSelector";
 import { changePage } from "../motion";
 import { EntryFrame } from "./EntryFrame";
 
@@ -105,10 +106,7 @@ export default function Walkthrough({ onFinish }: { onFinish: () => void }) {
                 <NotebookPen size={19} aria-hidden="true" />
                 <span>Sample journal</span>
               </div>
-              <p className="entry-diary-note">
-                “I put my phone away a little earlier. The room finally felt
-                quiet.”
-              </p>
+              <p className="entry-diary-note">“{sample[0].note}”</p>
               <div
                 className="entry-rating"
                 role="group"
@@ -148,18 +146,15 @@ export default function Walkthrough({ onFinish }: { onFinish: () => void }) {
                   <Clock3 size={15} aria-hidden="true" /> Sample timer
                 </span>
                 <strong>{duration}:00</strong>
-                <div role="group" aria-label="Try a wind-down duration">
-                  {[15, 30, 45].map((minutes) => (
-                    <button
-                      type="button"
-                      key={minutes}
-                      aria-pressed={duration === minutes}
-                      onClick={() => setDuration(minutes)}
-                    >
-                      {minutes} min
-                    </button>
-                  ))}
-                </div>
+                <GlassSelector
+                  label="Try a wind-down duration"
+                  options={[15, 30, 45].map((minutes) => ({
+                    value: minutes,
+                    label: `${minutes} min`,
+                  }))}
+                  value={duration}
+                  onSelect={setDuration}
+                />
               </div>
               <div className="entry-ritual-list">
                 {demoRituals.map(({ label, icon: Icon }) => {

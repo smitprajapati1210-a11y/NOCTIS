@@ -15,6 +15,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import NightMoon from "./Moon";
+import GlassSelector from "./GlassSelector";
 import { WindDownSession } from "./WindDown";
 import type { WindDownController } from "../useWindDown";
 import { tonightMoment } from "../moon";
@@ -26,6 +27,8 @@ import {
   type Preferences,
   type Store,
 } from "../domain";
+
+const breathingDurations = [60, 180, 300];
 
 export default function Tonight({
   store,
@@ -272,18 +275,19 @@ export default function Tonight({
               </span>
             </div>
           </div>
-          <div className="timer-options" aria-label="Timer duration">
-            {[60, 180, 300].map((sec) => (
-              <button
-                key={sec}
-                className={timerLength === sec ? "active" : ""}
-                onClick={() => setTimer(sec)}
-                disabled={running}
-              >
-                {sec / 60} min
-              </button>
-            ))}
-          </div>
+          <GlassSelector
+            className="timer-options"
+            label="Timer duration"
+            options={breathingDurations.map((seconds) => ({
+              value: seconds,
+              label: `${seconds / 60} min`,
+            }))}
+            value={
+              breathingDurations.includes(timerLength) ? timerLength : null
+            }
+            onSelect={setTimer}
+            disabled={running}
+          />
           <div className="timer-controls">
             <button
               className="icon-button"
