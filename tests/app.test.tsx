@@ -41,6 +41,11 @@ const { STORAGE_KEY, freshStore } = await import("../src/storage");
 const { today } = await import("../src/domain");
 const user = () => userEvent.setup({ document: dom.window.document });
 const saved = () => JSON.parse(localStorage.getItem(STORAGE_KEY)!);
+function enableSampleFixture() {
+  const state = freshStore();
+  state.preferences.demo = true;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
 afterEach(() => {
   cleanup();
   localStorage.clear();
@@ -60,6 +65,7 @@ async function logNight(
 }
 
 test("saving a real night exits samples; edit survives a remount; duplicate date is blocked", async () => {
+  enableSampleFixture();
   render(<App />);
   assert.ok(screen.getByText("Exploring sample nights"));
   const u = await logNight();
@@ -117,6 +123,7 @@ test("sample toggle preserves personal data; preferences persist independently",
 });
 
 test("local chat renders computed chart cards and detective comparisons", async () => {
+  enableSampleFixture();
   render(<App />);
   const u = user();
   await u.click(screen.getByRole("button", { name: "Discover" }));
@@ -233,6 +240,7 @@ test("backup import previews replacement and restores only after confirmation", 
 });
 
 test("start-journal invitation stays on Today and opens a real entry before changing modes", async () => {
+  enableSampleFixture();
   render(<App />);
   const u = user();
   await u.click(screen.getByRole("button", { name: "Journal" }));
@@ -405,4 +413,24 @@ test("an earlier journal can be adopted explicitly without appearing in a differ
     }),
     null,
   );
+});
+
+test("a new signed-in account opens its empty personal journal", async () => {
+  const { accountStorageKey } = await import("../src/storage");
+  const key = accountStorageKey("new-account");
+  render(
+    <App
+      storageKey={key}
+      account={{ email: "new@example.test", signOut: async () => {} }}
+    />,
+  );
+  assert.ok(screen.getByRole("button", { name: "Log my first night" }));
+  assert.equal(screen.queryByText("Exploring sample nights"), null);
+  assert.equal(
+    screen.queryByRole("button", { name: "View latest night" }),
+    null,
+  );
+  const state = JSON.parse(localStorage.getItem(key)!);
+  assert.deepEqual(state.entries, []);
+  assert.equal(state.preferences.demo, false);
 });

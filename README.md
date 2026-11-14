@@ -28,16 +28,24 @@ The Wi-Fi URL is for local testing with a password you use only for this preview
 
 Each account uses its own journal storage in the current browser. To bring an existing journal into your account on that same device and address, use **Settings → Import journal from before sign-in**, review the preview and confirm the restore. The earlier copy remains in browser storage. Use a JSON backup to transfer a journal to another browser or address.
 
-## Enable Google and Apple sign-in
+## Google sign-in on the Mac
 
-Provider buttons become available once their server credentials and the correct app address are configured. For both providers on an iPhone, start with an HTTPS host for NOCTIS and keep a persistent disk for its SQLite database. The Node server runs behind the host's HTTPS reverse proxy, which should preserve the original Host header.
+The Google button is available when the server has a registered app address and a matching client ID and secret. The Apple button is inactive.
 
-1. Copy [.env.example](.env.example) to `.env.local`. Set `NOCTIS_URL` to the app's HTTPS origin. Set `BETTER_AUTH_SECRET` to a fresh random value, generated locally with `openssl rand -hex 32`. Set the SMTP connection URL and sender. Keep this file out of Git.
-2. In Google Cloud, create a **Web application** OAuth client for NOCTIS and add `https://YOUR-DOMAIN/api/auth/callback/google` as its authorized redirect URI. Enter the client ID and secret in the server environment. Google also allows an explicit localhost callback for Mac development. [Google OAuth setup](https://better-auth.com/docs/authentication/google)
-3. Apple documents an existing App Store app using Sign in with Apple as a prerequisite for web authentication. In the Apple Developer account, enable the capability on the primary App ID and create a Services ID for the website. [Apple’s web authentication requirements](https://developer.apple.com/documentation/signinwithapple/configuring-your-environment-for-sign-in-with-apple) Register your HTTPS domain and `https://YOUR-DOMAIN/api/auth/callback/apple` as the return URL. Use the Services ID for `APPLE_CLIENT_ID` and a signed client-secret JWT for `APPLE_CLIENT_SECRET`. Rotate the JWT before it expires. [Apple web sign-in setup](https://better-auth.com/docs/authentication/apple)
-4. Run `npm run build` and `npm start` on the host. The server listens on loopback port 4173 by default. Test email verification and recovery, then complete a real Google and Apple sign-in at the registered HTTPS address. Public deployments use a separate default account database in `.noctis/production`. Choose a fresh database when publishing.
+1. In the [Noctis Google Cloud project](https://console.cloud.google.com/auth/overview?project=noctis-514708), set up the consent screen and create a **Web application** client named **NOCTIS local development**. Add `http://localhost:5176/api/auth/callback/google` to **Authorized redirect URIs**. [Google OAuth redirect rules](https://developers.google.com/identity/protocols/oauth2/web-server)
+2. Create `.env.google.local` in the project. Add `NOCTIS_URL=http://localhost:5176`, `NOCTIS_AUTH_DATA_DIR=.noctis/google-preview`, and the client values as `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`. Git ignores this file. The app reads these values on the server.
+3. Run `npm run dev:google`. Open **http://localhost:5176/**, complete the introduction and choose **Continue with Google**. This Mac-only preview uses its own test account database. The regular Wi-Fi preview stays on port 5173 for email sign-in.
 
-The current Wi-Fi preview has verified email/password account creation, sign-in and sign-out. Google and Apple authorization redirects were exercised with test configuration. Completing provider sign-in requires live credentials. SMTP delivery and provider identity verification need a configured deployment to test end to end.
+## Google and email sign-in on iPhone
+
+Use a hosted HTTPS address for Google sign-in on iPhone. The local Wi-Fi IP address works for previewing the app with email accounts. [Google OAuth redirect rules](https://developers.google.com/identity/protocols/oauth2/web-server)
+
+1. Choose an HTTPS host with persistent storage for SQLite. Configure its HTTPS reverse proxy to preserve the original `Host` header.
+2. Register a separate **Web application** client with the redirect URI `https://YOUR-DOMAIN/api/auth/callback/google`. Set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `NOCTIS_URL` in the host's server environment. [Better Auth Google configuration](https://better-auth.com/docs/authentication/google)
+3. Use [.env.example](.env.example) for the other server settings. Set `BETTER_AUTH_SECRET` to a fresh random value from `openssl rand -hex 32`, configure the SMTP connection and sender, and point `NOCTIS_AUTH_DATA_DIR` at the persistent disk.
+4. Run `npm run build` and `npm start` on the host. The server listens on loopback port 4173 by default. From iPhone Safari, test Google sign-in, verified email signup, password recovery and sign-out at the registered HTTPS address.
+
+Automated tests cover Google redirect generation and the verification and recovery flows with a local SMTP inbox. Live sign-in and mail delivery need to be tested with the registered Google client and the deployed sender.
 
 ## What works in milestone 1
 
@@ -50,7 +58,7 @@ The current Wi-Fi preview has verified email/password account creation, sign-in 
 | Moon      | Tonight’s calculated phase at 9 pm in the device’s timezone; historical phases at each entry’s actual bedtime.                                                           |
 | Settings  | Name, sleep goal, separate sample mode, JSON export/import with a replacement confirmation, and personal-journal erase confirmation.                                     |
 
-After signing in for the first time, the journal opens in **clearly labeled sample mode** so you can explore the interface. The **Start my journal** invitation appears only on Today and opens the first-entry sheet. Saving starts your personal journal throughout the app; canceling keeps the sample view. The 28 sample nights never get added to your personal entries. Sample mode can be revisited from Settings.
+New accounts open an empty personal journal. Use **Today → Log my first night** to add a night. The walkthrough uses examples, and **Settings → Explore sample nights** opens an optional sample view. **Open my journal** returns to your entries. If you used the previous preview and signed in while sample mode was active, switch it off in Settings.
 
 **Wind down** is directly available in the bottom navigation and through a prominent Today card, before the sleep statistics. The card shows live time remaining and checklist progress. The timer and four daily rituals appear together before the schedule planner. Choose 15, 30 or 45 minutes, pause/resume, or reset; the selected length and progress survive navigation and reopening. The original 1/3/5-minute breathing pause is a separate optional section. Countdown completion is shown in the app; this does not set a system alarm or notification.
 

@@ -40,7 +40,7 @@ export type Store = {
 export const DEFAULT_PREFERENCES: Preferences = {
   name: "",
   goal: 8,
-  demo: true,
+  demo: false,
   wakeTime: "07:00",
   eventName: "First commitment",
   eventTime: "09:00",

@@ -90,11 +90,6 @@ export async function createAuthServer({
     env.GOOGLE_CLIENT_ID &&
     env.GOOGLE_CLIENT_SECRET
   );
-  const apple = !!(
-    publicUrl?.protocol === "https:" &&
-    env.APPLE_CLIENT_ID &&
-    env.APPLE_CLIENT_SECRET
-  );
   const mail = mailEnabled
     ? nodemailer.createTransport(env.NOCTIS_SMTP_URL!)
     : null;
@@ -111,7 +106,7 @@ export async function createAuthServer({
       allowedHosts: [...hosts],
       protocol: "http",
     },
-    trustedOrigins: apple ? [...origins, "https://appleid.apple.com"] : origins,
+    trustedOrigins: origins,
     advanced: {
       ipAddress: { ipAddressHeaders: ["x-noctis-client-ip"] },
       useSecureCookies: publicUrl?.protocol === "https:",
@@ -151,24 +146,14 @@ export async function createAuthServer({
           },
         }
       : {}),
-    socialProviders: {
-      ...(google
-        ? {
-            google: {
-              clientId: env.GOOGLE_CLIENT_ID!,
-              clientSecret: env.GOOGLE_CLIENT_SECRET!,
-            },
-          }
-        : {}),
-      ...(apple
-        ? {
-            apple: {
-              clientId: env.APPLE_CLIENT_ID!,
-              clientSecret: env.APPLE_CLIENT_SECRET!,
-            },
-          }
-        : {}),
-    },
+    socialProviders: google
+      ? {
+          google: {
+            clientId: env.GOOGLE_CLIENT_ID!,
+            clientSecret: env.GOOGLE_CLIENT_SECRET!,
+          },
+        }
+      : {},
     onAPIError: {
       errorURL: `${publicUrl?.origin ?? `http://localhost:${port}`}/?account=callback`,
     },
@@ -196,7 +181,7 @@ export async function createAuthServer({
       }
       if (path === "/api/noctis/auth-options" && req.method === "GET") {
         res.setHeader("Content-Type", "application/json");
-        res.end(JSON.stringify({ google, apple, mailEnabled }));
+        res.end(JSON.stringify({ google, mailEnabled }));
         return;
       }
       if (!path.startsWith("/api/auth/")) {

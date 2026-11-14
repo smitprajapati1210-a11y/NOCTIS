@@ -5,7 +5,7 @@ import { authClient } from "./authClient";
 
 type Mode = "signin" | "signup" | "forgot" | "reset";
 type Provider = "google" | "apple";
-type Providers = { google: boolean; apple: boolean; mailEnabled: boolean };
+type Providers = { google: boolean; mailEnabled: boolean };
 const headings = {
   signin: ["Come on in.", "Sign in to open your sleep journal."],
   signup: ["Make it yours.", "Create your NOCTIS account."],
@@ -116,27 +116,30 @@ export default function SignIn({
     setStatus("");
   }
 
-  async function social(provider: Provider) {
-    if (active.current || !providers?.[provider]) return;
+  async function signInWithGoogle() {
+    if (active.current || !providers?.google) return;
     active.current = true;
     setBusy(true);
     setError("");
     setStatus("");
     try {
       const result = await authClient.signIn.social({
-        provider,
+        provider: "google",
         callbackURL: returnUrl,
         errorCallbackURL: returnUrl,
       });
-      if (result.error)
+      if (result.error) {
         setError(
           messageFor(
             result.error.code,
-            `Couldn’t open ${provider === "google" ? "Google" : "Apple"} sign-in. Try again.`,
+            "Couldn’t open Google sign-in. Try again.",
           ),
         );
-      else if (result.data?.url) return;
-      else await onSession();
+      } else if (result.data?.url) {
+        return;
+      } else {
+        await onSession();
+      }
     } catch {
       setError("Couldn’t reach sign-in. Check your connection and try again.");
     }
@@ -245,23 +248,20 @@ export default function SignIn({
           {(mode === "signin" || mode === "signup") && (
             <>
               <div className="entry-providers">
-                {(["google", "apple"] as const).map((provider) => (
-                  <button
-                    key={provider}
-                    type="button"
-                    disabled={busy || !providers?.[provider]}
-                    onClick={() => void social(provider)}
-                  >
-                    <ProviderMark provider={provider} /> Continue with{" "}
-                    {provider === "google" ? "Google" : "Apple"}
-                  </button>
-                ))}
+                <button
+                  type="button"
+                  disabled={busy || !providers?.google}
+                  onClick={() => void signInWithGoogle()}
+                >
+                  <ProviderMark provider="google" /> Continue with Google
+                </button>
+                <button type="button" disabled>
+                  <ProviderMark provider="apple" /> Continue with Apple
+                </button>
               </div>
-              {providers && (!providers.google || !providers.apple) && (
+              {providers && !providers.google && (
                 <p className="entry-provider-status">
-                  {!providers.google && !providers.apple
-                    ? "Google and Apple sign-in are awaiting setup."
-                    : `${providers.google ? "Apple" : "Google"} sign-in is awaiting setup.`}
+                  Google sign-in is awaiting setup.
                 </p>
               )}
               <div className="entry-divider">

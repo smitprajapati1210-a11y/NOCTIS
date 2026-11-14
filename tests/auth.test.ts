@@ -4,9 +4,14 @@ import { createServer, request as httpRequest } from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test, type TestContext } from "node:test";
+import { SMTPServer } from "smtp-server";
 import { createAuthServer } from "../server/auth.ts";
 
-async function authFixture(t: TestContext, env: NodeJS.ProcessEnv = {}) {
+async function authFixture(
+  t: TestContext,
+  env: NodeJS.ProcessEnv = {},
+  preview = true,
+) {
   const directory = await mkdtemp(join(tmpdir(), "noctis-auth-test-"));
   let auth: Awaited<ReturnType<typeof createAuthServer>>;
   const server = createServer((req, res) =>
@@ -27,7 +32,7 @@ async function authFixture(t: TestContext, env: NodeJS.ProcessEnv = {}) {
   auth = await createAuthServer({
     env: { ...env, NOCTIS_AUTH_DATA_DIR: directory },
     port: address.port,
-    preview: true,
+    preview,
   });
   const request = (path: string, body?: object, cookie?: string) =>
     new Promise<Response>((resolve, reject) => {
@@ -102,35 +107,136 @@ test("email sign-up gives a server session, and sign-out revokes it", async (t) 
   assert.ok(signedIn.headers.getSetCookie().length);
 });
 
-test("configured providers generate Google and Apple authorization URLs with their own callbacks", async (t) => {
+test("configured Google sign-in uses the registered callback and leaves Apple inactive", async (t) => {
   const { request, origin } = await authFixture(t, {
     NOCTIS_URL: "https://noctis.example.test",
     GOOGLE_CLIENT_ID: "test-google-id",
     GOOGLE_CLIENT_SECRET: "fixture-google-secret",
-    APPLE_CLIENT_ID: "test.noctis.web",
-    APPLE_CLIENT_SECRET: "fixture-apple-secret",
   });
   const available = await request("noctis/auth-options");
   assert.deepEqual(await available.json(), {
     google: true,
-    apple: true,
     mailEnabled: false,
   });
-  for (const [provider, hostname] of [
-    ["google", "accounts.google.com"],
-    ["apple", "appleid.apple.com"],
-  ]) {
-    const start = await request("auth/sign-in/social", {
-      provider,
-      callbackURL: `${origin}/?account=callback`,
-    });
-    assert.equal(start.status, 200, await start.clone().text());
-    const authorization = new URL((await start.json()).url);
-    assert.equal(authorization.hostname, hostname);
-    assert.equal(
-      authorization.searchParams.get("redirect_uri"),
-      `${origin}/api/auth/callback/${provider}`,
+  const callbackURL = `${origin}/?account=callback`;
+  const start = await request("auth/sign-in/social", {
+    provider: "google",
+    callbackURL,
+  });
+  assert.equal(start.status, 200, await start.clone().text());
+  const authorization = new URL((await start.json()).url);
+  assert.equal(authorization.hostname, "accounts.google.com");
+  assert.equal(
+    authorization.searchParams.get("redirect_uri"),
+    `${origin}/api/auth/callback/google`,
+  );
+  assert.ok(authorization.searchParams.get("state"));
+  assert.ok(
+    !(await request("auth/sign-in/social", { provider: "apple", callbackURL }))
+      .ok,
+  );
+});
+
+test("public account email verifies ownership and password reset revokes earlier sessions", async (t) => {
+  const messages: string[] = [];
+  const smtp = new SMTPServer({
+    authOptional: true,
+    disabledCommands: ["STARTTLS"],
+    onData(stream, _session, done) {
+      let message = "";
+      stream.setEncoding("utf8");
+      stream.on("data", (chunk) => (message += chunk));
+      stream.on("error", done);
+      stream.on("end", () => {
+        messages.push(message);
+        done();
+      });
+    },
+  });
+  await new Promise<void>((resolve) => smtp.listen(0, "127.0.0.1", resolve));
+  t.after(() => new Promise<void>((resolve) => smtp.close(resolve)));
+  const smtpAddress = smtp.server.address();
+  assert.ok(smtpAddress && typeof smtpAddress !== "string");
+
+  const { request, origin } = await authFixture(
+    t,
+    {
+      NOCTIS_URL: "https://noctis.example.test",
+      BETTER_AUTH_SECRET: "public-auth-test-fixture-secret-0000000000000000",
+      NOCTIS_SMTP_URL: `smtp://127.0.0.1:${smtpAddress.port}`,
+      NOCTIS_MAIL_FROM: "NOCTIS <no-reply@example.test>",
+    },
+    false,
+  );
+  const emailLink = (subject: string) => {
+    const message = messages.find((item) =>
+      item.includes(`Subject: ${subject}`),
     );
-    assert.ok(authorization.searchParams.get("state"));
-  }
+    assert.ok(message);
+    const body = message.slice(message.indexOf("\r\n\r\n") + 4);
+    const decoded = body.replace(/=\r?\n/g, "").replace(/=3D/g, "=");
+    const link = decoded.match(/https:\/\/\S+/)?.[0];
+    assert.ok(link);
+    const url = new URL(link);
+    assert.equal(url.origin, origin);
+    return url;
+  };
+  const follow = (url: URL) =>
+    request(url.pathname.slice("/api/".length) + url.search);
+  const credentials = {
+    email: "verified-sleeper@example.test",
+    password: "original test password 123",
+  };
+  const callbackURL = `${origin}/?account=callback`;
+  const created = await request("auth/sign-up/email", {
+    ...credentials,
+    name: "Verified sleeper",
+    callbackURL,
+  });
+  assert.equal(created.status, 200, await created.clone().text());
+  assert.equal(created.headers.getSetCookie().length, 0);
+  assert.equal((await request("auth/sign-in/email", credentials)).status, 403);
+
+  const verification = emailLink("Verify your email for NOCTIS");
+  assert.equal(verification.pathname, "/api/auth/verify-email");
+  const verified = await follow(verification);
+  assert.equal(verified.status, 302);
+  assert.equal(verified.headers.get("location"), callbackURL);
+  const cookies = verified.headers.getSetCookie();
+  assert.match(cookies.join(" "), /HttpOnly/i);
+  assert.match(cookies.join(" "), /Secure/i);
+  const cookie = cookies.map((item) => item.split(";")[0]).join("; ");
+  const session = await request("auth/get-session", undefined, cookie);
+  assert.equal((await session.json()).user.emailVerified, true);
+
+  const resetRequested = await request("auth/request-password-reset", {
+    email: credentials.email,
+    redirectTo: `${origin}/?account=reset`,
+  });
+  assert.equal(resetRequested.status, 200, await resetRequested.clone().text());
+  const resetLink = emailLink("Reset your NOCTIS password");
+  assert.match(resetLink.pathname, /^\/api\/auth\/reset-password\//);
+  const resetRedirect = await follow(resetLink);
+  assert.equal(resetRedirect.status, 302);
+  const token = new URL(
+    resetRedirect.headers.get("location")!,
+  ).searchParams.get("token");
+  assert.ok(token);
+  const newPassword = "updated test password 456";
+  const reset = await request("auth/reset-password", { token, newPassword });
+  assert.equal(reset.status, 200, await reset.clone().text());
+  assert.equal(
+    await (await request("auth/get-session", undefined, cookie)).json(),
+    null,
+  );
+  assert.equal((await request("auth/sign-in/email", credentials)).status, 401);
+  assert.equal(
+    (
+      await request("auth/sign-in/email", {
+        ...credentials,
+        password: newPassword,
+      })
+    ).status,
+    200,
+  );
 });
