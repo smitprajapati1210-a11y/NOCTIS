@@ -323,22 +323,6 @@ h3 {
   border-radius: 16px;
   flex-shrink: 0;
 }
-.segment-cursor {
-  position: absolute;
-  top: 4px;
-  bottom: 4px;
-  left: 4px;
-  width: calc((100% - 8px) / var(--segments));
-  border-radius: 12px;
-  background: linear-gradient(130deg, #60416f, #443053);
-  box-shadow:
-    inset 0 1px 0 #f3d8ff12,
-    0 3px 12px #08040e33;
-  transform: translateX(calc(var(--selected-index) * 100%));
-  transition: transform var(--motion-control) var(--ease-enter);
-  z-index: -1;
-  pointer-events: none;
-}
 .glide-selector button {
   min-height: 44px;
   font-size: 0.8125rem;
@@ -352,25 +336,6 @@ h3 {
 }
 .glide-selector button.active {
   color: #f4e2ff;
-}
-.glide-selector.mini {
-  padding: 3px;
-  border: 1px solid #4a3457;
-  background: #2c1e38;
-  border-radius: 12px;
-}
-.glide-selector.mini .segment-cursor {
-  top: 3px;
-  bottom: 3px;
-  left: 3px;
-  width: calc((100% - 6px) / var(--segments));
-  border-radius: 9px;
-}
-.glide-selector.mini button {
-  font-size: 0.6875rem;
-  min-height: 38px;
-  padding: 8px 10px;
-  border-radius: 9px;
 }
 .chart {
   margin-top: 29px;
@@ -582,23 +547,6 @@ h3 {
   isolation: isolate;
   overflow: visible;
   z-index: 20;
-}
-.dock-cursor {
-  position: absolute;
-  left: 8px;
-  top: 7px;
-  bottom: 7px;
-  width: calc((100% - 16px) / 4);
-  border-radius: 19px;
-  background:
-    radial-gradient(ellipse at 50% 0, #8d62a831, transparent 90%), #503361;
-  box-shadow:
-    inset 0 1px 0 #ebc7ff17,
-    0 3px 10px #0b041938;
-  transform: translateX(calc(var(--selected-index) * 100%));
-  transition: transform 420ms var(--ease-enter);
-  pointer-events: none;
-  z-index: -1;
 }
 .bottom-nav button {
   min-height: 57px;
@@ -1327,10 +1275,6 @@ html[data-direction="forward"] {
     font-size: 0.5625rem;
     letter-spacing: 1px;
   }
-  .glide-selector.mini button {
-    padding: 8px;
-    font-size: 0.625rem;
-  }
   .sleep-hero {
     padding: 21px;
   }
@@ -1478,17 +1422,11 @@ html[data-direction="forward"] {
   .bottom-nav button {
     min-height: 48px;
   }
-  .dock-cursor {
-    top: 5px;
-    bottom: 5px;
-  }
   .sheet {
     max-height: 96dvh;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .dock-cursor,
-  .segment-cursor,
   .bottom-nav button > span,
   .sheet {
     transition-property: none !important;

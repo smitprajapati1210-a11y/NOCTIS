@@ -1,0 +1,121 @@
+.glass-selector {
+  background: #261b32cd;
+  -webkit-backdrop-filter: blur(20px) saturate(125%);
+  backdrop-filter: blur(20px) saturate(125%);
+  touch-action: pan-y pinch-zoom;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.glass-selector-cursor {
+  position: absolute;
+  left: var(--glass-inset-x);
+  inset-block: var(--glass-inset-y);
+  width: calc((100% - 2 * var(--glass-inset-x)) / var(--glass-options));
+  transition: transform 310ms var(--ease-enter);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.bottom-nav.glass-selector {
+  --glass-inset-x: 8px;
+  --glass-inset-y: 7px;
+  --glass-radius: 19px;
+}
+
+.glide-selector.glass-selector {
+  --glass-inset-x: 4px;
+  --glass-inset-y: 4px;
+  --glass-radius: 1px;
+  border-radius: 1px;
+}
+
+.glide-selector.glass-selector button {
+  border-radius: 1px;
+}
+
+.glass-selector-cursor[data-dragging] {
+  transition: none;
+}
+
+.glass-selector-lens {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--glass-radius);
+  overflow: hidden;
+  background: linear-gradient(167deg, #f5deffb3, #a37fbd66 53%, #c994ee90);
+  box-shadow: 0 3px 10px #0b041958;
+}
+
+.glass-selector-surface {
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  background:
+    radial-gradient(135% 100% at 18% 0%, #c291ef3b, transparent 70%),
+    linear-gradient(164deg, #76558ddd, #6d4b85e8 53%, #614278f0);
+}
+
+@supports (clip-path: shape(from 0% 0%, line to 100% 100%, close)) {
+  .glass-selector-cursor {
+    filter: drop-shadow(0 3px 5px #0b04194d);
+  }
+  .glass-selector-lens {
+    overflow: visible;
+    background: none;
+    box-shadow: none;
+  }
+  .glass-selector-lens::before,
+  .glass-selector-surface::before {
+    position: absolute;
+    inset: -6px -14%;
+    content: "";
+    background: linear-gradient(167deg, #eee0ff90, #ad82d82e 55%, #cd9dee70);
+  }
+  .glass-selector-surface {
+    inset: 0;
+    clip-path: inherit;
+    transform: scale(0.975, 0.962);
+    background: none;
+  }
+  .glass-selector-surface::before {
+    background:
+      radial-gradient(110% 90% at 23% 0%, #c599ef46, transparent 68%),
+      linear-gradient(164deg, #7f5c98f0, #704f87f5 53%, #644579f5);
+  }
+}
+
+.glass-selector-gleam {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 37% 48% at 50% 0%, #f2d6ff80, transparent),
+    radial-gradient(ellipse 44% 30% at 50% 100%, #c598ff58, transparent);
+  opacity: 0;
+  transition: opacity 140ms ease-out;
+}
+
+.glass-selector:has(button:active) .glass-selector-gleam,
+.glass-selector[data-dragging] .glass-selector-gleam {
+  opacity: 0.65;
+}
+
+.glass-selector button {
+  color: #c7aad9;
+}
+
+.glass-selector button.active {
+  color: #fcf4ff;
+}
+
+@media (max-height: 480px) and (orientation: landscape) {
+  .bottom-nav.glass-selector {
+    --glass-inset-y: 5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-selector-cursor {
+    transition: none;
+  }
+}

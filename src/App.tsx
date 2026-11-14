@@ -1,11 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type CSSProperties,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowRight,
   BookOpen,
@@ -13,11 +6,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock3,
-  House,
   Moon,
   Plus,
   Search,
-  Sparkles,
   Sunrise,
   X,
 } from "lucide-react";
@@ -53,16 +44,10 @@ import { entryMoment } from "./moon";
 import LunarScene from "./components/LunarScene";
 import WeekRail from "./components/WeekRail";
 import AppHeader from "./components/AppHeader";
+import BottomNav, { tabIndex, type Tab } from "./components/BottomNav";
+import ScrollSky from "./components/ScrollSky";
 import { WindDownHome } from "./components/WindDown";
 import { useWindDown } from "./useWindDown";
-
-type Tab = "today" | "journal" | "discover" | "tonight";
-const tabs = [
-  { id: "today" as const, label: "Today", icon: House },
-  { id: "journal" as const, label: "Journal", icon: BookOpen },
-  { id: "discover" as const, label: "Discover", icon: Sparkles },
-  { id: "tonight" as const, label: "Wind down", icon: Moon },
-];
 
 export default function App({
   storageKey = STORAGE_KEY,
@@ -78,6 +63,7 @@ export default function App({
   const [readError, setReadError] = useState(initial.error);
   const [writeError, setWriteError] = useState("");
   const [tab, setTab] = useState<Tab>("today");
+  const requestedTab = useRef<Tab>(tab);
   const [modal, setModal] = useState<
     "entry" | "settings" | "sample" | "checklist" | "history" | null
   >(null);
@@ -145,13 +131,11 @@ export default function App({
     setModal(demo ? "sample" : "entry");
   };
   function navigate(next: Tab) {
-    if (next === tab) return;
-    const direction =
-      tabs.findIndex((t) => t.id === next) >=
-      tabs.findIndex((t) => t.id === tab)
-        ? "forward"
-        : "backward";
+    if (next === requestedTab.current) return;
+    requestedTab.current = next;
+    const direction = tabIndex(next) >= tabIndex(tab) ? "forward" : "backward";
     changePage(() => {
+      if (next === tab) return;
       setTab(next);
       setQuery("");
       if (content.current) content.current.scrollTop = 0;
@@ -430,36 +414,8 @@ export default function App({
           />
         )}
       </main>
-      <nav
-        className="bottom-nav"
-        aria-label="Main navigation"
-        style={
-          {
-            "--selected-index": tabs.findIndex((t) => t.id === tab),
-          } as CSSProperties
-        }
-      >
-        <span
-          className="dock-cursor"
-          aria-hidden="true"
-          style={{
-            transform: `translateX(${tabs.findIndex((t) => t.id === tab) * 100}%)`,
-          }}
-        />
-        {tabs.map(({ id, label, icon: Icon }) => (
-          <button
-            key={id}
-            className={tab === id ? "active" : ""}
-            aria-current={tab === id ? "page" : undefined}
-            onClick={() => navigate(id)}
-          >
-            <span>
-              <Icon size={21} strokeWidth={tab === id ? 1.9 : 1.5} />
-            </span>
-            <small>{label}</small>
-          </button>
-        ))}
-      </nav>
+      <ScrollSky scrollArea={content} page={tab} />
+      <BottomNav tab={tab} onSelect={navigate} />
       {toast && (
         <div className="toast" role="status">
           {toast}

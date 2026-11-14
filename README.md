@@ -126,6 +126,8 @@ The illustration shows waxing light on the right and waning light on the left. I
 
 ## Design and motion
 
+The lilac slider in the bottom navigation and Discover flexes toward the next selection, with a moving reflection. Drag the selected slider and release over another option to switch. Discover’s slider settles into a rectangle. Two layers of background stars follow scrolling at different speeds. The nearer stars drift briefly after a quick flick. Reduced Motion keeps the sky still and switches selections immediately.
+
 Applied the user-installed UI/UX Pro Max and UI Animation skills. Today is moon-led, Journal uses a date-led diary layout, the Night Lab presents field notes and a mood line chart, and Wind down leads with its session timer and checklist, ahead of planning and the optional breathing pause. Instrument Serif and Manrope Variable are bundled locally. The compact header wordmark uses locally bundled Outfit Medium, with a small crescent and the original header height. Sleep-duration charts use thin lilac lines and small points, with gaps for unlogged nights, a quiet goal reference and accessible night-by-night details. Visible scrollbars are hidden across the app, including sheets and text fields, while touch and keyboard scrolling remain available. The floating dock remains live while the central viewport uses directional transitions. Rapid navigation cancels stale callbacks; reduced motion skips spatial travel. Read `design-system/noctis/MASTER.md` for the design decisions, timing and verification limits.
 
 ## Development and checks

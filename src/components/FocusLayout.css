@@ -451,28 +451,6 @@
   margin-top: 12px;
 }
 
-.bottom-nav {
-  background: #21172cf2;
-}
-.bottom-nav .dock-cursor {
-  background: linear-gradient(150deg, #503763, #664875);
-  box-shadow:
-    inset 0 0 0 1px #c6a3d955,
-    0 3px 10px #0b041938;
-}
-.bottom-nav button.active {
-  color: #f9e9ff;
-}
-.glide-selector {
-  background-color: #201629;
-}
-.glide-selector .segment-cursor {
-  background: #604271;
-  box-shadow: inset 0 0 0 1px #c6a3d943;
-}
-.glide-selector button.active {
-  color: #f9e9ff;
-}
 .wind-checklist .wind-check {
   border-color: #b9a2ca;
 }

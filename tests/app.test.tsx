@@ -404,7 +404,8 @@ test("journal calendar starts a new entry on the chosen morning without navigati
   await u.click(screen.getByRole("button", { name: "Save my night" }));
   assert.equal(saved().entries[0].date, date);
   assert.equal(
-    document.querySelector<HTMLElement>(".dock-cursor")?.style.transform,
+    document.querySelector<HTMLElement>(".bottom-nav .glass-selector-cursor")
+      ?.style.transform,
     "translateX(100%)",
   );
   assert.equal(

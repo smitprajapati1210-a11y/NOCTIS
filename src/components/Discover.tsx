@@ -10,7 +10,7 @@ import {
   type Entry,
 } from "../domain";
 import { PatternBars } from "./Charts";
-import Segmented from "./Segmented";
+import GlassSelector from "./GlassSelector";
 import RestedChart from "./RestedChart";
 
 export default function Discover({
@@ -40,13 +40,13 @@ export default function Discover({
           <FlaskConical aria-hidden="true" /> Discover
         </h1>
       </div>
-      <Segmented
+      <GlassSelector
         options={[
           { value: "overview", label: "Insights" },
           { value: "patterns", label: "Detective" },
         ]}
         value={tab}
-        onChange={selectTab}
+        onSelect={selectTab}
         label="Discovery view"
       />
       <div key={tab} className="discovery-content" data-animate={hasInteracted}>

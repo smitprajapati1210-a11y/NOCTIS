@@ -1,0 +1,79 @@
+.app-shell {
+  isolation: isolate;
+}
+
+.scroll-sky {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 73% 15%, #30204d35, transparent 56%);
+}
+
+.scroll-sky > span {
+  position: absolute;
+  inset: -28px 0 -244px;
+  background-repeat: repeat;
+}
+
+.scroll-sky-distant {
+  opacity: 0.85;
+  background-size: 354px 418px;
+  background-image:
+    radial-gradient(circle at 8% 18%, #d7c6f74c 0.5px, transparent 1px),
+    radial-gradient(circle at 26% 8%, #d7c6f747 0.5px, transparent 1px),
+    radial-gradient(circle at 49% 14%, #d7c6f74e 0.5px, transparent 1px),
+    radial-gradient(circle at 84% 9%, #d7c6f74c 0.5px, transparent 1px),
+    radial-gradient(circle at 94% 22%, #d7c6f742 0.5px, transparent 1px),
+    radial-gradient(circle at 17% 34%, #d7c6f750 0.5px, transparent 1px),
+    radial-gradient(circle at 38% 28%, #d7c6f749 0.5px, transparent 1px),
+    radial-gradient(circle at 73% 32%, #d7c6f742 0.5px, transparent 1px),
+    radial-gradient(circle at 54% 43%, #d7c6f746 0.5px, transparent 1px),
+    radial-gradient(circle at 88% 46%, #d7c6f74c 0.5px, transparent 1px),
+    radial-gradient(circle at 7% 58%, #d7c6f74f 0.5px, transparent 1px),
+    radial-gradient(circle at 29% 69%, #d7c6f746 0.5px, transparent 1px),
+    radial-gradient(circle at 62% 62%, #d7c6f74c 0.5px, transparent 1px),
+    radial-gradient(circle at 77% 72%, #d7c6f74a 0.5px, transparent 1px),
+    radial-gradient(circle at 15% 86%, #d7c6f746 0.5px, transparent 1px),
+    radial-gradient(circle at 46% 91%, #d7c6f749 0.5px, transparent 1px),
+    radial-gradient(circle at 57% 80%, #d7c6f745 0.5px, transparent 1px),
+    radial-gradient(circle at 91% 92%, #d7c6f74c 0.5px, transparent 1px);
+}
+
+.scroll-sky-near {
+  background-size: 417px 513px;
+  background-image:
+    radial-gradient(
+      circle at 6% 26%,
+      #e2ceff8c 0.72px,
+      #ad89e624 1.3px,
+      transparent 2px
+    ),
+    radial-gradient(circle at 24% 12%, #d9ceff76 0.62px, transparent 1.5px),
+    radial-gradient(circle at 46% 23%, #e4d1ff88 0.68px, transparent 1.8px),
+    radial-gradient(circle at 76% 9%, #cdc4ff82 0.66px, transparent 1.5px),
+    radial-gradient(
+      circle at 92% 36%,
+      #e7d6ff9b 0.76px,
+      #bb9ff52e 1.35px,
+      transparent 2px
+    ),
+    radial-gradient(circle at 10% 63%, #d3c8ff7d 0.66px, transparent 1.7px),
+    radial-gradient(circle at 31% 54%, #e8d4ff77 0.63px, transparent 1.55px),
+    radial-gradient(circle at 68% 61%, #e6d3ff88 0.7px, transparent 1.8px),
+    radial-gradient(
+      circle at 82% 80%,
+      #d9cbff90 0.72px,
+      #ae90ea23 1.3px,
+      transparent 2px
+    ),
+    radial-gradient(circle at 16% 91%, #e7d4ff7f 0.66px, transparent 1.55px),
+    radial-gradient(circle at 56% 90%, #d9cbff85 0.69px, transparent 1.75px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-sky > span {
+    transform: none !important;
+  }
+}

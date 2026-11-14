@@ -111,6 +111,12 @@ The chat is **deterministic local rules, not an LLM**. The account server handle
 - Past weeks is available on Today and Journal. Both chart views use a dim starfield, circular glowing points, and straight lilac connections with breaks for missing nights. The weekly chart omits the dashed goal line. Points appear one by one before the line reveal, then the halos twinkle at staggered intervals while visible. Reduced Motion shows a static chart.
 - Verified the populated chart and past-week switching in Chrome using an isolated sample journal. All 34 tests and the production build passed. Physical iPhone verification remains pending.
 
+## Follow-up — glass selectors and scroll-responsive sky
+
+- The bottom tabs and Discover share a bright lilac selector with a curved outline that flexes and carries a highlight during its 310 ms glide. Horizontal drag starts on the selected item and switches to the item under the pointer on release. Discover’s track and slider rest in a rectangle.
+- Added a two-layer starfield behind the four signed-in views. The closer stars are brighter, move farther with scrolling, and briefly carry flick momentum. The sky stays still with Reduced Motion, and selectors switch immediately.
+- All 34 tests and the production build passed. At a phone-sized viewport, Chrome and WebKit verified both selectors, shape and highlight animation, release, rapid switching, the rectangular Discover slider, scroll reversal and Reduced Motion. Chrome also verified touch release and cancellation. Check the feel in Safari on a physical iPhone next.
+
 ## Next milestone — physical iPhone and motion tuning
 
 1. Read README’s beginner-friendly run instructions. Start `npm run dev` in this folder.
