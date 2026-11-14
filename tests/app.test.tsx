@@ -126,6 +126,24 @@ test("Today answers questions with chart cards and Discover retains the detectiv
   enableSampleFixture();
   render(<App />);
   const u = user();
+  const rhythm = within(
+    screen.getByRole("region", { name: "Your sleep rhythm" }),
+  );
+  assert.ok(
+    rhythm
+      .getByRole("group", { name: "7-day sleep duration chart" })
+      .closest("section"),
+  );
+  await u.click(rhythm.getByRole("button", { name: "Month" }));
+  assert.ok(rhythm.getByRole("group", { name: "30-day sleep duration chart" }));
+  await u.click(rhythm.getByRole("button", { name: "Week" }));
+  assert.match(
+    rhythm
+      .getByRole("group", { name: "7-day sleep duration chart" })
+      .querySelector("path")
+      ?.getAttribute("d") ?? "",
+    /L/,
+  );
   assert.ok(screen.getByRole("heading", { name: "Ask Noctis" }));
   assert.ok(
     screen.getByRole("textbox", { name: "Ask about your sleep journal" }),
@@ -491,6 +509,8 @@ test("a new signed-in account opens its empty personal journal", async () => {
     />,
   );
   assert.ok(screen.getByRole("button", { name: "Log my first night" }));
+  assert.ok(screen.getByRole("group", { name: "7-day sleep duration chart" }));
+  assert.ok(screen.getByText("Your first night will start the line."));
   assert.equal(screen.queryByText("Exploring sample nights"), null);
   assert.equal(
     screen.queryByRole("button", { name: "View latest night" }),

@@ -9,6 +9,7 @@ import {
 import {
   ArrowRight,
   BookOpen,
+  ChartNoAxesCombined,
   ChevronLeft,
   ChevronRight,
   Clock3,
@@ -167,7 +168,6 @@ export default function App({
     <div className="app-shell">
       <AppHeader
         day={day}
-        name={store.preferences.name}
         sample={demo && tab !== "today"}
         onHome={() => navigate("today")}
         onSettings={() => setModal("settings")}
@@ -223,11 +223,44 @@ export default function App({
               goal={goal}
               demo={demo}
             />
+            <section
+              className="today-trends"
+              aria-labelledby="today-trends-heading"
+            >
+              <div className="section-heading">
+                <div className="today-average">
+                  <h2 id="today-trends-heading">
+                    <ChartNoAxesCombined size={16} aria-hidden="true" /> Your
+                    sleep rhythm
+                  </h2>
+                  <small>
+                    {week.length
+                      ? `${durationLabel(avg)} average · ${week.length}/${chartDays} nights`
+                      : `${chartDays === 7 ? "This week" : "Past 30 days"} · No nights logged`}
+                  </small>
+                </div>
+                <Segmented
+                  options={[
+                    { value: 7, label: "Week" },
+                    { value: 30, label: "Month" },
+                  ]}
+                  value={chartDays}
+                  onChange={setChartDays}
+                  label="Chart time period"
+                  mini
+                />
+              </div>
+              <SleepChart
+                entries={entries}
+                goal={goal}
+                days={chartDays}
+                onSelect={openEntry}
+              />
+            </section>
             <div className="today-actions" aria-label="Quick actions">
               <button className="today-log" onClick={newNight}>
                 <Plus size={19} aria-hidden="true" />
                 <strong>{latest ? "Log a night" : "Log my first night"}</strong>
-                <ChevronRight size={17} aria-hidden="true" />
               </button>
               <WindDownHome
                 store={store}
@@ -237,67 +270,37 @@ export default function App({
               />
             </div>
             {latest && (
-              <div className="today-sleep">
-                <button
-                  className="latest-night"
-                  aria-label="View latest night"
-                  onClick={() => openEntry(latest)}
-                >
-                  <span>
-                    <strong>{durationLabel(sleepMinutes(latest))}</strong>
-                    <small>
-                      Estimated sleep ·{" "}
-                      {Math.round((sleepMinutes(latest) / (goal * 60)) * 100)}%
-                      of goal
-                    </small>
-                  </span>
-                  <span>
-                    <small>
-                      {latest.date === day
-                        ? "Last night"
-                        : dateLabel(latest.date)}
-                    </small>
-                    <ChevronRight size={17} aria-hidden="true" />
-                  </span>
-                </button>
-                <details className="more-panel today-trends">
-                  <summary>
-                    Your sleep rhythm{" "}
-                    <ChevronRight size={16} aria-hidden="true" />
-                  </summary>
-                  <div className="section-heading">
-                    <div className="today-average">
-                      <strong>{week.length ? durationLabel(avg) : "—"}</strong>
-                      <small>
-                        {week.length}/{chartDays} nights logged
-                      </small>
-                    </div>
-                    <Segmented
-                      options={[
-                        { value: 7, label: "Week" },
-                        { value: 30, label: "Month" },
-                      ]}
-                      value={chartDays}
-                      onChange={setChartDays}
-                      label="Chart time period"
-                      mini
-                    />
-                  </div>
-                  <SleepChart
-                    entries={entries}
-                    goal={goal}
-                    days={chartDays}
-                    onSelect={openEntry}
-                  />
-                </details>
-              </div>
+              <button
+                className="latest-night"
+                aria-label="View latest night"
+                onClick={() => openEntry(latest)}
+              >
+                <span>
+                  <strong>{durationLabel(sleepMinutes(latest))}</strong>
+                  <small>
+                    Estimated sleep ·{" "}
+                    {Math.round((sleepMinutes(latest) / (goal * 60)) * 100)}% of
+                    goal
+                  </small>
+                </span>
+                <span>
+                  <small>
+                    {latest.date === day
+                      ? "Last night"
+                      : dateLabel(latest.date)}
+                  </small>
+                  <ChevronRight size={17} aria-hidden="true" />
+                </span>
+              </button>
             )}
           </div>
         )}
         {tab === "journal" && (
           <div className="view journal-view">
             <div className="page-intro journal-intro">
-              <h1>Journal</h1>
+              <h1 className="symbol-heading">
+                <BookOpen aria-hidden="true" /> Journal
+              </h1>
               <button className="primary" onClick={newNight}>
                 <Plus size={17} aria-hidden="true" /> Log a night
               </button>

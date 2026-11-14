@@ -1,15 +1,13 @@
-import { Settings2 } from "lucide-react";
+import { UserRound } from "lucide-react";
 import { dateLabel } from "../domain";
 
 export default function AppHeader({
   day,
-  name,
   sample,
   onHome,
   onSettings,
 }: {
   day: string;
-  name: string;
   sample: boolean;
   onHome: () => void;
   onSettings: () => void;
@@ -48,11 +46,7 @@ export default function AppHeader({
           onClick={onSettings}
           aria-label="Open settings"
         >
-          {name ? (
-            name[0].toUpperCase()
-          ) : (
-            <Settings2 size={18} aria-hidden="true" />
-          )}
+          <UserRound size={19} aria-hidden="true" />
         </button>
       </div>
     </header>

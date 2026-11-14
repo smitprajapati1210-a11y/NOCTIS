@@ -67,7 +67,7 @@ Netlify serves the build in `dist` and runs the authentication endpoints in `net
 
 | View      | Working features                                                                                                                                                         |
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Today     | Ask Noctis with journal answers and chart cards, quick logging, wind-down shortcut, latest night and expandable 7/30-day charts. |
+| Today     | Ask Noctis with journal answers and chart cards, quick logging, wind-down shortcut, an inline 7/30-day sleep chart, and the latest night. |
 | Journal   | Create, edit and delete nights; date/time validation; rested ratings; habit tags and notes; search; tappable 35-day heatmap.                                             |
 | Discover  | Weekly summary, expandable rested-rating chart and bedtime variation, and the pattern detective. |
 | Wind down | 15/30/45-minute session timer, editable daily checklist with task suggestions, and an expandable evening plan and breathing timer. |

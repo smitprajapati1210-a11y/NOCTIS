@@ -1,19 +1,29 @@
 import type { Dispatch, SetStateAction } from "react";
 import {
+  BookOpen,
   Check,
-  ChevronRight,
   Pencil,
   Clock3,
+  ListTodo,
   Moon,
   Pause,
   Play,
   RotateCcw,
+  Smartphone,
+  Sunrise,
 } from "lucide-react";
 import { routineCompletedToday, today, type Store } from "../domain";
 import type { WindDownController } from "../useWindDown";
 
 const clock = (seconds: number) =>
   `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+
+const taskIcons = new Map([
+  ["lights", Moon],
+  ["phone", Smartphone],
+  ["tomorrow", BookOpen],
+  ["reflect", Sunrise],
+]);
 
 export function WindDownHome({
   store,
@@ -38,21 +48,14 @@ export function WindDownHome({
       <span>
         <strong>Wind down</strong>
         <small>
+          {timer.running && (
+            <span className="today-timer">{clock(timer.remaining)} left</span>
+          )}
           {total
             ? `${done} of ${total} rituals complete`
             : "Set up your checklist"}
         </small>
       </span>
-      {timer.running ? (
-        <span
-          className="today-timer"
-          aria-label={`${clock(timer.remaining)} left`}
-        >
-          {clock(timer.remaining)}
-        </span>
-      ) : (
-        <ChevronRight size={17} aria-hidden="true" />
-      )}
     </button>
   );
 }
@@ -178,37 +181,45 @@ export function WindDownSession({
               </div>
             </div>
             <div className="wind-rituals">
-              {tasks.map(({ id, title }) => (
-                <label
-                  key={id}
-                  className={`wind-ritual ${done.includes(id) ? "is-done" : ""}`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={done.includes(id)}
-                    onChange={() =>
-                      setStore((previous) => {
-                        const date = today();
-                        const current = routineCompletedToday(
-                          previous.routine,
-                          date,
-                        );
-                        const completed = current.includes(id)
-                          ? current.filter((item) => item !== id)
-                          : [...current, id];
-                        return {
-                          ...previous,
-                          routine: { ...previous.routine, date, completed },
-                        };
-                      })
-                    }
-                  />
-                  <span className="wind-check" aria-hidden="true">
-                    <Check size={13} />
-                  </span>
-                  <span className="wind-ritual-copy">{title}</span>
-                </label>
-              ))}
+              {tasks.map(({ id, title }) => {
+                const Icon = taskIcons.get(id) ?? ListTodo;
+                return (
+                  <label
+                    key={id}
+                    className={`wind-ritual ${done.includes(id) ? "is-done" : ""}`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={done.includes(id)}
+                      onChange={() =>
+                        setStore((previous) => {
+                          const date = today();
+                          const current = routineCompletedToday(
+                            previous.routine,
+                            date,
+                          );
+                          const completed = current.includes(id)
+                            ? current.filter((item) => item !== id)
+                            : [...current, id];
+                          return {
+                            ...previous,
+                            routine: { ...previous.routine, date, completed },
+                          };
+                        })
+                      }
+                    />
+                    <Icon
+                      className="wind-ritual-icon"
+                      size={18}
+                      aria-hidden="true"
+                    />
+                    <span className="wind-ritual-copy">{title}</span>
+                    <span className="wind-check" aria-hidden="true">
+                      <Check size={13} />
+                    </span>
+                  </label>
+                );
+              })}
             </div>
           </>
         ) : (

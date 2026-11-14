@@ -194,6 +194,10 @@
   line-height: 1.45;
   overflow-wrap: anywhere;
 }
+.wind-ritual-icon {
+  flex: none;
+  color: var(--accent);
+}
 .wind-check {
   display: grid;
   place-items: center;

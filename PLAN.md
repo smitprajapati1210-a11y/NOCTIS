@@ -99,6 +99,12 @@ The chat is **deterministic local rules, not an LLM**. The account server handle
 - Moved the separately downloaded local and hosted OAuth JSON backups out of Downloads to the private `~/.config/noctis/oauth` folder. Running sign-in uses the existing configured environments.
 - Chrome verified Today’s inline answer and the checklist editor’s one-tap suggestion and cancel flow. All 32 tests and the production build passed. Deployed commit `125da58` to the live beta and verified the new bundles and Google sign-in configuration at the public URL. Physical iPhone testing remains pending.
 
+## Follow-up — restore symbols and show the chart on Today
+
+- Restored stars and orbital lines around tonight’s moon, section icons, and the default wind-down task icons. The top-right person icon opens the existing Settings sheet.
+- Today shows the sleep-duration chart directly under Ask Noctis, with Week and Month controls, the goal reference, and per-night details. New journals show an empty plot with a first-night message. Quick actions sit side by side below the chart.
+- All 32 tests and the production build passed. Verified the visible chart and profile icon in Chrome’s phone-sized app shell and switched between Week and Month. Physical iPhone testing remains pending.
+
 ## Next milestone — physical iPhone and motion tuning
 
 1. Read README’s beginner-friendly run instructions. Start `npm run dev` in this folder.

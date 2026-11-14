@@ -59,7 +59,7 @@ export default function AskNoctis({
       <div className="ask-home-heading">
         <Sparkles size={20} aria-hidden="true" />
         <h2 id={title}>Ask Noctis</h2>
-        <span>{demo ? "Sample journal" : "Journal assistant"}</span>
+        <span>{demo ? "Sample journal · Local preview" : "Local preview"}</span>
       </div>
       <form className="ask-home-form" onSubmit={submit}>
         <input
@@ -117,9 +117,6 @@ export default function AskNoctis({
           ))}
         </div>
       </details>
-      <p className="ask-home-note">
-        Local preview · Answers use your journal and built-in rules.
-      </p>
     </section>
   );
 }

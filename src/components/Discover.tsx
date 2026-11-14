@@ -36,7 +36,9 @@ export default function Discover({
   return (
     <div className="view discover-view">
       <div className="page-intro lab-intro">
-        <h1>Discover</h1>
+        <h1 className="symbol-heading">
+          <FlaskConical aria-hidden="true" /> Discover
+        </h1>
       </div>
       <Segmented
         options={[
