@@ -117,6 +117,11 @@ The chat is **deterministic local rules, not an LLM**. The account server handle
 - Added a two-layer starfield behind the four signed-in views. The closer stars are brighter, move farther with scrolling, and briefly carry flick momentum. The sky stays still with Reduced Motion, and selectors switch immediately.
 - All 34 tests and the production build passed. At a phone-sized viewport, Chrome and WebKit verified both selectors, shape and highlight animation, release, rapid switching, the rectangular Discover slider, scroll reversal and Reduced Motion. Chrome also verified touch release and cancellation. Check the feel in Safari on a physical iPhone next.
 
+## Follow-up — interactive moon on Today
+
+- Today’s moon opens a close-up with an orbiting glint and a picker for tonight and two nights on either side. Every date uses the calculated local 9 pm phase and illumination. The sheet reopens on tonight, restores focus to the moon on dismissal, and keeps the artwork still with Reduced Motion.
+- All 35 tests and the production build passed. Touch-sized Chrome and WebKit previews verified opening, orbital movement, date selection, reopening, focus restoration, and Reduced Motion. Physical iPhone verification remains pending.
+
 ## Next milestone — physical iPhone and motion tuning
 
 1. Read README’s beginner-friendly run instructions. Start `npm run dev` in this folder.

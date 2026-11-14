@@ -42,6 +42,7 @@ import Tonight from "./components/Tonight";
 import NightMoon, { MoonVisual } from "./components/Moon";
 import { entryMoment } from "./moon";
 import LunarScene from "./components/LunarScene";
+import MoonExplorer from "./components/MoonExplorer";
 import WeekRail from "./components/WeekRail";
 import AppHeader from "./components/AppHeader";
 import BottomNav, { tabIndex, type Tab } from "./components/BottomNav";
@@ -65,7 +66,7 @@ export default function App({
   const [tab, setTab] = useState<Tab>("today");
   const requestedTab = useRef<Tab>(tab);
   const [modal, setModal] = useState<
-    "entry" | "settings" | "sample" | "checklist" | "history" | null
+    "entry" | "settings" | "sample" | "checklist" | "history" | "moon" | null
   >(null);
   const [editing, setEditing] = useState<Entry | undefined>();
   const [entryDate, setEntryDate] = useState(today());
@@ -181,7 +182,11 @@ export default function App({
       >
         {tab === "today" && (
           <div className="view today-view">
-            <LunarScene now={now} name={store.preferences.name} />
+            <LunarScene
+              now={now}
+              name={store.preferences.name}
+              onExplore={() => setModal("moon")}
+            />
             <button className="today-log primary full" onClick={newNight}>
               <Plus size={19} aria-hidden="true" />
               {latest ? "Log a night" : "Log my first night"}
@@ -428,6 +433,11 @@ export default function App({
         </div>
       )}
       <OverlayPresence show={modal !== null}>
+        {modal === "moon" && (
+          <Modal title="Moon phases" onClose={() => setModal(null)}>
+            <MoonExplorer tonight={day} />
+          </Modal>
+        )}
         {modal === "history" && (
           <Modal
             title={demo ? "Past weeks · Sample journal" : "Past weeks"}

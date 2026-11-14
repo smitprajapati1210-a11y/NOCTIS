@@ -212,6 +212,59 @@ test("Today plots this week before chat and opens older constellations separatel
   assert.equal(oldChart().querySelectorAll(".sleep-line-star").length, 7);
 });
 
+test("the Today moon opens to tonight, explores nearby phases, and returns focus", async () => {
+  const { dateLabel, dateOffset } = await import("../src/domain");
+  const { moonSnapshot, tonightMoment } = await import("../src/moon");
+  const date = today();
+  const tonight = moonSnapshot(tonightMoment(date));
+  const later = dateOffset(date, 2);
+  const laterMoon = moonSnapshot(tonightMoment(later));
+  const laterLabel = dateLabel(later, {
+    weekday: "long",
+    day: "numeric",
+    month: "short",
+  });
+
+  render(<App />);
+  const u = user();
+  const trigger = screen.getByRole("button", {
+    name: "Explore tonight’s moon",
+  });
+  const homeMoon = screen.getByRole("region", { name: "Tonight’s moon" });
+  const readout = `${tonight.name} · ${tonight.percent}% illuminated`;
+  trigger.focus();
+  await u.keyboard("{Enter}");
+  const dialog = within(screen.getByRole("dialog", { name: "Moon phases" }));
+  assert.equal(
+    dialog
+      .getByRole("button", { name: "Tonight" })
+      .getAttribute("aria-pressed"),
+    "true",
+  );
+  assert.ok(dialog.getByRole("heading", { name: tonight.name }));
+  assert.ok(dialog.getByText(`${tonight.percent}% illuminated`));
+
+  const laterButton = dialog.getByRole("button", { name: laterLabel });
+  await u.click(laterButton);
+  assert.equal(laterButton.getAttribute("aria-pressed"), "true");
+  assert.ok(dialog.getByText(`${laterLabel} · 9 pm`));
+  assert.ok(dialog.getByRole("heading", { name: laterMoon.name }));
+  assert.ok(dialog.getByText(`${laterMoon.percent}% illuminated`));
+  assert.ok(within(homeMoon).getByText(readout));
+
+  await u.keyboard("{Escape}");
+  assert.equal(screen.queryByRole("dialog", { name: "Moon phases" }), null);
+  assert.equal(document.activeElement, trigger);
+  await u.click(trigger);
+  assert.equal(
+    screen
+      .getByRole("button", { name: "Tonight" })
+      .getAttribute("aria-pressed"),
+    "true",
+  );
+  assert.equal(saved().entries.length, 0);
+});
+
 test("home opens wind-down; long sessions and the checklist survive navigation and reload", async () => {
   render(<App />);
   const u = user();

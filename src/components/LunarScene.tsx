@@ -1,9 +1,17 @@
-import { Sparkle } from "lucide-react";
+import { Plus, Sparkle } from "lucide-react";
 import { greetingForHour, localDate } from "../domain";
 import { moonSnapshot, tonightMoment } from "../moon";
 import { MoonVisual } from "./Moon";
 
-export default function LunarScene({ name, now }: { name: string; now: Date }) {
+export default function LunarScene({
+  name,
+  now,
+  onExplore,
+}: {
+  name: string;
+  now: Date;
+  onExplore: () => void;
+}) {
   const date = tonightMoment(localDate(now));
   const moon = moonSnapshot(date);
   const greeting = greetingForHour(now.getHours());
@@ -23,7 +31,16 @@ export default function LunarScene({ name, now }: { name: string; now: Date }) {
           {moon.name} · {moon.percent}% illuminated
         </p>
       </div>
-      <div className="today-moon-art">
+      <button
+        type="button"
+        className="today-moon-art"
+        aria-label="Explore tonight’s moon"
+        aria-haspopup="dialog"
+        onClick={(event) => {
+          event.currentTarget.focus({ preventScroll: true });
+          onExplore();
+        }}
+      >
         <svg
           className="today-moon-orbit"
           viewBox="0 0 100 100"
@@ -41,14 +58,19 @@ export default function LunarScene({ name, now }: { name: string; now: Date }) {
           <circle cx="33" cy="12" r="1.6" />
           <circle cx="84" cy="88" r="1.6" />
         </svg>
-        <MoonVisual date={date} size={78} />
+        <span className="today-moon-disc" aria-hidden="true">
+          <MoonVisual date={date} size={78} />
+        </span>
         <Sparkle
           className="today-moon-star"
           size={13}
           fill="currentColor"
           aria-hidden="true"
         />
-      </div>
+        <span className="today-moon-expand" aria-hidden="true">
+          <Plus size={12} strokeWidth={1.8} />
+        </span>
+      </button>
     </section>
   );
 }

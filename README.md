@@ -120,6 +120,8 @@ The planner selects the next upcoming wake-up, including when opened after midni
 
 ## The moon
 
+Tap the moon on **Today** to open **Moon phases**. A small spark traces the orbit as the close-up opens. Tap any of the five nights to see its phase and the percentage illuminated at 9 pm. Reduced Motion shows the same information with a still illustration.
+
 Moon illumination and phase are calculated locally with [SunCalc](https://github.com/mourner/suncalc). Tonight uses **9 pm local device time**; journal entries use their bedtime, accounting for the previous date when sleep crosses midnight. Phase names use the nearest of eight familiar phases. These are astronomical estimates, not live telescope observations.
 
 The illustration shows waxing light on the right and waning light on the left. It is a northern-style phase diagram, not a location-specific horizon orientation. There is no GPS request, moonrise/weather forecast, or claim that the phase causes sleep changes.
