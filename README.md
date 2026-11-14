@@ -30,7 +30,9 @@ Each account uses its own journal storage in the current browser. To bring an ex
 
 ## Google sign-in on the Mac
 
-The Google button is available when the server has a registered app address and a matching client ID and secret. The Apple button is inactive.
+Live Google sign-in was verified in Chrome on this Mac at **http://localhost:5176/**. Run `npm run dev:google` to restart the preview. The Apple button is inactive.
+
+If setting up Google sign-in in a fresh checkout, follow these steps.
 
 1. In the [Noctis Google Cloud project](https://console.cloud.google.com/auth/overview?project=noctis-514708), set up the consent screen and create a **Web application** client named **NOCTIS local development**. Add `http://localhost:5176/api/auth/callback/google` to **Authorized redirect URIs**. [Google OAuth redirect rules](https://developers.google.com/identity/protocols/oauth2/web-server)
 2. Create `.env.google.local` in the project. Add `NOCTIS_URL=http://localhost:5176`, `NOCTIS_AUTH_DATA_DIR=.noctis/google-preview`, and the client values as `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`. Git ignores this file. The app reads these values on the server.

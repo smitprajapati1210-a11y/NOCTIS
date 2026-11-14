@@ -74,9 +74,9 @@ The chat is **deterministic local rules, not an LLM**. The account server handle
 ## Follow-up — Google and email first, 2026-11-14
 
 - The web release uses Google and email. The Apple button stays visible and inactive. New accounts open an empty personal journal and can opt into sample nights in Settings.
-- Created the **Noctis** Google Cloud project (`noctis-514708`). The consent wizard is filled through its final step and is awaiting the owner’s review of Google’s API Services User Data Policy. After the owner finishes the wizard, create the local web client with `http://localhost:5176/api/auth/callback/google`, save its credentials to the ignored `.env.google.local`, and use `npm run dev:google`. The local Google preview has its own origin and database so the Wi-Fi preview remains available on port 5173.
+- Created the **Noctis** Google Cloud project (`noctis-514708`). The owner completed consent setup. Registered **NOCTIS local development** with `http://localhost:5176/api/auth/callback/google` and installed the credentials in the ignored `.env.google.local`. Start it with `npm run dev:google`. The Mac Google preview has its own origin and database, and the Wi-Fi preview remains available on port 5173.
 - Production build and 31 tests passed. Added coverage for a fresh account’s empty journal, the Google authorization URL and inactive Apple provider, and public-mode email verification and password reset with a local SMTP receiver.
-- To verify real Google sign-in, complete the callback with a test account and confirm the app opens the signed-in journal. For iPhone sign-in, choose an HTTPS host and persistent account storage, register its callback, configure a live SMTP sender, and test in Safari. See the README for exact settings.
+- Completed a live Google sign-in in Chrome on the Mac. The account chooser returned to NOCTIS and opened Today with an empty personal journal. For iPhone sign-in, choose an HTTPS host and persistent account storage, register its callback, configure a live SMTP sender, and test in Safari. See the README for exact settings.
 
 ## Next milestone — physical iPhone and motion tuning
 
