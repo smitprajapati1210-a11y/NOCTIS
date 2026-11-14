@@ -97,7 +97,7 @@ The chat is **deterministic local rules, not an LLM**. The account server handle
 - Reduced the moon scene to a compact greeting and tonight’s real phase. Placed logging and wind-down immediately below the assistant. Used collapsible controls for sleep trends, journal search and heatmap, Discover details, evening planning and the breathing timer. Increased contrast between key controls, with lilac for primary actions and muted sage for wind-down. Kept the gliding selector and reduced-motion handling.
 - Added checklist editing with renamed tasks, removal, custom tasks and suggestions. Version 1 journals and backups keep their default task IDs and existing checkmarks. An intentionally empty custom list stays empty. Tasks and daily checkmarks remain browser-local per account.
 - Moved the separately downloaded local and hosted OAuth JSON backups out of Downloads to the private `~/.config/noctis/oauth` folder. Running sign-in uses the existing configured environments.
-- Chrome verified Today’s inline answer and the checklist editor’s one-tap suggestion and cancel flow. Automated tests cover stored edits, older data, empty lists and chat chart cards. Physical iPhone testing remains pending.
+- Chrome verified Today’s inline answer and the checklist editor’s one-tap suggestion and cancel flow. All 32 tests and the production build passed. Deployed commit `125da58` to the live beta and verified the new bundles and Google sign-in configuration at the public URL. Physical iPhone testing remains pending.
 
 ## Next milestone — physical iPhone and motion tuning
 
