@@ -109,17 +109,26 @@ test("sample toggle preserves personal data; preferences persist independently",
   render(<App />);
   const u = await logNight();
   await u.click(screen.getByRole("button", { name: "Open settings" }));
-  fireEvent.change(screen.getByLabelText("What should we call you?"), {
-    target: { value: "Moon" },
+  assert.ok(screen.getByRole("dialog", { name: "Profile" }));
+  assert.ok(
+    !screen.getByText("Journal backups", { exact: true }).closest("details")
+      ?.open,
+  );
+  fireEvent.change(screen.getByLabelText("Display name"), {
+    target: { value: "moon" },
   });
+  await u.click(screen.getByRole("button", { name: "Save profile" }));
+  await u.click(screen.getByText("Preferences", { exact: true }));
   fireEvent.change(screen.getByRole("slider"), { target: { value: "8.5" } });
   await u.click(screen.getByRole("switch", { name: "Explore sample nights" }));
   assert.equal(saved().preferences.demo, true);
   assert.equal(saved().entries.length, 1);
-  await u.click(screen.getByRole("button", { name: "Save preferences" }));
-  assert.equal(saved().preferences.name, "Moon");
+  await u.click(screen.getByRole("button", { name: "Save sleep goal" }));
+  assert.equal(saved().preferences.name, "moon");
   assert.equal(saved().preferences.goal, 8.5);
   assert.equal(saved().entries.length, 1);
+  await u.click(screen.getByRole("button", { name: "Back to app" }));
+  assert.ok(screen.getByRole("heading", { name: /^Good .+, Moon$/ }));
 });
 
 test("Today answers questions with chart cards and Discover retains the detective", async () => {
@@ -386,6 +395,7 @@ test("backup import previews replacement and restores only after confirmation", 
   render(<App />);
   const u = user();
   await u.click(screen.getByRole("button", { name: "Open settings" }));
+  await u.click(screen.getByText("Journal backups", { exact: true }));
   const backup = freshStore();
   backup.entries = [
     {
@@ -553,10 +563,10 @@ test("an earlier journal can be adopted explicitly without appearing in a differ
   const u = user();
   await u.click(screen.getByRole("button", { name: "Open settings" }));
   assert.equal(
-    (screen.getByLabelText("What should we call you?") as HTMLInputElement)
-      .value,
+    (screen.getByLabelText("Display name") as HTMLInputElement).value,
     "",
   );
+  await u.click(screen.getByText("Journal backups", { exact: true }));
   await u.click(
     screen.getByRole("button", { name: "Import journal from before sign-in" }),
   );
@@ -576,10 +586,10 @@ test("an earlier journal can be adopted explicitly without appearing in a differ
   );
   await u.click(screen.getByRole("button", { name: "Open settings" }));
   assert.equal(
-    (screen.getByLabelText("What should we call you?") as HTMLInputElement)
-      .value,
+    (screen.getByLabelText("Display name") as HTMLInputElement).value,
     "",
   );
+  await u.click(screen.getByText("Journal backups", { exact: true }));
   assert.equal(
     screen.queryByRole("button", {
       name: "Import journal from before sign-in",
@@ -594,10 +604,16 @@ test("a new signed-in account opens its empty personal journal", async () => {
   render(
     <App
       storageKey={key}
-      account={{ email: "new@example.test", signOut: async () => {} }}
+      account={{
+        email: "new@example.test",
+        profileName: "smit",
+        updateProfile: async () => {},
+        signOut: async () => {},
+      }}
     />,
   );
   assert.ok(screen.getByRole("button", { name: "Log my first night" }));
+  assert.ok(screen.getByRole("heading", { name: /^Good .+, Smit$/ }));
   assert.ok(screen.getByRole("group", { name: "7-day sleep duration chart" }));
   assert.ok(screen.getByText("Log a night to add your first star this week."));
   assert.equal(screen.queryByText("Exploring sample nights"), null);

@@ -132,10 +132,64 @@ test("configured Google sign-in uses the registered callback and leaves Apple in
     `${origin}/api/auth/callback/google`,
   );
   assert.ok(authorization.searchParams.get("state"));
+  assert.equal(authorization.searchParams.get("prompt"), "select_account");
   assert.ok(
     !(await request("auth/sign-in/social", { provider: "apple", callbackURL }))
       .ok,
   );
+});
+
+test("profile edits are private to the signed-in account and persist after signing out", async (t) => {
+  const { request } = await authFixture(t);
+  const credentials = {
+    email: "profile@example.test",
+    password: "profile test password 123",
+  };
+  const details = {
+    profileName: "smit",
+    phoneNumber: "+91 90000 12345",
+    profilePhoto: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2Q==",
+  };
+  assert.equal((await request("auth/update-user", details)).status, 401);
+  const initial = await request("auth/sign-up/email", {
+    ...credentials,
+    name: "Profile fixture",
+  });
+  const cookie = initial.headers
+    .getSetCookie()
+    .map((header) => header.split(";")[0])
+    .join("; ");
+  assert.ok(cookie);
+  assert.equal(
+    (await request("auth/update-user", { phoneNumber: "invalid" }, cookie))
+      .status,
+    400,
+  );
+  assert.equal(
+    (
+      await request(
+        "auth/update-user",
+        { profilePhoto: "javascript:alert(1)" },
+        cookie,
+      )
+    ).status,
+    400,
+  );
+  const saved = await request("auth/update-user", details, cookie);
+  assert.equal(saved.status, 200, await saved.clone().text());
+  assert.ok((await request("auth/sign-out", {}, cookie)).ok);
+  const login = await request("auth/sign-in/email", credentials);
+  const signedIn = (await login.json()).user;
+  assert.equal(signedIn.email, credentials.email);
+  for (const [key, value] of Object.entries(details))
+    assert.equal(signedIn[key], value);
+  const other = await request("auth/sign-up/email", {
+    ...credentials,
+    email: "other-profile@example.test",
+    name: "Another fixture",
+  });
+  const otherUser = (await other.json()).user;
+  for (const key of Object.keys(details)) assert.ok(!otherUser[key]);
 });
 
 test("public account email verifies ownership and password reset revokes earlier sessions", async (t) => {

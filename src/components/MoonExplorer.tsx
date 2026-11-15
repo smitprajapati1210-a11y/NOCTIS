@@ -14,6 +14,9 @@ const fullDate: Intl.DateTimeFormatOptions = {
 
 export default function MoonExplorer({ tonight }: { tonight: string }) {
   const [offset, setOffset] = useState(0);
+  const [direction, setDirection] = useState<"forward" | "backward" | null>(
+    null,
+  );
   const selected = dateOffset(tonight, offset);
   const time = tonightMoment(selected);
   const moon = moonSnapshot(time);
@@ -26,8 +29,15 @@ export default function MoonExplorer({ tonight }: { tonight: string }) {
             <Sparkle size={12} fill="currentColor" />
           </span>
         </div>
-        <div key={selected} className="moon-explorer-disc">
-          <MoonVisual date={time} size={148} />
+        <div className="moon-explorer-disc">
+          <MoonVisual date={time} size={148} animatePhase />
+          {direction && (
+            <span
+              key={selected}
+              className="moon-explorer-sweep"
+              data-direction={direction}
+            />
+          )}
         </div>
       </div>
       <div
@@ -53,7 +63,11 @@ export default function MoonExplorer({ tonight }: { tonight: string }) {
           };
         })}
         value={offset}
-        onSelect={setOffset}
+        onSelect={(night) => {
+          if (night === offset) return;
+          setDirection(night > offset ? "forward" : "backward");
+          setOffset(night);
+        }}
         label="Choose a night"
       />
     </div>

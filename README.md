@@ -19,11 +19,13 @@ If dependencies need to be restored after copying or cloning the project, run `n
 
 ## Introduction and accounts
 
-On first open, explore the night scene, try a rested rating, tap through a sample sleep chart and check off a wind-down ritual. These examples use sample data. Continue to sign in, then choose **Create an account** to use an email address and a new password of at least 12 characters. The Mac preview stores real accounts in SQLite and uses server-managed session cookies. **Settings → Account** has sign-out.
+On first open, explore the night scene, try a rested rating, tap through a sample sleep chart and check off a wind-down ritual. These examples use sample data. Continue to sign in, then choose **Create an account** to use an email address and a new password of at least 12 characters. The Mac preview stores real accounts in SQLite and uses server-managed session cookies.
+
+Open **Profile** from the person icon. The page shows your signed-in email and lets you save a display name, photo, and optional phone number to your account. Today capitalizes the first letter of your display name in its greeting. Use **Sign out** to choose another Google account.
 
 The Wi-Fi URL is for local testing with a password you use only for this preview. The preview accepts an email address as the account name and supports sign-in without inbox verification. Use a verified HTTPS deployment and SMTP for public signup, email confirmation and password reset.
 
-Each account uses its own journal storage in the current browser. To bring an existing journal into your account on that same device and address, use **Settings → Import journal from before sign-in**, review the preview and confirm the restore. The earlier copy remains in browser storage. Use a JSON backup to transfer a journal to another browser or address.
+Each account uses its own journal storage in the current browser. To bring an existing journal into your account on that same device and address, use **Profile → Journal backups → Import journal from before sign-in**, review the preview and confirm the restore. The earlier copy remains in browser storage. Use a JSON backup to transfer a journal to another browser or address.
 
 ## Google sign-in on the Mac
 
@@ -50,11 +52,11 @@ Automated tests cover Google redirect generation and the verification and recove
 
 The Vite build serves the app from `dist`. Vercel Functions serve the account API from `api/`, and the linked Neon PostgreSQL database stores accounts. The production project is `smitprajapati1210-4406/noctis-sleep-beta` and uses Node.js 24.x.
 
-1. Set `DATABASE_URL`, `BETTER_AUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `NOCTIS_URL` in the project’s production environment. For a new database, apply the Postgres schema in `netlify/database/migrations/0001_accounts.sql` once. The existing Neon database already has the schema.
+1. Set `DATABASE_URL`, `BETTER_AUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `NOCTIS_URL` in the project’s production environment. For a new database, apply the SQL files in `netlify/database/migrations/` in order. The existing Neon database already includes `0001_accounts` and `0002_profile`.
 2. Register the exact Google callback `https://noctis-sleep-beta.vercel.app/api/auth/callback/google`. If the primary domain changes, update both the callback and `NOCTIS_URL`.
 3. Run `npx vercel@65.16.0 build --prod` with Node.js 24 and then `npx vercel@65.16.0 deploy --prebuilt --prod`. Verify the homepage, `/api/noctis/auth-options`, and a full Google sign-in at the production address. [Vercel Vite setup](https://vercel.com/docs/frameworks/frontend/vite) · [Vercel CLI deploy](https://vercel.com/docs/cli/deploy)
 
-The former Netlify site has been retired. If you exported your journal from that address, open the new address, sign in, and choose **Settings → Import backup**. Import replaces the destination journal, so save a backup there first if you have started logging at the new address.
+The former Netlify site has been retired. If you exported your journal from that address, open the new address, sign in, and choose **Profile → Journal backups → Import backup**. Import replaces the destination journal, so save a backup there first if you have started logging at the new address.
 
 ### Deploy on Render
 
@@ -74,9 +76,9 @@ The former Netlify site has been retired. If you exported your journal from that
 | Discover  | Weekly summary, expandable rested-rating chart and bedtime variation, and the pattern detective. |
 | Wind down | 15/30/45-minute session timer, editable daily checklist with task suggestions, and an expandable evening plan and breathing timer. |
 | Moon      | Tonight’s calculated phase at 9 pm in the device’s timezone; historical phases at each entry’s actual bedtime.                                                           |
-| Settings  | Name, sleep goal, separate sample mode, JSON export/import with a replacement confirmation, and personal-journal erase confirmation.                                     |
+| Profile   | Display name, photo, signed-in email, optional phone number, sign-out, sample nights, sleep goal, backups and confirmed erase. |
 
-New accounts open an empty personal journal. Use **Today → Log my first night** to add a night. The walkthrough uses examples, and **Settings → Explore sample nights** opens an optional sample view. **Open my journal** returns to your entries. If you used the previous preview and signed in while sample mode was active, switch it off in Settings.
+New accounts open an empty personal journal. Use **Today → Log my first night** to add a night. The walkthrough uses examples, and **Profile → Explore sample nights** opens an optional sample view. **Open my journal** returns to your entries.
 
 **Your sleep rhythm** starts a fresh chart each Monday. Each logged wake-up date adds a glowing point at that night's sleep duration. The points appear in date order, then a thin line joins consecutive logged nights. Tap **Past weeks** on Today or Journal to see earlier weeks with entries. Reduced Motion shows the completed chart immediately.
 
@@ -115,14 +117,14 @@ The planner selects the next upcoming wake-up, including when opened after midni
 
 - Journal entries, preferences and timers stay in browser storage under an account-specific key. The SQLite database stores account, credential and session records. Journal data travels between devices through user-exported backups.
 - Each device and web address has separate storage. `localhost:5173`, a Network IP, and production preview on port 4173 are separate journals. Safari/Home Screen storage behavior must also be tested before relying on it.
-- Use **Settings → Export backup** regularly. Clearing browser data can remove your journal. The app does not add its own encryption to browser storage, and exported backups are plain JSON.
+- Use **Profile → Journal backups → Export backup** regularly. Clearing browser data can remove your journal. The app does not add its own encryption to browser storage, and exported backups are plain JSON.
 - Import validates the complete backup before offering replacement. Canceling leaves the current journal intact. Export before replacing or erasing it.
-- A corrupted stored copy is not silently overwritten. Settings offers a raw recovery download and a separate reset action. If browser storage is blocked or full, the app warns that changes are not saved.
+- Profile offers a raw recovery download and a separate reset action for unreadable saved data. If browser storage is blocked or full, the app warns that changes are not saved.
 - One main sleep entry is supported per wake-up date; separate naps and multiple sleep blocks are future work.
 
 ## The moon
 
-Tap the moon on **Today** to open **Moon phases**. A small spark traces the orbit as the close-up opens. Tap a night or drag the lilac slider across the five dates to see each phase and the percentage illuminated at 9 pm. Reduced Motion shows the same information with a still illustration.
+Tap the moon on **Today** to open **Moon phases**. A small spark traces the orbit as the close-up opens. Tap a night or drag the lilac slider across the five dates to see the illuminated edge move and a soft reflection pass over the moon. The selected phase shows its illumination at 9 pm. Reduced Motion switches directly to the selected phase.
 
 Moon illumination and phase are calculated locally with [SunCalc](https://github.com/mourner/suncalc). Tonight uses **9 pm local device time**; journal entries use their bedtime, accounting for the previous date when sleep crosses midnight. Phase names use the nearest of eight familiar phases. These are astronomical estimates, not live telescope observations.
 

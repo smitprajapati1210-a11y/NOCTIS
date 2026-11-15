@@ -1,11 +1,51 @@
-import { useId } from "react";
+import { useId, useLayoutEffect, useRef } from "react";
 import { dateLabel, localDate } from "../domain";
 import { illuminatedPath, moonSnapshot } from "../moon";
+import { reducedMotion } from "../motion";
 
-export function MoonVisual({ date, size = 74 }: { date: Date; size?: number }) {
+export function MoonVisual({
+  date,
+  size = 74,
+  animatePhase = false,
+}: {
+  date: Date;
+  size?: number;
+  animatePhase?: boolean;
+}) {
   const moon = moonSnapshot(date);
   const id = useId().replace(/:/g, "");
   const lit = illuminatedPath(moon.fraction, moon.waxing);
+  const target = date.getTime();
+  const visibleTime = useRef(target);
+  const edge = useRef<SVGPathElement>(null);
+  const clip = useRef<SVGPathElement>(null);
+
+  useLayoutEffect(() => {
+    const start = visibleTime.current;
+    if (!animatePhase || start === target || reducedMotion()) {
+      visibleTime.current = target;
+      return;
+    }
+    function paint(time: number) {
+      visibleTime.current = time;
+      const { fraction, waxing } = moonSnapshot(new Date(time));
+      const path = illuminatedPath(fraction, waxing);
+      edge.current?.setAttribute("d", path);
+      clip.current?.setAttribute("d", path);
+    }
+    paint(start);
+    const enteredAt = window.performance.now();
+    let frame: number;
+    function tick(at: number) {
+      const progress = Math.min(1, (at - enteredAt) / 460);
+      const eased = 1 - (1 - progress) ** 3;
+      // Sample dates between selections so both waxing and waning cross naturally.
+      paint(start + (target - start) * eased);
+      if (progress < 1) frame = window.requestAnimationFrame(tick);
+    }
+    frame = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(frame);
+  }, [animatePhase, target]);
   return (
     <svg
       className="moon-visual"
@@ -26,7 +66,7 @@ export function MoonVisual({ date, size = 74 }: { date: Date; size?: number }) {
           <stop offset="1" stopColor="#ac8fc3" />
         </radialGradient>
         <clipPath id={`${id}-lit`}>
-          <path d={lit} />
+          <path d={lit} ref={clip} />
         </clipPath>
       </defs>
       <circle
@@ -42,7 +82,7 @@ export function MoonVisual({ date, size = 74 }: { date: Date; size?: number }) {
         <circle cx="38" cy="65" r="11" />
         <circle cx="65" cy="52" r="6" />
       </g>
-      <path d={lit} fill={`url(#${id}-light)`} />
+      <path d={lit} fill={`url(#${id}-light)`} ref={edge} />
       <g clipPath={`url(#${id}-lit)`}>
         <g fill="#72578f" opacity=".16">
           <circle cx="34" cy="35" r="8" />

@@ -2051,7 +2051,7 @@ legend {
   font-weight: 500;
   position: relative;
 }
-.field > span:not(.input-suffix):not(.goal-value):not(.optional) {
+.field > span:not(.input-suffix):not(.optional) {
   display: flex;
   gap: 6px;
   align-items: center;
@@ -2238,113 +2238,6 @@ legend {
 .import-confirm p {
   font-size: 11px;
   margin-top: 8px;
-}
-.settings-content > form {
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
-}
-.settings-content > form > .eyebrow {
-  color: #aa91b7;
-  margin-bottom: -6px;
-}
-.settings-content > form > .caption {
-  margin-top: -22px;
-  font-size: 9px;
-}
-.goal-value {
-  font-size: 15px;
-  position: absolute;
-  right: 0;
-  top: -2px;
-  color: #9e7ab3;
-}
-.settings-section {
-  padding-top: 26px;
-  margin-top: 26px;
-  border-top: 1px solid #e8dfeb;
-}
-.settings-section h3 {
-  font-size: 15px;
-  color: #9577a6;
-  display: flex;
-  gap: 7px;
-  align-items: center;
-}
-.privacy-note {
-  display: flex;
-  align-items: flex-start;
-  gap: 11px;
-  margin-top: 16px;
-  color: #a4b38c;
-}
-.privacy-note p {
-  font-size: 11px;
-  color: #a38baf;
-}
-.settings-section > .muted {
-  margin-top: 13px;
-  font-size: 10px;
-  color: #b09abc;
-}
-.settings-section > .button-row {
-  margin-top: 15px;
-}
-.settings-section .secondary {
-  font-size: 10px;
-  padding: 11px 9px;
-  background: #eee5f4;
-  color: #a184b2;
-}
-.settings-section .section-heading .muted {
-  font-size: 9px;
-  margin-top: 7px;
-  color: #b39fc1;
-}
-.settings-section > .caption {
-  margin-top: 12px;
-  font-size: 9px;
-  color: #b69ec5;
-}
-.settings-section .text-button {
-  font-size: 10px;
-  justify-content: flex-start;
-}
-.settings-section > .delete-confirm {
-  margin-top: 12px;
-}
-.settings-section > .section-heading > div {
-  flex: 1;
-}
-.switch {
-  height: 27px;
-  min-width: 46px;
-  padding: 4px;
-  border-radius: 30px;
-  background: #ded6e3;
-  display: flex;
-  align-items: center;
-  transition: background 0.2s;
-}
-.switch > span {
-  height: 19px;
-  width: 19px;
-  border-radius: 50%;
-  background: #fff9ff;
-  box-shadow: 0 1px 4px #62467020;
-  transition: transform 0.2s;
-}
-.switch.on {
-  background: #b49ac8;
-}
-.switch.on > span {
-  transform: translateX(19px);
-}
-.version-label {
-  text-align: center;
-  font-size: 9px;
-  color: #bba6c7;
-  margin-top: 30px;
 }
 .storage-alert {
   padding: 15px 23px;
@@ -3324,55 +3217,6 @@ h3 {
   background: #352142;
   border-color: #69407c;
   color: #d6aeea;
-}
-.settings-content > form > .eyebrow {
-  color: #ba94ce;
-}
-.goal-value {
-  color: #d8aff1;
-}
-.settings-section {
-  border-color: #44294f;
-}
-.settings-section h3 {
-  color: #d4b2e8;
-}
-.privacy-note {
-  color: #bcd59a;
-}
-.privacy-note p {
-  color: #c5a7d7;
-}
-.settings-section > .muted {
-  color: #ba9dcd;
-}
-.settings-section .secondary {
-  background: #382346;
-  color: #d8b0eb;
-}
-.settings-section .section-heading .muted {
-  color: #b799ca;
-}
-.settings-section > .caption {
-  color: #ae8fc0;
-}
-.settings-section .text-button {
-  color: #e9a0bd;
-}
-.switch {
-  background: #49324f;
-}
-.switch > span {
-  background: #d5b7e5;
-}
-.switch.on {
-  background: #9365b0;
-}
-.switch.on > span {
-  background: #f3dfff;
-}
-.version-label {
-  color: #9974ac;
 }
 .storage-alert {
   background: #391b2b;

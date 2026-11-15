@@ -15,12 +15,15 @@ export default function LunarScene({
   const date = tonightMoment(localDate(now));
   const moon = moonSnapshot(date);
   const greeting = greetingForHour(now.getHours());
+  const greetingName = name
+    .trim()
+    .replace(/\p{L}/u, (letter) => letter.toLocaleUpperCase());
   return (
     <section className="today-moon" aria-label="Tonight’s moon">
       <div>
         <h1>
           {greeting}
-          {name ? `, ${name}` : ""}{" "}
+          {greetingName ? `, ${greetingName}` : ""}{" "}
           <Sparkle
             className="today-greeting-star"
             size={16}

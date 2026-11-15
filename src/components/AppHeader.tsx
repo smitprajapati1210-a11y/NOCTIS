@@ -43,7 +43,10 @@ export default function AppHeader({
         )}
         <button
           className="avatar"
-          onClick={onSettings}
+          onClick={(event) => {
+            event.currentTarget.focus({ preventScroll: true });
+            onSettings();
+          }}
           aria-label="Open settings"
         >
           <UserRound size={19} aria-hidden="true" />

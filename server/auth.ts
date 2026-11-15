@@ -9,6 +9,12 @@ import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { getMigrations } from "better-auth/db/migration";
 import { toNodeHandler } from "better-auth/node";
 import nodemailer from "nodemailer";
+import { z } from "zod";
+import {
+  PROFILE_NAME_LIMIT,
+  PROFILE_PHOTO_LIMIT,
+  validPhoneNumber,
+} from "../src/profile.ts";
 
 const loopback = ["localhost", "127.0.0.1", "[::1]"];
 
@@ -113,6 +119,43 @@ export function createAuthConfig({
     rateLimit: { enabled: true, storage: "database" },
     session: { expiresIn: 7 * 24 * 60 * 60 },
     account: { encryptOAuthTokens: true, accountLinking: { enabled: false } },
+    user: {
+      additionalFields: {
+        profileName: {
+          type: "string",
+          required: false,
+          validator: { input: z.string().trim().max(PROFILE_NAME_LIMIT) },
+        },
+        profilePhoto: {
+          type: "string",
+          required: false,
+          validator: {
+            input: z
+              .string()
+              .max(PROFILE_PHOTO_LIMIT)
+              .refine(
+                (value) =>
+                  !value ||
+                  /^data:image\/jpeg;base64,\/9j\/[a-z\d+/]+={0,2}$/i.test(
+                    value,
+                  ),
+                "Choose a profile photo.",
+              ),
+          },
+        },
+        phoneNumber: {
+          type: "string",
+          required: false,
+          validator: {
+            input: z
+              .string()
+              .trim()
+              .max(30)
+              .refine(validPhoneNumber, "Enter a valid phone number."),
+          },
+        },
+      },
+    },
     emailAndPassword: {
       enabled: passwordEnabled,
       minPasswordLength: 12,
@@ -150,6 +193,7 @@ export function createAuthConfig({
           google: {
             clientId: env.GOOGLE_CLIENT_ID!,
             clientSecret: env.GOOGLE_CLIENT_SECRET!,
+            prompt: "select_account",
           },
         }
       : {},

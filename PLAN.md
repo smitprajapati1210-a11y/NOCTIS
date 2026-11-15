@@ -136,6 +136,13 @@ The chat is **deterministic local rules, not an LLM**. The account server handle
 - The GitHub repository is still private. Vercel currently deploys through the CLI. Automatic Git deployments require adding the GitHub login connection in Vercel first.
 - The owner confirmed Vercel sign-in and readiness to retire Netlify. Deleted only `noctis-sleep-beta` on Netlify, checked that its old address returned 404, and rechecked the Vercel homepage and Google configuration. Use Settings to import previously exported journal backups at the new address.
 
+## Follow-up — profile screen and animated moon phases
+
+- Rebuilt Profile as a full-screen view in the NOCTIS palette. It shows the signed-in email and lets people save a display name, uploaded photo, and optional phone number to their account. Sign out opens a fresh sign-in with account selection. Today capitalizes the first letter of the saved display name for all time-based greetings.
+- Kept Explore sample nights visible and moved sleep goal and journal backups behind compact disclosures. Confirmations still protect journal replacement and erase. Profile fields are separate from the browser-local journal.
+- Moon phase switching now interpolates the illuminated silhouette over the intervening dates, with a soft sweep that follows the picker direction. Rapid changes start from the displayed phase, and Reduced Motion shows the selected phase immediately.
+- Applied the additive profile migration to Vercel’s Neon database and verified the existing account count. All 36 tests and the production build passed. Phone-sized Chrome and WebKit verified uploads, profile persistence in a fresh session, greeting capitalization, sample mode, backup download, sign-out, moon animation and Reduced Motion. Physical iPhone and authenticated production profile editing remain to be tested.
+
 ## Next milestone — physical iPhone and motion tuning
 
 1. Read README’s beginner-friendly run instructions. Start `npm run dev` in this folder.

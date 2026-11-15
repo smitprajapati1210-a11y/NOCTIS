@@ -52,7 +52,7 @@ export default function AccountGate() {
   }
 
   const user = session.data?.user;
-  if (session.isPending && !resetting) return <Loading />;
+  if (session.isPending && !user && !resetting) return <Loading />;
   if (user && !resetting) {
     return (
       <Suspense fallback={<Loading />}>
@@ -62,6 +62,15 @@ export default function AccountGate() {
           legacyStorageKey={STORAGE_KEY}
           account={{
             email: user.email,
+            profileName: user.profileName ?? undefined,
+            profilePhoto: user.profilePhoto ?? undefined,
+            phoneNumber: user.phoneNumber ?? undefined,
+            updateProfile: async (profile) => {
+              const { error } = await authClient.updateUser(profile);
+              if (error)
+                throw new Error("Couldn’t save your profile. Try again.");
+              await session.refetch();
+            },
             signOut: async () => {
               finishIntro();
               const { error } = await authClient.signOut();

@@ -1064,48 +1064,6 @@ h3 {
 .import-confirm p {
   font-size: 0.8125rem;
 }
-.settings-content > form > .caption {
-  font-size: 0.6875rem;
-}
-.settings-section h3 {
-  font-size: 1rem;
-}
-.privacy-note p,
-.settings-section > .muted {
-  font-size: 0.8125rem;
-  line-height: 1.7;
-}
-.settings-section .secondary {
-  font-size: 0.75rem;
-  padding: 12px 10px;
-}
-.settings-section .section-heading .muted {
-  font-size: 0.75rem;
-}
-.settings-section > .caption {
-  font-size: 0.75rem;
-  line-height: 1.7;
-}
-.settings-section .text-button {
-  font-size: 0.8125rem;
-}
-.switch {
-  height: 44px;
-  min-width: 62px;
-  padding: 8px;
-  background: #49324f;
-}
-.switch > span {
-  height: 28px;
-  width: 28px;
-}
-.switch.on > span {
-  transform: translateX(18px);
-}
-.version-label {
-  font-size: 0.6875rem;
-  line-height: 1.7;
-}
 .sample-detail > h2 {
   font-size: 1.5rem;
 }

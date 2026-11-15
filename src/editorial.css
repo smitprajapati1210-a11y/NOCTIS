@@ -1336,10 +1336,6 @@ h4 {
   font-family: var(--font-display);
   font-size: 1.3rem;
 }
-.settings-section h3 {
-  font-family: var(--font-body);
-  font-size: 0.9375rem;
-}
 .sample-detail > h2 {
   font-family: var(--font-display);
   font-weight: 400;

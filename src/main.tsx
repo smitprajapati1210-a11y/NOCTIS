@@ -11,6 +11,7 @@ import "./refinements.css";
 import "./editorial.css";
 import "./components/SleepChart.css";
 import "./components/AppHeader.css";
+import "./components/Profile.css";
 import "./components/WindDown.css";
 import "./components/FocusLayout.css";
 import "./components/MoonExplorer.css";

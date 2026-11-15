@@ -38,6 +38,7 @@ import Modal from "./components/Modal";
 import OverlayPresence from "./components/OverlayPresence";
 import { changePage } from "./motion";
 import Settings from "./components/Settings";
+import type { ProfileAccount } from "./profile";
 import Tonight from "./components/Tonight";
 import NightMoon, { MoonVisual } from "./components/Moon";
 import { entryMoment } from "./moon";
@@ -57,7 +58,7 @@ export default function App({
 }: {
   storageKey?: string;
   legacyStorageKey?: string;
-  account?: { email: string; signOut: () => Promise<void> };
+  account?: ProfileAccount;
 } = {}) {
   const initial = useMemo(() => readStore(storageKey), [storageKey]);
   const [store, setStore] = useState<Store>(initial.store);
@@ -184,7 +185,7 @@ export default function App({
           <div className="view today-view">
             <LunarScene
               now={now}
-              name={store.preferences.name}
+              name={account?.profileName ?? store.preferences.name}
               onExplore={() => setModal("moon")}
             />
             <button className="today-log primary full" onClick={newNight}>
@@ -502,7 +503,12 @@ export default function App({
           </Modal>
         )}
         {modal === "settings" && (
-          <Modal title="Your space" onClose={() => setModal(null)}>
+          <Modal
+            title="Profile"
+            className="profile-sheet"
+            fullScreen
+            onClose={() => setModal(null)}
+          >
             <Settings
               storageKey={storageKey}
               legacyStorageKey={legacyStorageKey}
@@ -515,7 +521,6 @@ export default function App({
                 setWriteError("");
               }}
               notify={notify}
-              onClose={() => setModal(null)}
             />
           </Modal>
         )}

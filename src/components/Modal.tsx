@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode } from "react";
-import { X } from "lucide-react";
+import { ArrowLeft, X } from "lucide-react";
 import { useOverlayClosing } from "./OverlayPresence";
 
 export default function Modal({
@@ -7,11 +7,15 @@ export default function Modal({
   children,
   onClose,
   wide = false,
+  className,
+  fullScreen = false,
 }: {
   title: string;
   children: ReactNode;
   onClose: () => void;
   wide?: boolean;
+  className?: string;
+  fullScreen?: boolean;
 }) {
   const closing = useOverlayClosing();
   const panel = useRef<HTMLDivElement>(null);
@@ -26,10 +30,16 @@ export default function Modal({
     const key = (e: KeyboardEvent) => {
       if (e.key === "Escape") close.current();
       if (e.key === "Tab") {
-        const nodes = panel.current?.querySelectorAll<HTMLElement>(
-          'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex="0"]',
+        const candidates = panel.current?.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex="0"]',
         );
-        if (!nodes?.length) return;
+        const nodes = Array.from(candidates ?? []).filter(
+          (node) =>
+            !node.closest(
+              "[hidden], [inert], details:not([open]) > :not(summary)",
+            ),
+        );
+        if (!nodes.length) return;
         const first = nodes[0];
         const last = nodes[nodes.length - 1];
         if (
@@ -58,29 +68,42 @@ export default function Modal({
   }, [closing]);
   return (
     <div
-      className="modal-backdrop"
+      className={fullScreen ? "modal-backdrop full-screen" : "modal-backdrop"}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
       <div
-        className={`sheet ${wide ? "wide" : ""}`}
+        className={["sheet", wide && "wide", className]
+          .filter(Boolean)
+          .join(" ")}
         ref={panel}
         role="dialog"
         aria-modal="true"
         aria-label={title}
         tabIndex={-1}
       >
-        <div className="sheet-handle" />
+        {!fullScreen && <div className="sheet-handle" />}
         <header className="sheet-header">
+          {fullScreen && (
+            <button
+              className="icon-button"
+              onClick={onClose}
+              aria-label="Back to app"
+            >
+              <ArrowLeft size={21} aria-hidden="true" />
+            </button>
+          )}
           <h2>{title}</h2>
-          <button
-            className="icon-button"
-            onClick={onClose}
-            aria-label="Close dialog"
-          >
-            <X size={21} />
-          </button>
+          {!fullScreen && (
+            <button
+              className="icon-button"
+              onClick={onClose}
+              aria-label="Close dialog"
+            >
+              <X size={21} aria-hidden="true" />
+            </button>
+          )}
         </header>
         {children}
       </div>
