@@ -54,15 +54,7 @@ The Vite build serves the app from `dist`. Vercel Functions serve the account AP
 2. Register the exact Google callback `https://noctis-sleep-beta.vercel.app/api/auth/callback/google`. If the primary domain changes, update both the callback and `NOCTIS_URL`.
 3. Run `npx vercel@65.16.0 build --prod` with Node.js 24 and then `npx vercel@65.16.0 deploy --prebuilt --prod`. Verify the homepage, `/api/noctis/auth-options`, and a full Google sign-in at the production address. [Vercel Vite setup](https://vercel.com/docs/frameworks/frontend/vite) · [Vercel CLI deploy](https://vercel.com/docs/cli/deploy)
 
-If you logged nights on the old web address, choose **Settings → Export backup** there. Open the new address in the same device's browser, sign in, and choose **Settings → Import backup**. Import replaces the destination journal, so save a backup there first if you have started logging at the new address.
-
-### Previous Netlify deployment
-
-Netlify serves the build in `dist` and runs the authentication endpoints in `netlify/functions`. Netlify Database keeps accounts and sessions in Postgres. SQLite powers local previews and the Render deployment. The current hosted beta uses Google. When an SMTP sender is configured, verified email signup and password recovery become available on the same site. [Netlify free plan](https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/credit-based-pricing-plans/) · [Netlify Database](https://docs.netlify.com/build/data-and-storage/netlify-database/getting-started/)
-
-1. Create a Netlify project on the free plan and provision Netlify Database. The Netlify build packages `netlify/database/migrations/0001_accounts.sql` and Netlify applies it when publishing.
-2. Register a Google Web application client for `https://YOUR-SITE.netlify.app/api/auth/callback/google`. Configure `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` and a unique `BETTER_AUTH_SECRET` in Netlify’s environment. If the runtime needs an override, set `AWS_LAMBDA_JS_RUNTIME=nodejs24.x` there. Netlify supplies the site URL and database connection. In a custom-domain deploy, set `NOCTIS_URL` to the canonical HTTPS address.
-3. For the existing linked Netlify project, run `npx netlify-cli@27.19.0 deploy --prod --context production`. Review the published home page and sign in through Google after deployment. Use `NOCTIS_SMTP_URL` and `NOCTIS_MAIL_FROM` when setting up a verified email sender.
+The former Netlify site has been retired. If you exported your journal from that address, open the new address, sign in, and choose **Settings → Import backup**. Import replaces the destination journal, so save a backup there first if you have started logging at the new address.
 
 ### Deploy on Render
 
@@ -172,6 +164,6 @@ Read **PLAN.md**, this README, and `git status` first. Ask:
 
 > Continue NOCTIS in /Users/smitprajapati/Projects/NOCTIS. Read README.md and PLAN.md, check Git status, and continue the next unfinished milestone. Preserve the dark purple theme and the actual moon phase feature.
 
-The files and local Git history remain on the Mac when a chat stops. Future sessions can inspect them and resume without rebuilding from scratch. This repository has **no remote backup configured**.
+The files and local Git history remain on the Mac when a chat stops. Future sessions can inspect them and resume without rebuilding from scratch. Committed source is backed up in the private `smitprajapati1210-a11y/NOCTIS` repository.
 
 **Usage limits do not erase the project, but they can stop work. I cannot promise to continue automatically when a limit resets.** Return when usage is available and send a continuation request. Account limits depend on the plan and work performed; use the product’s usage dashboard for current availability. [Official OpenAI usage guidance](https://learn.chatgpt.com/docs/pricing).

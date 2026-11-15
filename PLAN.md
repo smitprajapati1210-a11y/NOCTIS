@@ -134,7 +134,7 @@ The chat is **deterministic local rules, not an LLM**. The account server handle
 - Copied and compared all three existing user and Google account records, preserving their IDs and OAuth token encryption key. Vercel starts new sessions on its own domain. The account snapshot is private under the ignored `.noctis/hosting-migration/` directory.
 - Verified the production homepage, service worker, unauthenticated session endpoint, and the Google authorization URL with the exact new callback. Verified a new active session after Google sign-in on Vercel. All 35 automated tests passed.
 - The GitHub repository is still private. Vercel currently deploys through the CLI. Automatic Git deployments require adding the GitHub login connection in Vercel first.
-- Netlify retirement is pending confirmation that any old journals needed by beta testers have been exported. Journals remain browser-local to their web address. Export from Settings on the old address and import on the new one before deleting the old project. The owner replaced the Google callback with the Vercel URL. Restore the old callback temporarily if a tester needs to sign in to export.
+- The owner confirmed Vercel sign-in and readiness to retire Netlify. Deleted only `noctis-sleep-beta` on Netlify, checked that its old address returned 404, and rechecked the Vercel homepage and Google configuration. Use Settings to import previously exported journal backups at the new address.
 
 ## Next milestone — physical iPhone and motion tuning
 
