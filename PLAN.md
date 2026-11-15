@@ -151,6 +151,13 @@ The chat is **deterministic local rules, not an LLM**. The account server handle
 - Validation: 32 interface/domain/moon tests pass with `node --import tsx --test tests/app.test.tsx tests/domain.test.ts tests/moon.test.ts`; the production build and `git diff --check` pass. The standard `npm test` entry point cannot create its IPC socket in this sandbox. Running the full suite directly also crashes the socket-based authentication test process in a native Node assertion under both Node 24.22.3 and 26.13.0. The complete authentication suite is not verified in this environment. Physical iPhone checks remain pending.
 - These changes are local and have not been deployed to Vercel. The broader design review recommends quicker night logging, a visible lead finding in Discover, and clearer disabled save-button styling; these suggestions have not been implemented.
 
+## Follow-up — stylesheet cleanup, 2026-11-15
+
+- Removed 464 unused selector branches and four unused CSS variables from the older theme layers, cutting 2,212 lines of CSS. The minified stylesheet shrank from 138.97 kB to 108.35 kB (22%). The complete production build is 30.6 kB smaller.
+- Verified that the remaining declarations, keyframes, and cascade order match the baseline. The production JavaScript, fonts, and images match after accounting for generated filenames. The service worker uses the updated asset names and cache version.
+- All 36 tests, the production build, and `git diff --check` passed. Compared 19 phone-sized screen states in Chrome and WebKit and exercised the glass dock glide and moon phase morph with motion enabled. WebKit screenshots were pixel-identical. Chrome's settled capture differed by at most 1/255 per channel across 22 pixels on one screen. Repeat baseline-only captures also showed minor pixel variation.
+- Saved this cleanup locally. Physical iPhone and production release checks remain pending.
+
 ## Next milestone — physical iPhone and motion tuning
 
 1. Read README’s beginner-friendly run instructions. Start `npm run dev` in this folder.

@@ -10,7 +10,6 @@
   --accent-ink: #2c183b;
   --border-subtle: #3e2d4c;
   --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-move: cubic-bezier(0.25, 1, 0.5, 1);
   --motion-press: 160ms;
   --motion-control: 280ms;
   --motion-page: 280ms;
@@ -112,8 +111,7 @@ h3 {
 }
 .primary,
 .secondary,
-.danger,
-.light-button {
+.danger {
   min-height: 48px;
   font-size: 0.875rem;
   border-radius: 15px;
@@ -183,10 +181,6 @@ h3 {
 .page-intro > .eyebrow {
   margin-bottom: 12px;
 }
-.intro-topline {
-  gap: 12px;
-  margin-bottom: 13px;
-}
 .today-view h1,
 .today-view h1 em {
   font-size: 2.2rem;
@@ -203,115 +197,6 @@ h3 {
   padding: 22px;
   border-radius: 24px;
   border-color: var(--border-subtle);
-}
-.sleep-hero {
-  padding: 24px;
-  min-height: 255px;
-  border-radius: 26px;
-  background:
-    radial-gradient(ellipse at 100% 0, #61406f55, transparent 65%),
-    linear-gradient(120deg, #32203f, #24192f);
-}
-.hero-main {
-  padding: 20px 0 22px;
-  min-height: 147px;
-}
-.hero-top .mini-label,
-.hero-date {
-  font-size: 0.625rem;
-}
-.sleep-number {
-  font-size: 3.2rem;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -2px;
-}
-.sleep-number span {
-  font-size: 1.35rem;
-}
-.hero-main p {
-  font-size: 0.75rem;
-  margin-top: 4px;
-}
-.rested-chip {
-  font-size: 0.6875rem;
-  padding: 6px 9px;
-  margin-top: 13px;
-}
-.hero-bottom {
-  gap: 20px;
-  margin-top: 18px;
-}
-.hero-bottom span {
-  font-size: 0.6875rem;
-}
-.hero-bottom strong {
-  font-size: 0.8125rem;
-  font-variant-numeric: tabular-nums;
-  margin-top: 5px;
-}
-.hero-bottom button {
-  height: 44px;
-  width: 44px;
-}
-.moon-orbit {
-  width: 105px;
-  height: 105px;
-}
-.moon-orbit:before {
-  height: 127px;
-  width: 127px;
-}
-.moon-orbit .moon-visual {
-  width: 97px;
-  height: 97px;
-}
-.hero-moon-caption {
-  font-size: 0.5625rem;
-  bottom: -11px;
-}
-.log-night-button {
-  padding: 15px 16px;
-  min-height: 78px;
-  gap: 13px;
-  margin-top: -8px;
-}
-.plus-circle {
-  height: 40px;
-  width: 40px;
-  flex-shrink: 0;
-}
-.log-night-button strong {
-  font-size: 0.875rem;
-}
-.log-night-button small {
-  font-size: 0.75rem;
-  margin-top: 5px;
-  line-height: 1.55;
-}
-.log-night-button > svg {
-  flex-shrink: 0;
-}
-.weekly-card .eyebrow {
-  font-size: 0.625rem;
-}
-.weekly-card h3 {
-  font-size: 1.0625rem;
-}
-.weekly-summary {
-  margin-top: 22px;
-  gap: 12px;
-}
-.weekly-summary > div > strong {
-  font-size: 1.875rem;
-  font-variant-numeric: tabular-nums;
-}
-.weekly-summary > div > span,
-.nights-count {
-  font-size: 0.6875rem;
-  line-height: 1.5;
-}
-.weekly-summary > div > span {
-  margin-top: 3px;
 }
 .glide-selector {
   position: relative;
@@ -340,78 +225,11 @@ h3 {
 .chart {
   margin-top: 29px;
 }
-.chart-area {
-  height: 138px;
-  margin-left: 26px;
-  margin-bottom: 31px;
-}
-.chart-grid span {
-  font-size: 0.625rem;
-  text-indent: -26px;
-  color: #b49ac6;
-}
-.goal-line > span {
-  font-size: 0.5625rem;
-  top: -12px;
-  color: #bfa0d3;
-}
-.bars {
-  inset: 0 0 0 0;
-  gap: 0;
-}
-.chart-target {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding: 0;
-  min-width: 24px;
-  background: none;
-}
-.chart-target:active {
-  transform: none !important;
-}
-.bar {
-  display: block;
-  width: 60%;
-  max-width: 27px;
-  border-radius: 7px 7px 3px 3px;
-  transition: background-color 120ms;
-  pointer-events: none;
-}
-.bar-slot > .bar {
-  align-self: flex-end;
-  width: 70%;
-}
-@media (hover: hover) and (pointer: fine) {
-  .chart-target:hover .bar {
-    filter: brightness(1.12);
-  }
-}
-.chart-target:focus-visible .bar {
-  filter: brightness(1.12);
-}
-.bar-label {
-  font-size: 0.625rem;
-  bottom: -22px;
-}
-.bars.dense {
-  gap: 4px;
-  inset: 0 1px;
-}
-.dense .bar {
-  width: 100%;
-  border-radius: 3px;
-}
 .chart-foot {
   font-size: 0.625rem;
   padding-top: 14px;
   gap: 10px;
   flex-wrap: wrap;
-}
-.chart.compact .chart-area {
-  height: 128px;
 }
 .chart-data {
   margin-top: 15px;
@@ -462,41 +280,6 @@ h3 {
 .chart-data-list p {
   font-size: 0.75rem;
   padding: 10px 0;
-}
-.insight-teaser {
-  padding: 20px 17px;
-  gap: 13px;
-}
-.insight-teaser small {
-  font-size: 0.5625rem;
-}
-.insight-teaser strong {
-  font-size: 0.875rem;
-  margin-top: 6px;
-}
-.insight-teaser p {
-  font-size: 0.75rem;
-  line-height: 1.6;
-  margin-top: 6px;
-}
-.insight-spark {
-  height: 42px;
-  width: 42px;
-}
-.tonight-teaser {
-  padding: 4px 0;
-  min-height: 64px;
-}
-.tonight-teaser small {
-  font-size: 0.5625rem;
-}
-.tonight-teaser strong {
-  font-size: 0.875rem;
-  line-height: 1.5;
-}
-.closing-caption {
-  font-size: 0.6875rem;
-  line-height: 1.7;
 }
 .night-moon-card {
   gap: 16px;
@@ -595,16 +378,6 @@ h3 {
 .back-to-top {
   display: none;
 }
-.journal-summary strong {
-  font-size: 1.75rem;
-}
-.journal-summary > div > span {
-  font-size: 0.75rem;
-}
-.journal-summary > .primary {
-  font-size: 0.8125rem;
-  padding-inline: 14px;
-}
 .heat-card > .muted {
   font-size: 0.8125rem;
   margin-top: 12px;
@@ -639,11 +412,6 @@ h3 {
 .entry-row {
   padding: 18px 15px;
   gap: 12px;
-}
-.entry-icon {
-  width: 42px;
-  height: 44px;
-  align-self: flex-start;
 }
 .entry-title {
   gap: 10px;
@@ -730,19 +498,6 @@ h3 {
   font-size: 0.75rem;
   line-height: 1.5;
 }
-.ask-banner {
-  padding: 23px 20px;
-}
-.ask-banner strong {
-  font-size: 1rem;
-}
-.ask-banner small {
-  font-size: 0.8125rem;
-  line-height: 1.5;
-}
-.ask-banner + .caption {
-  font-size: 0.6875rem;
-}
 .detective-intro h3 {
   font-size: 1rem;
 }
@@ -784,59 +539,12 @@ h3 {
 .sample-counts span {
   font-size: 0.6875rem;
 }
-.assistant-notice {
-  font-size: 0.6875rem;
-  line-height: 1.6;
-  padding: 13px;
-  align-items: flex-start;
-}
-.assistant-notice svg {
-  margin-top: 3px;
-}
-.chat-welcome h2 {
-  font-size: 1.5rem;
-}
-.chat-welcome p {
-  font-size: 0.875rem;
-  max-width: 280px;
-}
-.prompt-list button {
-  font-size: 0.8125rem;
-  min-height: 48px;
-}
 .message {
   font-size: 0.875rem;
   padding: 19px;
 }
 .message p {
   line-height: 1.75;
-}
-.message-name {
-  font-size: 0.625rem;
-}
-.chat-chart-card {
-  padding: 18px 14px;
-}
-.chat-chart-card .section-heading {
-  font-size: 0.75rem;
-}
-.chat-composer {
-  bottom: 0;
-  position: sticky;
-  padding: 6px 7px 6px 14px;
-  margin-top: 24px;
-}
-.chat-composer input {
-  font-size: 1rem;
-  min-height: 42px;
-}
-.chat-composer button {
-  height: 44px;
-  width: 44px;
-}
-.chat-composer + .caption {
-  font-size: 0.6875rem;
-  line-height: 1.7;
 }
 .plan-card .mini-label {
   font-size: 0.625rem;
@@ -910,39 +618,6 @@ h3 {
 }
 .breathing-card > .caption {
   font-size: 0.6875rem;
-}
-.ritual {
-  padding: 18px 15px;
-  gap: 14px;
-}
-.ritual-icon {
-  height: 42px;
-  width: 42px;
-}
-.ritual strong {
-  font-size: 0.875rem;
-}
-.ritual small {
-  font-size: 0.75rem;
-  line-height: 1.6;
-  max-width: 230px;
-}
-.ritual-check {
-  height: 23px;
-  width: 23px;
-}
-.ritual-check svg {
-  transition:
-    transform 180ms var(--ease-enter),
-    opacity 180ms;
-}
-.ritual-check {
-  transition:
-    background-color 180ms,
-    border-color 180ms;
-}
-.closing-note p {
-  font-size: 0.8125rem;
 }
 .sheet {
   max-height: 94dvh;
@@ -1147,15 +822,10 @@ html[data-direction="forward"] {
   .sheet {
     transform: translateY(28px);
   }
-  .ritual-check svg {
-    opacity: 0;
-    transform: scale(0.7);
-  }
 }
 @media (hover: hover) and (pointer: fine) {
   .entry-row:hover,
-  .discovery-link:hover,
-  .prompt-list button:hover {
+  .discovery-link:hover {
     background: #2c1e39;
     border-color: #76528e;
   }
@@ -1167,12 +837,6 @@ html[data-direction="forward"] {
   }
   .tag:hover {
     border-color: #aa7cc4;
-  }
-  .log-night-button:hover {
-    background: #382548;
-  }
-  .ritual:hover {
-    border-color: #79548e;
   }
 }
 @media (min-width: 600px) {
@@ -1218,49 +882,6 @@ html[data-direction="forward"] {
   .card {
     padding: 20px;
   }
-  .weekly-card .section-heading {
-    gap: 8px;
-  }
-  .weekly-card h3 {
-    font-size: 0.9375rem;
-  }
-  .weekly-card .eyebrow {
-    font-size: 0.5625rem;
-    letter-spacing: 1px;
-  }
-  .sleep-hero {
-    padding: 21px;
-  }
-  .sleep-number {
-    font-size: 2.8rem;
-  }
-  .moon-orbit {
-    width: 88px;
-    height: 96px;
-  }
-  .moon-orbit:before {
-    height: 113px;
-    width: 113px;
-  }
-  .hero-bottom {
-    gap: 13px;
-  }
-  .hero-bottom > div {
-    gap: 7px;
-  }
-  .hero-bottom span {
-    font-size: 0.625rem;
-  }
-  .hero-bottom strong {
-    font-size: 0.75rem;
-  }
-  .insight-teaser {
-    padding: 18px 14px;
-    gap: 10px;
-  }
-  .insight-teaser strong {
-    font-size: 0.8125rem;
-  }
   .night-moon-card {
     padding: 16px;
     gap: 12px;
@@ -1303,9 +924,6 @@ html[data-direction="forward"] {
   .bottom-nav small {
     font-size: 0.625rem;
   }
-  .hero-moon-caption {
-    font-size: 0.5rem;
-  }
 }
 @media (max-width: 340px) {
   .demo-banner {
@@ -1316,25 +934,6 @@ html[data-direction="forward"] {
   }
   .demo-banner button {
     min-height: 32px;
-  }
-  .hero-main {
-    gap: 10px;
-  }
-  .moon-orbit {
-    width: 70px;
-  }
-  .moon-orbit:before {
-    display: none;
-  }
-  .moon-orbit .moon-visual {
-    width: 76px;
-    height: 76px;
-  }
-  .sleep-number {
-    font-size: 2.4rem;
-  }
-  .hero-bottom {
-    flex-wrap: wrap;
   }
   .stats-pair {
     grid-template-columns: 1fr;
@@ -1350,9 +949,6 @@ html[data-direction="forward"] {
   }
   .chart-foot {
     font-size: 0.5625rem;
-  }
-  .weekly-card .section-heading {
-    flex-wrap: wrap;
   }
 }
 @media (max-height: 480px) and (orientation: landscape) {
@@ -1390,7 +986,6 @@ html[data-direction="forward"] {
   .primary,
   .secondary,
   .tag,
-  .ritual,
   .ratings button {
     transition:
       background-color 80ms,

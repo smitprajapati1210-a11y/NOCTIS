@@ -3,7 +3,6 @@
   --font-body:
     "Manrope Variable", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-display: "Instrument Serif", Georgia, serif;
-  --moon-cream: #e9d5c1;
   --lilac: #d5b7ee;
   font-family: var(--font-body);
 }
@@ -29,14 +28,6 @@ h3,
 h4 {
   font-family: var(--font-body);
 }
-.wordmark {
-  font-family: var(--font-body);
-  font-size: 15px;
-  letter-spacing: 2.7px;
-  font-weight: 800;
-}
-.sleep-number,
-.weekly-summary > div > strong,
 .timer-number,
 .plan-time strong,
 .sample-duration {
@@ -52,307 +43,16 @@ h4 {
 .today-view > .demo-banner {
   margin-bottom: -2px;
 }
-.lunar-scene {
-  min-height: 270px;
-  position: relative;
-  padding-top: 6px;
-  padding-bottom: 67px;
-}
-.scene-copy {
-  position: relative;
-  z-index: 2;
-  max-width: 58%;
-  pointer-events: none;
-}
-.scene-greeting {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.75rem;
-  color: #c4aace;
-  line-height: 1.8;
-  margin-bottom: 18px;
-}
-.greeting-star {
-  font-size: 16px;
-  color: #ccb2df;
-}
-.lunar-scene h1,
-.today-view .lunar-scene h1 {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 3.4rem;
-  line-height: 1;
-  letter-spacing: -1.1px;
-  white-space: nowrap;
-}
-.lunar-scene h1 em {
-  font-size: inherit;
-  letter-spacing: inherit;
-  color: #dcc5ec;
-  font-style: italic;
-  font-weight: 400;
-}
-.scene-whisper {
-  font-size: 0.6875rem;
-  color: #af96be;
-  margin-top: 18px;
-  letter-spacing: 0.15px;
-}
-.scene-moon {
-  position: absolute;
-  right: -19px;
-  top: -1px;
-  width: 203px;
-  height: 203px;
-  display: grid;
-  place-items: center;
-  pointer-events: none;
-}
-.scene-moon .moon-visual {
-  filter: drop-shadow(0 0 22px #c3a4e01b);
-}
-.celestial-lines {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  fill: none;
-  stroke: #d4b4ed24;
-  stroke-width: 0.65;
-}
-.celestial-lines circle {
-  fill: #d0b4df88;
-  stroke: none;
-}
-.scene-star {
-  position: absolute;
-  top: 30px;
-  right: 32px;
-  font-size: 16px;
-  color: #dec9a8;
-}
-.scene-phase {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  text-align: left;
-  padding: 15px 0;
-  border-bottom: 1px solid #60406e66;
-  min-height: 59px;
-}
-.phase-live-dot {
-  height: 7px;
-  width: 7px;
-  border-radius: 50%;
-  background: #c5a4dc;
-  box-shadow: 0 0 0 4px #b58bdc12;
-}
-.scene-phase > span:nth-child(2) {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.scene-phase strong {
-  font-size: 0.8125rem;
-  font-weight: 550;
-  color: #dfc8ec;
-}
-.scene-phase small {
-  font-size: 0.625rem;
-  color: #a88bbb;
-}
-.scene-phase > svg {
-  color: #c29ed6;
-}
-.today-view > .sleep-hero {
-  min-height: 230px;
-  padding: 22px;
-  background: linear-gradient(120deg, #34243e80, #231b2d);
-  border: 1px solid #694d7855;
-  box-shadow: none;
-  border-radius: 22px;
-}
-.today-view .hero-main {
-  padding: 17px 0 20px;
-  min-height: 135px;
-}
-.today-view .sleep-number {
-  font-size: 2.85rem;
-  font-weight: 450;
-  line-height: 1.25;
-}
-.today-view .sleep-number span {
-  font-size: 1.2rem;
-  color: #b39bc2;
-  font-weight: 400;
-}
-.today-view .rested-chip {
-  font-size: 0.625rem;
-  margin-top: 10px;
-}
-.today-view .hero-main p {
-  font-size: 0.6875rem;
-  color: #b19ac0;
-}
-.today-view .hero-bottom {
-  margin-top: 15px;
-  gap: 25px;
-}
-.today-view .hero-bottom strong {
-  font-weight: 500;
-  font-size: 0.75rem;
-}
-.goal-dial {
-  width: 93px;
-  height: 93px;
-  position: relative;
-  flex-shrink: 0;
-  margin-left: 14px;
-}
-.goal-dial svg {
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-  fill: none;
-  stroke: #9275a224;
-  stroke-width: 3.5;
-}
-.goal-dial .goal-dial-fill {
-  stroke: #ceb0df;
-  stroke-linecap: round;
-}
-.goal-dial > span {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  padding-top: 4px;
-}
-.goal-dial strong {
-  font-size: 1.25rem;
-  font-weight: 450;
-  color: #e7d0f2;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.6px;
-}
-.goal-dial strong small {
-  font-size: 0.75rem;
-  margin-left: 1px;
-  color: #af94be;
-}
-.goal-dial em {
-  font-size: 0.5625rem;
-  font-style: normal;
-  color: #b196c2;
-  margin-top: 4px;
-}
-.today-view .log-night-button {
-  border-radius: 16px;
-  background: #2c2039;
-  border-color: #5b3c6d66;
-}
-.today-view .log-night-button strong {
-  font-size: 0.8125rem;
-}
-.today-view .log-night-button small {
-  font-size: 0.6875rem;
-}
-.today-view .weekly-card {
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  padding: 9px 0 0;
-  box-shadow: none;
-}
-.weekly-card .section-heading h3 {
-  font-size: 1.125rem;
-  font-weight: 550;
-}
-.weekly-summary > div > strong {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  letter-spacing: 0;
-  font-weight: 400;
-  color: #e7d4f4;
-}
-.weekly-summary > div > span {
-  font-size: 0.625rem;
-}
-.goal-line > span {
-  background: #17111f;
-}
 .chart-foot {
   font-size: 0.625rem;
 }
 .chart-data {
   margin-top: 15px;
 }
-.empty-hero .empty-moon {
-  margin-bottom: 10px;
-}
-.empty-hero h2 {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 1.9rem;
-}
-.empty-hero .light-button {
-  min-height: 44px;
-  font-size: 0.75rem;
-}
-.today-view > .insight-teaser {
-  border-radius: 17px;
-  background: #222b23;
-  border-color: #47534055;
-}
-.insight-teaser strong {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 1.2rem;
-}
-.insight-teaser p {
-  font-size: 0.6875rem;
-}
-.tonight-teaser .icon-tile {
-  border-radius: 50%;
-  background: #31203c;
-}
-.tonight-teaser strong {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 1.2rem;
-}
-.closing-caption {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 0.9375rem;
-  color: #a58bb5;
-}
 /* Journal: an intimate date-led ledger rather than a dashboard of boxes. */
 .journal-view {
   gap: 24px;
   background: radial-gradient(ellipse at 0 0, #aa755708, transparent 60%);
-}
-.journal-edition,
-.lab-edition {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.5625rem;
-  letter-spacing: 1.6px;
-  color: #b39ac1;
-  margin-bottom: 15px;
-}
-.journal-edition {
-  color: #c2a38e;
 }
 .journal-intro h1 {
   font-family: var(--font-display);
@@ -431,65 +131,6 @@ h4 {
 }
 .week-rail .today > span {
   color: #c9a6bc;
-}
-.journal-summary {
-  padding-top: 0;
-  padding-bottom: 23px;
-  border-bottom: 1px solid #6b465b44;
-}
-.journal-summary > div > strong {
-  font-family: var(--font-display);
-  font-size: 1.8rem;
-  font-weight: 400;
-  color: #e1c6d1;
-}
-.journal-summary > div > span {
-  font-size: 0.625rem;
-  color: #ad90a4;
-}
-.journal-summary > .primary {
-  background: #cfafbf;
-  color: #2e1c29;
-  min-height: 44px;
-  font-size: 0.75rem;
-  padding: 12px 15px;
-}
-.heat-disclosure {
-  border-bottom: 1px solid #6b465b44;
-  margin-top: -17px;
-  padding-bottom: 4px;
-}
-.heat-disclosure > summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  list-style: none;
-  font-size: 0.6875rem;
-  color: #bc9caf;
-  min-height: 44px;
-  cursor: pointer;
-}
-.heat-disclosure > summary::-webkit-details-marker {
-  display: none;
-}
-.heat-disclosure > summary > svg {
-  transition: transform 200ms var(--ease-enter);
-}
-.heat-disclosure[open] > summary > svg {
-  transform: rotate(90deg);
-}
-.heat-disclosure .heat-card {
-  background: none;
-  border: 0;
-  border-radius: 0;
-  padding: 18px 0 16px;
-  box-shadow: none;
-}
-.heat-disclosure .heat-card h3 {
-  font-family: var(--font-display);
-  font-size: 1.6rem;
-  font-weight: 400;
-  color: #dac0d0;
 }
 .journal-heading {
   margin-top: -5px;
@@ -635,9 +276,6 @@ h4 {
 .discover-view {
   gap: 24px;
 }
-.lab-edition {
-  color: #abbb9b;
-}
 .lab-intro h1 {
   font-family: var(--font-display);
   font-size: 2.7rem;
@@ -668,25 +306,6 @@ h4 {
   border-left: 2px solid #bca0cc;
   background: linear-gradient(110deg, #3723409c, #241a304d);
   overflow: hidden;
-}
-.lab-note-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  position: relative;
-  z-index: 1;
-}
-.lab-note-header > span:first-child {
-  font-size: 0.5rem;
-  letter-spacing: 1.3px;
-  color: #b296c3;
-}
-.lab-note-header .pill {
-  font-size: 0.5625rem;
-  background: #d5b3ed0a;
-  color: #bf9cd4;
-  padding: 6px 8px;
 }
 .lab-average {
   font-family: var(--font-display);
@@ -723,17 +342,6 @@ h4 {
   line-height: 1.8 !important;
   margin: 0;
   max-width: 280px;
-}
-.lab-note-number {
-  position: absolute;
-  right: 15px;
-  top: 49px;
-  font-family: var(--font-display);
-  font-size: 5.4rem;
-  font-weight: 400;
-  line-height: 1;
-  color: #c49dd818;
-  pointer-events: none;
 }
 .discovery-content .stats-pair {
   gap: 0;
@@ -854,20 +462,6 @@ h4 {
   background: none;
   color: #b8cda4;
 }
-.ask-banner {
-  background: linear-gradient(100deg, #46305366, #35213f99);
-  border: 1px solid #75518b44;
-  border-radius: 17px;
-}
-.ask-banner strong {
-  font-family: var(--font-display);
-  font-size: 1.55rem;
-  font-weight: 400;
-}
-.ask-banner small {
-  font-size: 0.6875rem;
-  color: #b69bc6;
-}
 .pattern-card {
   padding: 18px 0;
   background: none;
@@ -939,61 +533,6 @@ h4 {
   border: 1px solid #74905d33;
   border-radius: 50%;
 }
-.chat-welcome {
-  padding: 30px 0 22px;
-  text-align: left;
-  position: relative;
-}
-.chat-welcome .assistant-orb {
-  position: absolute;
-  right: 1px;
-  top: 30px;
-  width: 44px;
-  height: 44px;
-  margin: 0;
-  box-shadow: 0 0 0 7px #b58adc09;
-}
-.chat-welcome .assistant-orb svg {
-  width: 22px;
-  height: 22px;
-}
-.chat-welcome h2 {
-  font-family: var(--font-display);
-  font-size: 2.05rem;
-  font-weight: 400;
-  line-height: 1.13;
-  letter-spacing: -0.3px;
-  color: #e8cffa;
-  max-width: 240px;
-}
-.chat-welcome h2 em {
-  font-style: italic;
-  font-weight: 400;
-  color: #c4a0dd;
-}
-.chat-welcome p {
-  font-size: 0.75rem;
-  line-height: 1.8;
-  max-width: 270px;
-  margin: 17px 0 0;
-  color: #b59bc5;
-}
-.assistant-notice {
-  font-size: 0.5625rem;
-  padding: 10px 11px;
-  background: #3a264033;
-  border-color: #5d3e6c55;
-}
-.prompt-list {
-  gap: 8px;
-}
-.prompt-list button {
-  font-size: 0.75rem;
-  background: #23182d;
-  border-color: #61407155;
-  border-radius: 11px;
-  padding: 12px 13px;
-}
 .message.assistant {
   border: 0;
   border-radius: 0;
@@ -1010,29 +549,6 @@ h4 {
   background: #513460;
   border-color: #76518866;
   padding: 15px 17px;
-}
-.message-name {
-  font-size: 0.5rem;
-  margin-bottom: 13px;
-}
-.chat-chart-card {
-  background: #2a1b3455;
-  border-color: #6c457c44;
-  border-radius: 15px;
-}
-.chat-composer {
-  border-radius: 23px;
-  background: #30203be8;
-  backdrop-filter: blur(10px);
-  border-color: #9363a280;
-}
-.chat-composer button {
-  border-radius: 50%;
-  width: 42px;
-  height: 42px;
-}
-.chat-composer input {
-  font-size: 1rem;
 }
 /* Tonight: an immersive pause first, practical planning further down. */
 .tonight-view {
@@ -1262,60 +778,6 @@ h4 {
   font-weight: 400;
   color: #ddc1ed;
 }
-.tonight-view .ritual-list {
-  gap: 0;
-  margin-top: 12px;
-}
-.ritual {
-  border: 0;
-  border-bottom: 1px solid #57375e55;
-  border-radius: 0;
-  background: transparent;
-  padding: 19px 0;
-  gap: 14px;
-}
-.ritual-icon {
-  background: #6944771c;
-  border: 1px solid #86599333;
-  border-radius: 50%;
-  width: 39px;
-  height: 39px;
-  color: #c79cdb;
-}
-.ritual strong {
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: #dab9eb;
-}
-.ritual small {
-  font-size: 0.625rem;
-  color: #ab89be;
-  line-height: 1.7;
-}
-.ritual-check {
-  height: 22px;
-  width: 22px;
-  border-color: #88649799;
-}
-.ritual.done {
-  background: #79985b0b;
-  border-color: #839b632b;
-}
-.ritual.done .ritual-icon {
-  background: #b3c98a0e;
-  border-color: #afca8a22;
-}
-.closing-note {
-  padding-top: 3px;
-}
-.closing-note p {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  font-style: italic;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #b395c5;
-}
 /* Forms remain clear and familiar, with an editorial note area. */
 .sheet-header h2 {
   font-family: var(--font-display);
@@ -1381,9 +843,6 @@ h4 {
   .week-rail button:hover {
     background: #a076921c;
   }
-  .scene-phase:hover {
-    border-bottom-color: #bb93d1aa;
-  }
   .rested-point:hover {
     background: #d5b3ed18;
   }
@@ -1392,58 +851,6 @@ h4 {
   }
 }
 @media (max-width: 390px) {
-  .lunar-scene {
-    min-height: 253px;
-  }
-  .lunar-scene h1,
-  .today-view .lunar-scene h1 {
-    font-size: 3.05rem;
-    letter-spacing: -1px;
-  }
-  .scene-moon {
-    right: -20px;
-    width: 178px;
-    height: 190px;
-    top: 3px;
-  }
-  .scene-moon > .moon-visual {
-    width: 135px;
-    height: 135px;
-  }
-  .scene-copy {
-    max-width: 59%;
-  }
-  .scene-greeting {
-    font-size: 0.6875rem;
-    margin-bottom: 17px;
-  }
-  .scene-whisper {
-    font-size: 0.625rem;
-    margin-top: 16px;
-  }
-  .scene-star {
-    right: 27px;
-  }
-  .scene-phase small {
-    font-size: 0.5625rem;
-  }
-  .today-view .sleep-number {
-    font-size: 2.55rem;
-  }
-  .goal-dial {
-    width: 84px;
-    height: 84px;
-    margin-left: 8px;
-  }
-  .today-view .hero-bottom {
-    gap: 15px;
-  }
-  .today-view .hero-bottom > div {
-    gap: 7px;
-  }
-  .today-view .hero-bottom strong {
-    font-size: 0.6875rem;
-  }
   .journal-intro h1 {
     font-size: 2.8rem;
   }
@@ -1486,14 +893,6 @@ h4 {
   .lab-lead > p {
     font-size: 0.75rem !important;
   }
-  .chat-welcome h2 {
-    font-size: 1.9rem;
-  }
-  .chat-welcome .assistant-orb {
-    width: 38px;
-    height: 38px;
-    right: 2px;
-  }
   .tonight-view h1 {
     font-size: 2.95rem;
   }
@@ -1510,44 +909,6 @@ h4 {
   }
 }
 @media (max-width: 340px) {
-  .lunar-scene h1,
-  .today-view .lunar-scene h1 {
-    font-size: 2.65rem;
-  }
-  .scene-moon {
-    right: -28px;
-    width: 159px;
-    top: 10px;
-  }
-  .scene-moon > .moon-visual {
-    width: 112px;
-    height: 112px;
-  }
-  .scene-copy {
-    max-width: 60%;
-  }
-  .scene-whisper {
-    font-size: 0.5625rem;
-  }
-  .lunar-scene {
-    min-height: 232px;
-  }
-  .goal-dial {
-    width: 72px;
-    height: 72px;
-  }
-  .goal-dial strong {
-    font-size: 1.05rem;
-  }
-  .goal-dial em {
-    font-size: 0.5rem;
-  }
-  .today-view .sleep-number {
-    font-size: 2.25rem;
-  }
-  .today-view .sleep-number span {
-    font-size: 1rem;
-  }
   .week-rail button {
     min-height: 75px;
     padding: 11px 0;
@@ -1561,24 +922,14 @@ h4 {
   .lab-intro h1 {
     font-size: 2.15rem;
   }
-  .lab-note-header .pill {
-    font-size: 0.5rem;
-  }
   .tonight-view h1 {
     font-size: 2.6rem;
-  }
-  .chat-welcome h2 {
-    font-size: 1.65rem;
-    max-width: 200px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .discovery-content {
     transition: opacity 80ms linear !important;
     transform: none !important;
-  }
-  .heat-disclosure > summary > svg {
-    transition: none !important;
   }
   @starting-style {
     .discovery-content[data-animate="true"] {
