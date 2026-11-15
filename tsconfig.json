@@ -14,5 +14,5 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "include": ["src", "vite.config.ts", "tests", "netlify/functions"]
+  "include": ["src", "vite.config.ts", "tests", "netlify/functions", "api"]
 }

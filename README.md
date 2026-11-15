@@ -2,7 +2,7 @@
 
 **Your night, understood.** A mobile-only sleep journal with a dark purple interface, designed for iPhone first.
 
-[Open the NOCTIS friends beta](https://noctis-sleep-beta.netlify.app/). Google sign-in creates a hosted account. Journal entries live in the browser where you write them. Discover and its chat show calculations from your journal using local rules.
+[Open the NOCTIS friends beta](https://noctis-sleep-beta.vercel.app/). Google sign-in creates a hosted account. Journal entries live in the browser where you write them. Discover and its chat show calculations from your journal using local rules.
 
 ## Open and run
 
@@ -46,7 +46,17 @@ Use a hosted HTTPS address for Google sign-in on iPhone. The local Wi-Fi IP addr
 
 Automated tests cover Google redirect generation and the verification and recovery flows with a local SMTP inbox. Live sign-in and mail delivery need to be tested with the registered Google client and the deployed sender.
 
-### Deploy the friends beta on Netlify
+### Deploy the friends beta on Vercel
+
+The Vite build serves the app from `dist`. Vercel Functions serve the account API from `api/`, and the linked Neon PostgreSQL database stores accounts. The production project is `smitprajapati1210-4406/noctis-sleep-beta` and uses Node.js 24.x.
+
+1. Set `DATABASE_URL`, `BETTER_AUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `NOCTIS_URL` in the project’s production environment. For a new database, apply the Postgres schema in `netlify/database/migrations/0001_accounts.sql` once. The existing Neon database already has the schema.
+2. Register the exact Google callback `https://noctis-sleep-beta.vercel.app/api/auth/callback/google`. If the primary domain changes, update both the callback and `NOCTIS_URL`.
+3. Run `npx vercel@65.16.0 build --prod` with Node.js 24 and then `npx vercel@65.16.0 deploy --prebuilt --prod`. Verify the homepage, `/api/noctis/auth-options`, and a full Google sign-in at the production address. [Vercel Vite setup](https://vercel.com/docs/frameworks/frontend/vite) · [Vercel CLI deploy](https://vercel.com/docs/cli/deploy)
+
+If you logged nights on the old web address, choose **Settings → Export backup** there. Open the new address in the same device's browser, sign in, and choose **Settings → Import backup**. Import replaces the destination journal, so save a backup there first if you have started logging at the new address.
+
+### Previous Netlify deployment
 
 Netlify serves the build in `dist` and runs the authentication endpoints in `netlify/functions`. Netlify Database keeps accounts and sessions in Postgres. SQLite powers local previews and the Render deployment. The current hosted beta uses Google. When an SMTP sender is configured, verified email signup and password recovery become available on the same site. [Netlify free plan](https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/credit-based-pricing-plans/) · [Netlify Database](https://docs.netlify.com/build/data-and-storage/netlify-database/getting-started/)
 

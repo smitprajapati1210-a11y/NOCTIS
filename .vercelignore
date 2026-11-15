@@ -1,0 +1,9 @@
+.env
+.env.*
+*.local
+.netlify
+.noctis
+*.sqlite*
+*.p8
+*.pem
+*.tsbuildinfo

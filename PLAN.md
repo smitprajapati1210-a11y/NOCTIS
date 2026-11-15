@@ -128,6 +128,14 @@ The chat is **deterministic local rules, not an LLM**. The account server handle
 - Replaced repetitive sample notes with 28 distinct entries that vary in sleep duration, rested rating, and habits. The sample list shows a two-line preview, and the detail sheet shows the full note at a smaller size in the existing serif. The walkthrough uses one of the same notes. Personal journal data remains separate.
 - All 35 tests and the production build passed. Checked phone-sized Chrome and WebKit for slider shape, first and last alignment, date and timer switching, and access to the full sample notes. Physical iPhone testing remains pending.
 
+## Follow-up — move the friends beta to Vercel, 2026-11-15
+
+- Published `https://noctis-sleep-beta.vercel.app/` in the owner’s Vercel Hobby project using Node.js 24.x. The Vite app and Vercel account routes share the existing Better Auth configuration. The production database is a separate Neon Postgres instance on the Free plan.
+- Copied and compared all three existing user and Google account records, preserving their IDs and OAuth token encryption key. Vercel starts new sessions on its own domain. The account snapshot is private under the ignored `.noctis/hosting-migration/` directory.
+- Verified the production homepage, service worker, unauthenticated session endpoint, and the Google authorization URL with the exact new callback. All 35 automated tests passed. Complete one full sign-in on the new domain before the Netlify cutover.
+- The GitHub repository is still private. Vercel currently deploys through the CLI. Automatic Git deployments require adding the GitHub login connection in Vercel first.
+- Keep the old Netlify site available until the owner confirms the switch. Journals remain browser-local to their web address. Export from Settings on the old address and import on the new one before deleting the old project.
+
 ## Next milestone — physical iPhone and motion tuning
 
 1. Read README’s beginner-friendly run instructions. Start `npm run dev` in this folder.

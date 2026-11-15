@@ -8,6 +8,7 @@ dist/
 coverage/
 .noctis/
 .netlify/
+.vercel/
 !.env.example
 *.p8
 *.pem
