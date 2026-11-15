@@ -52,6 +52,10 @@ Calculated solid-color contrast pairs: primary/card **14.47:1**, secondary/card 
 - Keep focus rings, visible labels, native dates/times, modal Escape/close, and a focus trap. No swipe-only essential actions.
 - Samples remain separate. “Start my journal” exists on Today, opens the first-entry sheet, and changes mode only after saving. Other pages carry a small sample-data status.
 
+## Profile glass controls
+
+The sleep-goal hours slider uses a reflective lilac glass thumb over a rounded progress track. Preserve the native range input, accessible hour value, quarter-hour steps, and explicit save action. **Explore sample nights** is a translucent capsule button with a reflective rim and a glass switch bubble. Keep its switch semantics and separate sample/personal data. Press feedback is immediate; release settles through CSS transitions. Reduced Motion removes animated spatial transitions.
+
 ## Wind-down priority
 
 The timer and checklist sit together before planning. The Today shortcut shows daily progress and a live countdown while running. Use tabular countdown numbers, clear start/pause/reset controls, and the existing short motion tokens for checkbox feedback and progress.

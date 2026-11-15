@@ -1,6 +1,7 @@
 import {
   useRef,
   useState,
+  type CSSProperties,
   type Dispatch,
   type FormEvent,
   type SetStateAction,
@@ -370,7 +371,14 @@ export default function Settings({
             className="profile-panel-content profile-preferences"
             onSubmit={saveGoal}
           >
-            <label className="field profile-goal">
+            <label
+              className="field profile-goal"
+              style={
+                {
+                  "--goal-progress": `${((goal - 6) / 4) * 100}%`,
+                } as CSSProperties
+              }
+            >
               Sleep goal
               <span aria-hidden="true">{goal} h</span>
               <input

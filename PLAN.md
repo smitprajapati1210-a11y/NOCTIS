@@ -143,6 +143,14 @@ The chat is **deterministic local rules, not an LLM**. The account server handle
 - Moon phase switching now interpolates the illuminated silhouette over the intervening dates, with a soft sweep that follows the picker direction. Rapid changes start from the displayed phase, and Reduced Motion shows the selected phase immediately.
 - Applied the additive profile migration to Vercel’s Neon database and verified the existing account count. All 36 tests and the production build passed. Phone-sized Chrome and WebKit verified uploads, profile persistence in a fresh session, greeting capitalization, sample mode, backup download, sign-out, moon animation and Reduced Motion. Physical iPhone and authenticated production profile editing remain to be tested.
 
+## Follow-up — liquid-glass profile controls, 2026-11-15
+
+- Restyled the Profile sleep-goal range with a reflective lilac glass thumb, rounded progress track, and immediate press feedback. Kept the native slider, 6–10-hour range, quarter-hour steps, accessible value text, and explicit save action.
+- Changed **Explore sample nights** into a translucent capsule button with a reflective rim and glass switch bubble. Preserved switch semantics and separate personal/sample journals. Reduced Motion removes the new spatial transitions.
+- Verified both controls visually in an isolated Chrome preview using a separate storage key and synthetic account. Confirmed the sample on/off state and native quarter-hour adjustment. No personal browser journal or hosted account was modified.
+- Validation: 32 interface/domain/moon tests pass with `node --import tsx --test tests/app.test.tsx tests/domain.test.ts tests/moon.test.ts`; the production build and `git diff --check` pass. The standard `npm test` entry point cannot create its IPC socket in this sandbox. Running the full suite directly also crashes the socket-based authentication test process in a native Node assertion under both Node 24.22.3 and 26.13.0. The complete authentication suite is not verified in this environment. Physical iPhone checks remain pending.
+- These changes are local and have not been deployed to Vercel. The broader design review recommends quicker night logging, a visible lead finding in Discover, and clearer disabled save-button styling; these suggestions have not been implemented.
+
 ## Next milestone — physical iPhone and motion tuning
 
 1. Read README’s beginner-friendly run instructions. Start `npm run dev` in this folder.
