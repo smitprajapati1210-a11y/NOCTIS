@@ -4,6 +4,30 @@
 
 [Open the NOCTIS friends beta](https://noctis-sleep-beta.vercel.app/). Google sign-in creates a hosted account. Journal entries live in the browser where you write them. Discover and its chat show calculations from your journal using local rules.
 
+## App tour
+
+NOCTIS gives you a quiet place to put the day down, record how you slept, and see which habits tend to go with better rest. These phone-sized screenshots use the built-in sample journal and a fictional profile.
+
+| Today | Journal |
+| :---: | :---: |
+| <img src="docs/screenshots/today.png" alt="Today with a personal greeting, tonight’s moon, a Log a night button, and the weekly sleep constellation" width="240"> | <img src="docs/screenshots/journal.png" alt="Journal with the last seven mornings, past weeks, and a dated list of sample sleep notes" width="240"> |
+| Log a night, watch the week’s constellation fill in, and scroll down to Ask Noctis for journal summaries and chart cards. | Record bed and wake times, how rested you feel, habits, and notes. Browse past weeks or open the 35-day heatmap. |
+
+| Discover | Wind down |
+| :---: | :---: |
+| <img src="docs/screenshots/discover.png" alt="Discover with the Insights and Detective tabs, a seven-day sleep average, and a shortcut to habit comparisons" width="240"> | <img src="docs/screenshots/wind-down.png" alt="Wind down with a 30-minute countdown, duration presets, and a four-item checklist" width="240"> |
+| Check your weekly average and bedtime consistency, or use Detective to compare nights with and without a habit tag. | Start a countdown, edit your daily checklist, or open a plan that works backward from your first morning commitment. |
+
+<details>
+<summary>See first launch and the moon picker</summary>
+
+| First launch | Moon phases |
+| :---: | :---: |
+| <img src="docs/screenshots/welcome.png" alt="The opening walkthrough with a dark bedroom window and a moon above the Explore NOCTIS button" width="240"> | <img src="docs/screenshots/moon-phases.png" alt="Moon phase sheet with an illustrated first-quarter moon, illumination percentage, and a five-night picker" width="240"> |
+| Try a sample rested rating, sleep chart, and wind-down checklist in the interactive walkthrough. | Tap the moon on Today and slide across five nights to see the changing phase and illumination. |
+
+</details>
+
 ## Open and run
 
 The account server runs on Node.js 24.15 or newer. In VS Code, open the project folder and choose **Terminal → New Terminal**, then enter:
@@ -62,7 +86,7 @@ The former Netlify site has been retired. If you exported your journal from that
 
 [render.yaml](render.yaml) defines a paid Web Service with a 1 GB persistent disk for accounts. Render supplies the HTTPS address and generates a server session secret. The program serves the app and its authentication routes together. [Render Web Services](https://render.com/docs/web-services) · [Persistent disks](https://render.com/docs/disks)
 
-1. Push the Git repository to a private GitHub repository. The `.env.*` files containing credentials and `.noctis/` account databases are ignored. The hosted service starts with its own account database.
+1. Push the Git repository to GitHub. The `.env.*` files containing credentials and `.noctis/` account databases are ignored. The hosted service starts with its own account database.
 2. In Render, create a **Blueprint** from that repository. Review the Starter compute and disk charges. Enter the SMTP connection and approved sender as `NOCTIS_SMTP_URL` and `NOCTIS_MAIL_FROM` in Render. If using Resend, verify a domain you control and use `smtps://resend:API_KEY@smtp.resend.com:465` with a sending key. [Render Blueprints](https://render.com/docs/infrastructure-as-code) · [Resend sender domains](https://resend.com/docs/dashboard/domains/introduction) · [Resend SMTP](https://resend.com/changelog/smtp-service)
 3. Open the deployed app and copy its exact HTTPS address from Render. Create a separate Google Web application OAuth client with `<that HTTPS address>/api/auth/callback/google`, then add `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` to Render's environment and redeploy. If switching to a custom domain, set `NOCTIS_URL` to that HTTPS origin and register the matching Google callback. Use a separate Google project for a public release. [Google OAuth client setup](https://support.google.com/cloud/answer/15549257)
 4. On iPhone Safari, test Google sign-in, email signup and verification, password recovery, and sign-out. Confirm an account still works after a redeploy. Use a JSON export and import to bring any existing journal entries to the new address.
@@ -166,6 +190,6 @@ Read **PLAN.md**, this README, and `git status` first. Ask:
 
 > Continue NOCTIS in /Users/smitprajapati/Projects/NOCTIS. Read README.md and PLAN.md, check Git status, and continue the next unfinished milestone. Preserve the dark purple theme and the actual moon phase feature.
 
-The files and local Git history remain on the Mac when a chat stops. Future sessions can inspect them and resume without rebuilding from scratch. Committed source is backed up in the private `smitprajapati1210-a11y/NOCTIS` repository.
+The files and local Git history remain on the Mac when a chat stops. Future sessions can inspect them and resume without rebuilding from scratch. The source and project plan are available in the public [NOCTIS GitHub repository](https://github.com/smitprajapati1210-a11y/NOCTIS).
 
 **Usage limits do not erase the project, but they can stop work. I cannot promise to continue automatically when a limit resets.** Return when usage is available and send a continuation request. Account limits depend on the plan and work performed; use the product’s usage dashboard for current availability. [Official OpenAI usage guidance](https://learn.chatgpt.com/docs/pricing).

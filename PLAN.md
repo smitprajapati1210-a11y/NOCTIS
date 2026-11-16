@@ -158,6 +158,11 @@ The chat is **deterministic local rules, not an LLM**. The account server handle
 - All 36 tests, the production build, and `git diff --check` passed. Compared 19 phone-sized screen states in Chrome and WebKit and exercised the glass dock glide and moon phase morph with motion enabled. WebKit screenshots were pixel-identical. Chrome's settled capture differed by at most 1/255 per channel across 22 pixels on one screen. Repeat baseline-only captures also showed minor pixel variation.
 - Saved this cleanup locally. Physical iPhone and production release checks remain pending.
 
+## Follow-up — public GitHub repository and app tour, 2026-11-16
+
+- Made the existing NOCTIS GitHub repository public for the college project. Verified read access without GitHub credentials.
+- Added a README tour of Today, Journal, Discover, Wind down, the opening walkthrough, and the moon picker. Captured the screens in phone-sized WebKit using the built-in sample journal and a fictional profile.
+
 ## Next milestone — physical iPhone and motion tuning
 
 1. Read README’s beginner-friendly run instructions. Start `npm run dev` in this folder.
