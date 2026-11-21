@@ -163,6 +163,14 @@ The chat is **deterministic local rules, not an LLM**. The account server handle
 - Made the existing NOCTIS GitHub repository public for the college project. Verified read access without GitHub credentials.
 - Added a README tour of Today, Journal, Discover, Wind down, the opening walkthrough, and the moon picker. Captured the screens in phone-sized WebKit using the built-in sample journal and a fictional profile.
 
+## Follow-up — FAI project cleanup, 2026-11-21
+
+- Retired the unused Netlify adapter, its two direct dependencies and eight packages in total, and the unused Render deployment file. Preserved the account schema and profile migration under `database/migrations/` and updated Vercel setup instructions.
+- Removed installed dependencies, generated builds, compiler state, old deployment caches, and temporary development drafts. Kept source, public assets, tests, lockfile, Vercel configuration, documentation, and repository screenshots.
+- Kept the local credentials, local account databases, deployment link, and Git history in the working checkout. The FAI submission ZIP includes source, documentation, screenshots, the self-contained presentation, and all four slide PNGs. Private local files and generated dependencies are excluded.
+- All 36 tests and the production build pass. All 26 generated production files match the pre-cleanup build byte for byte. Every retained dependency version matches the original lockfile. A clean submission copy also installs successfully with `npm ci` and produces the same 26 production files.
+- Restore local dependencies with `npm ci`, then run `npm run dev`. Generate production output again with `npm run build`.
+
 ## Next milestone — physical iPhone and motion tuning
 
 1. Read README’s beginner-friendly run instructions. Start `npm run dev` in this folder.

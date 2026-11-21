@@ -28,6 +28,14 @@ NOCTIS gives you a quiet place to put the day down, record how you slept, and se
 
 </details>
 
+## FAI project archive
+
+The submission ZIP contains the application source, lockfile, database migrations, project documentation, screenshots, and the four-slide presentation. Open `presentation/presentation.html` to present offline, or use the four PNGs beside it in your practical file.
+
+After extracting the project, install Node.js 24.15 or newer, then run `npm ci` and `npm run dev`. A fresh local preview supports email sign-up and creates its own local account database. Configure Google and hosted credentials using `.env.example` when setting up a deployment.
+
+Dependencies and production builds are generated again by `npm ci` and `npm run build`. The archive includes the Vercel routes and configuration. The working checkout keeps its Git history, local credentials, and local account data. The submission ZIP excludes those private and generated files.
+
 ## Open and run
 
 The account server runs on Node.js 24.15 or newer. In VS Code, open the project folder and choose **Terminal → New Terminal**, then enter:
@@ -76,20 +84,11 @@ Automated tests cover Google redirect generation and the verification and recove
 
 The Vite build serves the app from `dist`. Vercel Functions serve the account API from `api/`, and the linked Neon PostgreSQL database stores accounts. The production project is `smitprajapati1210-4406/noctis-sleep-beta` and uses Node.js 24.x.
 
-1. Set `DATABASE_URL`, `BETTER_AUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `NOCTIS_URL` in the project’s production environment. For a new database, apply the SQL files in `netlify/database/migrations/` in order. The existing Neon database already includes `0001_accounts` and `0002_profile`.
+1. Set `DATABASE_URL`, `BETTER_AUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `NOCTIS_URL` in the project’s production environment. For a new database, apply the SQL files in `database/migrations/` in order. The existing Neon database already includes `0001_accounts` and `0002_profile`.
 2. Register the exact Google callback `https://noctis-sleep-beta.vercel.app/api/auth/callback/google`. If the primary domain changes, update both the callback and `NOCTIS_URL`.
 3. Run `npx vercel@65.16.0 build --prod` with Node.js 24 and then `npx vercel@65.16.0 deploy --prebuilt --prod`. Verify the homepage, `/api/noctis/auth-options`, and a full Google sign-in at the production address. [Vercel Vite setup](https://vercel.com/docs/frameworks/frontend/vite) · [Vercel CLI deploy](https://vercel.com/docs/cli/deploy)
 
 The former Netlify site has been retired. If you exported your journal from that address, open the new address, sign in, and choose **Profile → Journal backups → Import backup**. Import replaces the destination journal, so save a backup there first if you have started logging at the new address.
-
-### Deploy on Render
-
-[render.yaml](render.yaml) defines a paid Web Service with a 1 GB persistent disk for accounts. Render supplies the HTTPS address and generates a server session secret. The program serves the app and its authentication routes together. [Render Web Services](https://render.com/docs/web-services) · [Persistent disks](https://render.com/docs/disks)
-
-1. Push the Git repository to GitHub. The `.env.*` files containing credentials and `.noctis/` account databases are ignored. The hosted service starts with its own account database.
-2. In Render, create a **Blueprint** from that repository. Review the Starter compute and disk charges. Enter the SMTP connection and approved sender as `NOCTIS_SMTP_URL` and `NOCTIS_MAIL_FROM` in Render. If using Resend, verify a domain you control and use `smtps://resend:API_KEY@smtp.resend.com:465` with a sending key. [Render Blueprints](https://render.com/docs/infrastructure-as-code) · [Resend sender domains](https://resend.com/docs/dashboard/domains/introduction) · [Resend SMTP](https://resend.com/changelog/smtp-service)
-3. Open the deployed app and copy its exact HTTPS address from Render. Create a separate Google Web application OAuth client with `<that HTTPS address>/api/auth/callback/google`, then add `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` to Render's environment and redeploy. If switching to a custom domain, set `NOCTIS_URL` to that HTTPS origin and register the matching Google callback. Use a separate Google project for a public release. [Google OAuth client setup](https://support.google.com/cloud/answer/15549257)
-4. On iPhone Safari, test Google sign-in, email signup and verification, password recovery, and sign-out. Confirm an account still works after a redeploy. Use a JSON export and import to bring any existing journal entries to the new address.
 
 ## What works in milestone 1
 
